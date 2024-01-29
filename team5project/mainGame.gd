@@ -63,29 +63,53 @@ func _input(event):
 		
 		var curr_tile_data : TileData = tile_map.get_cell_tile_data(ground_layor, tile_mouse_pos) #get tile data (not the whole map)
 		var right_tile_data : TileData = tile_map.get_cell_tile_data(ground_layor, tile_mouse_pos + Vector2i(1,0)) #get the tile at the right side
-		var left_tile_data : TileData = tile_map.get_cell_tile_data(ground_layor, tile_mouse_pos + Vector2i(-1,0)) #get the tile at the right side
-		var up_tile_data : TileData = tile_map.get_cell_tile_data(ground_layor, tile_mouse_pos + Vector2i(0,-1)) #get the tile at the right side
+		var rightdown_tile_data : TileData = tile_map.get_cell_tile_data(ground_layor, tile_mouse_pos + Vector2i(1,1)) #get the tile at the rightdown side (diagonal)
 		var down_tile_data : TileData = tile_map.get_cell_tile_data(ground_layor, tile_mouse_pos + Vector2i(0,1)) #get the tile at the right side
+		var downleft_tile_data : TileData = tile_map.get_cell_tile_data(ground_layor, tile_mouse_pos + Vector2i(-1,1)) #get the tile at the downleft side (diagnoal
+		var left_tile_data : TileData = tile_map.get_cell_tile_data(ground_layor, tile_mouse_pos + Vector2i(-1,0)) #get the tile at the right side
+		var leftup_tile_data : TileData = tile_map.get_cell_tile_data(ground_layor, tile_mouse_pos + Vector2i(-1,-1)) #get the tile at the leftup side (diagnoal)
+		var up_tile_data : TileData = tile_map.get_cell_tile_data(ground_layor, tile_mouse_pos + Vector2i(0,-1)) #get the tile at the right side
+		var upright_tile_data : TileData = tile_map.get_cell_tile_data(ground_layor, tile_mouse_pos + Vector2i(1,-1)) #get the tile at the upright side (diagonal
 		
-		#category of surrounding tiles (curr, right, left, up, down)
-		var sur_tiles = [0,0,0,0,0]
+		
+		#category of surrounding tiles (curr, up, upright, right, rightdown, down, downleft, left, leftup)
+		var sur_tiles = [0,0,0,0,0,0,0,0,0]
 		
 		if curr_tile_data:
 			sur_tiles[0] = curr_tile_data.get_custom_data(tile_category_custom_data)
+		
+		
 		if right_tile_data:
 			sur_tiles[1] = right_tile_data.get_custom_data(tile_category_custom_data)
-		if left_tile_data:
-			sur_tiles[2] = left_tile_data.get_custom_data(tile_category_custom_data)
-		if up_tile_data:
-			sur_tiles[3] = up_tile_data.get_custom_data(tile_category_custom_data)
+		if rightdown_tile_data:
+			sur_tiles[2] = rightdown_tile_data.get_custom_data(tile_category_custom_data)
 		if down_tile_data:
-			sur_tiles[4] = down_tile_data.get_custom_data(tile_category_custom_data)
+			sur_tiles[3] = down_tile_data.get_custom_data(tile_category_custom_data)
+		if downleft_tile_data:
+			sur_tiles[4] = downleft_tile_data.get_custom_data(tile_category_custom_data)
+		if left_tile_data:
+			sur_tiles[5] = left_tile_data.get_custom_data(tile_category_custom_data)
+		if leftup_tile_data:
+			sur_tiles[6] = leftup_tile_data.get_custom_data(tile_category_custom_data)
+		if up_tile_data:
+			sur_tiles[7] = up_tile_data.get_custom_data(tile_category_custom_data)
+		if upright_tile_data:
+			sur_tiles[8] = upright_tile_data.get_custom_data(tile_category_custom_data)
 		
-			
-		print(sur_tiles.count(2))
+		var curr_tile_is_ground = sur_tiles[0] == 1 
 		
-		#if there is no no_data and river tile in neighbor and if no more than 2 riverbeds are around
-		if sur_tiles[0] == 1 and sur_tiles.all(func(c): return c!=0 and c!=3) and sur_tiles.count(2)<2: 
+		#if surrounding tiles contain riverbed or no_data (outside border), false
+		var surr_tiles_are_not_river_or_outside = sur_tiles.all(func(c): return c!=0 and c!=3)
+		
+		#if place riverbed in curr_tile, can be square, false
+		var will_not_make_riverbed_square = sur_tiles.slice(1,4).any(func(c): return c!=2) and \
+			sur_tiles.slice(3,6).any(func(c): return c!=2) and  sur_tiles.slice(5,8).any(func(c): return c!=2) and \
+			  (sur_tiles[1] != 2 or sur_tiles.slice(7).any(func(c): return c!=2)) 
+		
+		#print(sur_tiles, sur_tiles.slice(1,4).any(func(c): return c!=2),sur_tiles.slice(3,6).any(func(c): return c!=2),sur_tiles.slice(5,8).any(func(c): return c!=2),(sur_tiles[1] != 2 or sur_tiles.slice(7).any(func(c): return c!=2)) )
+		
+		#if following conditions are met, set cell to riverbed
+		if curr_tile_is_ground and surr_tiles_are_not_river_or_outside and will_not_make_riverbed_square:
 			tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, atlas_coord) #set cell to riverbed 
 			
 		else:
