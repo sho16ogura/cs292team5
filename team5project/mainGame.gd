@@ -76,17 +76,17 @@ func _input(event):
 			var curr_tile_is_ground = sur_tiles[0] == 1 
 			
 			#if surrounding tiles contain riverbed or no_data (outside border), false
-			var surr_tiles_are_not_river_or_outside = sur_tiles.all(func(c): return c!=0 and c!=3)
+			var surr_tiles_are_not_outside = sur_tiles.all(func(c): return c!=0)
 			
-			#if place riverbed in curr_tile, can be square, false
-			var will_not_make_riverbed_square = sur_tiles.slice(1,4).any(func(c): return c!=2) and \
-				sur_tiles.slice(3,6).any(func(c): return c!=2) and  sur_tiles.slice(5,8).any(func(c): return c!=2) and \
-				  (sur_tiles[1] != 2 or sur_tiles.slice(7).any(func(c): return c!=2)) 
+			#if square of riverbed or river is made, false
+			var will_not_make_riverbed_square = sur_tiles.slice(1,4).any(func(c): return c!=2 and c!=3) and \
+				sur_tiles.slice(3,6).any(func(c): return c!=2 and c!=3) and  sur_tiles.slice(5,8).any(func(c): return c!=2 and c!=3) and \
+				  ((sur_tiles[1] != 2 and sur_tiles[1] != 3) or sur_tiles.slice(7).any(func(c): return c!=2 and c!=3)) 
 			
 			#print(sur_tiles, sur_tiles.slice(1,4).any(func(c): return c!=2),sur_tiles.slice(3,6).any(func(c): return c!=2),sur_tiles.slice(5,8).any(func(c): return c!=2),(sur_tiles[1] != 2 or sur_tiles.slice(7).any(func(c): return c!=2)) )
 			
 			#if following conditions are met, set cell to riverbed
-			if curr_tile_is_ground and surr_tiles_are_not_river_or_outside and will_not_make_riverbed_square:
+			if curr_tile_is_ground and surr_tiles_are_not_outside and will_not_make_riverbed_square:
 				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, atlas_coord) #set cell to riverbed 
 				
 			else:
@@ -97,9 +97,9 @@ func _input(event):
 			var curr_tile_is_riverbed = sur_tiles[0] == 2
 			
 			#if surrounding tiles contain riverbed or no_data (outside border), false
-			var surr_tiles_are_not_river_or_outside = sur_tiles.all(func(c): return c!=0 and c!=3)
+			var surr_tiles_are_not_outside = sur_tiles.all(func(c): return c!=0)
 			
-			if curr_tile_is_riverbed and surr_tiles_are_not_river_or_outside and checkRiverConnection(tile_mouse_pos):
+			if curr_tile_is_riverbed and surr_tiles_are_not_outside and checkRiverConnection(tile_mouse_pos):
 				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, atlas_coord)
 			else:
 				print("cannot undig here")
