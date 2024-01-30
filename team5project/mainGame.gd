@@ -164,7 +164,7 @@ func _on_timer_timeout():
 		for x in range(16, 0 , -1):
 			var temp_vec = Vector2i(x, y)
 			if tile_map.get_cell_atlas_coords(ground_layor, temp_vec) == Vector2i(3, 0) and lockout != 1:
-				if tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE)) == Vector2i(1,0): 
+				if tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE)) == Vector2i(1,0) and leftlock != 1: 
 					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE), 0, Vector2i(3,0))
 				elif tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_LEFT_SIDE)) == Vector2i(1,0) and leftlock != 1: 
 					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_LEFT_SIDE), 0, Vector2i(3,0))
