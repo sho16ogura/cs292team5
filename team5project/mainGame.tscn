@@ -50,6 +50,7 @@ layer_1/name = "top"
 layer_1/tile_data = PackedInt32Array()
 
 [node name="Timer" type="Timer" parent="TileMap"]
+wait_time = 2.0
 autostart = true
 
 [connection signal="timeout" from="TileMap/Timer" to="." method="_on_timer_timeout"]

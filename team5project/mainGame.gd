@@ -111,22 +111,26 @@ func _input(event):
 
 func _on_timer_timeout():
 	
+	var lockout = 0
+	
 	if tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 0)) == Vector2i(1, 0):
 		tile_map.set_cell(ground_layor, Vector2i(8,0), 0, Vector2i(3,0))
-	elif tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 0)) == Vector2i(3, 0):
+	elif tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 0)) == Vector2i(3, 0) and tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 1)) != Vector2i(3, 0):
 		tile_map.set_cell(ground_layor, Vector2i(8,1), 0, Vector2i(3,0))
+		lockout = 1
 	
-	for row in range(15, -1, -1):
-		for col in range(11, -1 , -1):
-			var temp_vec = Vector2i(row + 1, col + 1)
-			print(temp_vec)
-			if tile_map.get_cell_atlas_coords(ground_layor, temp_vec) == Vector2i(3, 0):
+	for row in range(16, 0, -1):
+		for col in range(12, 0 , -1):
+			var temp_vec = Vector2i(row, col)
+			if tile_map.get_cell_atlas_coords(ground_layor, temp_vec) == Vector2i(3, 0) and lockout != 1:
 				if tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, 4)) == Vector2i(1,0):
 					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, 4), 0, Vector2i(3,0))
 				elif tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, 8)) == Vector2i(1,0):
 					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, 8), 0, Vector2i(3,0))
 				elif tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, 0)) == Vector2i(1,0):
 					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, 0), 0, Vector2i(3,0))
+	
+	lockout = 0
 	
 	#var pos = Vector2i(8, temp_count/100) #temp_count is divided by 100 to make things slower
 	#var source_id = 0
