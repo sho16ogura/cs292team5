@@ -99,7 +99,7 @@ func _input(event):
 			#if surrounding tiles contain riverbed or no_data (outside border), false
 			var surr_tiles_are_not_river_or_outside = sur_tiles.all(func(c): return c!=0 and c!=3)
 			
-			if curr_tile_is_riverbed and surr_tiles_are_not_river_or_outside:
+			if curr_tile_is_riverbed and surr_tiles_are_not_river_or_outside and checkRiverConnection(tile_mouse_pos):
 				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, atlas_coord)
 			else:
 				print("cannot undig here")
@@ -148,7 +148,7 @@ func get_category_sur_tiles(curr_pos):
 		
 	return sur_tiles
 
-
+# 2 second pulse, check water flow. order is down, left, then right. no support for water flowing up
 func _on_timer_timeout():
 	
 	var lockout = 0
@@ -164,7 +164,7 @@ func _on_timer_timeout():
 		for x in range(16, 0 , -1):
 			var temp_vec = Vector2i(x, y)
 			if tile_map.get_cell_atlas_coords(ground_layor, temp_vec) == Vector2i(3, 0) and lockout != 1:
-				if tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE)) == Vector2i(1,0): 
+				if tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE)) == Vector2i(1,0) and leftlock != 1: 
 					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE), 0, Vector2i(3,0))
 				elif tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_LEFT_SIDE)) == Vector2i(1,0) and leftlock != 1: 
 					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_LEFT_SIDE), 0, Vector2i(3,0))
@@ -175,3 +175,6 @@ func _on_timer_timeout():
 				leftlock = 0
 	
 	lockout = 0
+	
+func checkRiverConnection(tile_pos):
+	return true
