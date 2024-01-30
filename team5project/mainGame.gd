@@ -152,6 +152,7 @@ func get_category_sur_tiles(curr_pos):
 func _on_timer_timeout():
 	
 	var lockout = 0
+	var leftlock = 0
 	
 	if tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 0)) == Vector2i(1, 0):
 		tile_map.set_cell(ground_layor, Vector2i(8,0), 0, Vector2i(3,0))
@@ -159,20 +160,18 @@ func _on_timer_timeout():
 		tile_map.set_cell(ground_layor, Vector2i(8,1), 0, Vector2i(3,0))
 		lockout = 1
 	
-	for row in range(16, 0, -1):
-		for col in range(12, 0 , -1):
-			var temp_vec = Vector2i(row, col)
+	for y in range(12, 0, -1):
+		for x in range(16, 0 , -1):
+			var temp_vec = Vector2i(x, y)
 			if tile_map.get_cell_atlas_coords(ground_layor, temp_vec) == Vector2i(3, 0) and lockout != 1:
-				if tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, 4)) == Vector2i(1,0):
-					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, 4), 0, Vector2i(3,0))
-				elif tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, 8)) == Vector2i(1,0):
-					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, 8), 0, Vector2i(3,0))
-				elif tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, 0)) == Vector2i(1,0):
-					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, 0), 0, Vector2i(3,0))
+				if tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE)) == Vector2i(1,0): 
+					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE), 0, Vector2i(3,0))
+				elif tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_LEFT_SIDE)) == Vector2i(1,0) and leftlock != 1: 
+					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_LEFT_SIDE), 0, Vector2i(3,0))
+					leftlock = 1
+				elif tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_RIGHT_SIDE)) == Vector2i(1,0): 
+					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_RIGHT_SIDE), 0, Vector2i(3,0))
+			else:
+				leftlock = 0
 	
 	lockout = 0
-	
-	#var pos = Vector2i(8, temp_count/100) #temp_count is divided by 100 to make things slower
-	#var source_id = 0
-	#var atlas_coord = Vector2i(3, 0) #river tile
-	#tile_map.set_cell(ground_layor, pos, source_id, atlas_coord) #place water from the top to bottom
