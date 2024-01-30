@@ -120,7 +120,7 @@ func _on_timer_timeout():
 		for col in 11:
 			var temp_vec = Vector2i(row + 1, col + 1)
 			print(temp_vec)
-			if tile_map.get_cell_atlas_coords(ground_layor, temp_vec) == Vector2i(2, 0):
+			if tile_map.get_cell_atlas_coords(ground_layor, temp_vec) == Vector2i(3, 0):
 				if tile_map.get_cell_altas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, 4)) == Vector2i(1,0):
 					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, 4), 0, Vector2i(3,0))
 				elif tile_map.get_cell_altas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, 8)) == Vector2i(1,0):
