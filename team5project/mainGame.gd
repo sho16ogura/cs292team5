@@ -14,6 +14,8 @@ var tile_category_custom_data = "tile_category"
 
 
 
+enum DIG_MODES {DIG, UNDIG}
+var dig_mode_state = DIG_MODES.DIG # by default, player can dig ground
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -38,21 +40,7 @@ func _ready():
 func _process(delta):	
 	
 	pass #no function needed here at the moment, add code to _on_timer_timeout for pulse related events		
-		
-enum DIG_MODES {DIG, UNDIG}
-var dig_mode_state = DIG_MODES.DIG # by default, player can dig ground
-		
-func _input(event):
 	
-	#if toggle_dig (J) is pressed, mode change to dig mode
-	if Input.is_action_just_pressed("toggle_dig"):
-		dig_mode_state = DIG_MODES.DIG
-		
-	#if toggle_undig (K) is pressed, mode change to undig mode
-	if Input.is_action_just_pressed("toggle_undig"):
-		dig_mode_state = DIG_MODES.UNDIG
-	
-=======
 func _input(event): 
 	
 	#if toggle_dig (J) is pressed, mode change to dig mode
