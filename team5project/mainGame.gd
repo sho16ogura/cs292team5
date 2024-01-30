@@ -111,13 +111,24 @@ func _input(event):
 
 func _on_timer_timeout():
 	
+	if tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 0)) == Vector2i(1, 0):
+		tile_map.set_cell(ground_layor, Vector2i(8,0), 0, Vector2i(3,0))
+	elif tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 0)) == Vector2i(3, 0):
+		tile_map.set_cell(ground_layor, Vector2i(8,1), 0, Vector2i(3,0))
+	
 	for row in 15:
 		for col in 11:
 			var temp_vec = Vector2i(row + 1, col + 1)
+			print(temp_vec)
 			if tile_map.get_cell_atlas_coords(ground_layor, temp_vec) == Vector2i(2, 0):
-				pass
-			 
-	var pos = Vector2i(8, temp_count/100) #temp_count is divided by 100 to make things slower
-	var source_id = 0
-	var atlas_coord = Vector2i(3, 0) #river tile
-	tile_map.set_cell(ground_layor, pos, source_id, atlas_coord) #place water from the top to bottom
+				if tile_map.get_cell_altas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, 4)) == Vector2i(1,0):
+					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, 4), 0, Vector2i(3,0))
+				elif tile_map.get_cell_altas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, 8)) == Vector2i(1,0):
+					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, 8), 0, Vector2i(3,0))
+				elif tile_map.get_cell_altas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, 0)) == Vector2i(1,0):
+					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, 0), 0, Vector2i(3,0))
+	
+	#var pos = Vector2i(8, temp_count/100) #temp_count is divided by 100 to make things slower
+	#var source_id = 0
+	#var atlas_coord = Vector2i(3, 0) #river tile
+	#tile_map.set_cell(ground_layor, pos, source_id, atlas_coord) #place water from the top to bottom
