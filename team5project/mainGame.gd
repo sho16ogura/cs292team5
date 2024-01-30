@@ -8,11 +8,14 @@ var ground_layor = 0
 var temp_count = 0
 
 
+
  #returns tile category int (0 = no data, 1 = ground, 2 = riverbed, 3 = river, 4 = pump)
 var tile_category_custom_data = "tile_category"
 
 
 
+enum DIG_MODES {DIG, UNDIG}
+var dig_mode_state = DIG_MODES.DIG # by default, player can dig ground
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -36,21 +39,9 @@ func _ready():
 # Go to Project Setting -> Physics -> Common to see number of cycles per second
 func _process(delta):	
 	
-	#print(temp_count)
+	pass #no function needed here at the moment, add code to _on_timer_timeout for pulse related events		
 	
-	var pos = Vector2i(8, temp_count/100) #temp_count is divided by 100 to make things slower
-	var source_id = 0
-	var atlas_coord = Vector2i(3, 0) #river tile
-	tile_map.set_cell(ground_layor, pos, source_id, atlas_coord) #place water from the top to bottom
-	
-	if temp_count < 1200:
-		temp_count+=1
-		
-		
-enum DIG_MODES {DIG, UNDIG}
-var dig_mode_state = DIG_MODES.DIG # by default, player can dig ground
-		
-func _input(event):
+func _input(event): 
 	
 	#if toggle_dig (J) is pressed, mode change to dig mode
 	if Input.is_action_just_pressed("toggle_dig"):
@@ -156,7 +147,32 @@ func get_category_sur_tiles(curr_pos):
 		sur_tiles[8] = upright_tile_data.get_custom_data(tile_category_custom_data)		
 		
 	return sur_tiles
-			
+
+
+func _on_timer_timeout():
 	
+	var lockout = 0
 	
+	if tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 0)) == Vector2i(1, 0):
+		tile_map.set_cell(ground_layor, Vector2i(8,0), 0, Vector2i(3,0))
+	elif tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 0)) == Vector2i(3, 0) and tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 1)) != Vector2i(3, 0):
+		tile_map.set_cell(ground_layor, Vector2i(8,1), 0, Vector2i(3,0))
+		lockout = 1
 	
+	for row in range(16, 0, -1):
+		for col in range(12, 0 , -1):
+			var temp_vec = Vector2i(row, col)
+			if tile_map.get_cell_atlas_coords(ground_layor, temp_vec) == Vector2i(3, 0) and lockout != 1:
+				if tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, 4)) == Vector2i(1,0):
+					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, 4), 0, Vector2i(3,0))
+				elif tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, 8)) == Vector2i(1,0):
+					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, 8), 0, Vector2i(3,0))
+				elif tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, 0)) == Vector2i(1,0):
+					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, 0), 0, Vector2i(3,0))
+	
+	lockout = 0
+	
+	#var pos = Vector2i(8, temp_count/100) #temp_count is divided by 100 to make things slower
+	#var source_id = 0
+	#var atlas_coord = Vector2i(3, 0) #river tile
+	#tile_map.set_cell(ground_layor, pos, source_id, atlas_coord) #place water from the top to bottom
