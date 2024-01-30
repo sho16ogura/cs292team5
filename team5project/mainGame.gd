@@ -99,7 +99,7 @@ func _input(event):
 			#if surrounding tiles contain riverbed or no_data (outside border), false
 			var surr_tiles_are_not_river_or_outside = sur_tiles.all(func(c): return c!=0 and c!=3)
 			
-			if curr_tile_is_riverbed and surr_tiles_are_not_river_or_outside:
+			if curr_tile_is_riverbed and surr_tiles_are_not_river_or_outside and checkRiverConnection(tile_mouse_pos):
 				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, atlas_coord)
 			else:
 				print("cannot undig here")
@@ -148,7 +148,7 @@ func get_category_sur_tiles(curr_pos):
 		
 	return sur_tiles
 
-
+# 2 second pulse, check water flow. order is down, left, then right. no support for water flowing up
 func _on_timer_timeout():
 	
 	var lockout = 0
@@ -175,3 +175,6 @@ func _on_timer_timeout():
 				leftlock = 0
 	
 	lockout = 0
+	
+func checkRiverConnection(tile_pos):
+	return true
