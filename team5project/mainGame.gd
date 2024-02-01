@@ -7,7 +7,7 @@ var ground_layor = 0
 
 var temp_count = 0
 
-
+var global_lockout = false
 
  #returns tile category int (0 = no data, 1 = ground, 2 = riverbed, 3 = river, 4 = pump)
 var tile_category_custom_data = "tile_category"
@@ -59,7 +59,7 @@ func _input(event):
 		mode_state = MODES.PUMP
 	
 	#can add action by Project -> Project Settings -> Input Map -> Add new Action
-	elif Input.is_action_just_pressed("click"): #if left mouse button is clicked
+	elif Input.is_action_just_pressed("click") and global_lockout == false: #if left mouse button is clicked
 		
 		#add constraint to each kind of tile by TileSet (on the right) 
 		#-> Custom Data Layers (and add variable) -> paint (bottom)->paint properties
@@ -170,38 +170,40 @@ func get_category_sur_tiles(curr_pos):
 # 2 second pulse, check water flow. order is down, left, then right. no support for water flowing up
 func _on_timer_timeout():
 	
-	var lockout = 0
-	var leftlock = 0
+	var lockout = false
+	var leftlock = false
 	
 	if tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 0)) == Vector2i(1, 0):
 		tile_map.set_cell(ground_layor, Vector2i(8,0), 0, Vector2i(3,0))
 	elif tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 0)) == Vector2i(3, 0) and tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 1)) != Vector2i(3, 0):
 		tile_map.set_cell(ground_layor, Vector2i(8,1), 0, Vector2i(3,0))
-		lockout = 1
+		lockout = true
+	
+	if tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 12)) == Vector2i(3, 0):
+		global_lockout = true
+		print("game over!")
 	
 	for y in range(12, 0, -1):
 		for x in range(16, 0 , -1):
 			var temp_vec = Vector2i(x, y)
-			if tile_map.get_cell_atlas_coords(ground_layor, temp_vec) == Vector2i(3, 0) and lockout != 1:
-				if tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE)) == Vector2i(1,0) and leftlock != 1: 
+			if tile_map.get_cell_atlas_coords(ground_layor, temp_vec) == Vector2i(3, 0) and lockout == false:
+				if tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE)) == Vector2i(1,0) and leftlock == false: 
 					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE), 0, Vector2i(3,0))
-				elif tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_LEFT_SIDE)) == Vector2i(1,0) and leftlock != 1: 
+				elif tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_LEFT_SIDE)) == Vector2i(1,0) and leftlock == false: 
 					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_LEFT_SIDE), 0, Vector2i(3,0))
-					leftlock = 1
+					leftlock = true
 				elif tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_RIGHT_SIDE)) == Vector2i(1,0): 
 					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_RIGHT_SIDE), 0, Vector2i(3,0))
 			else:
-				leftlock = 0
+				leftlock = false
 	
-	lockout = 0
+	lockout = false
 	
 func checkRiverConnection(tile_pos):
 	var tiles_to_visit = {Vector2i(8,0): 1}
 	var tiles_checked = {}
-	var temp = 0
 	
 	while tiles_to_visit.is_empty() == false:
-		temp = temp + 1
 		
 		var tile = tiles_to_visit.keys()[0]
 		print(tile)
