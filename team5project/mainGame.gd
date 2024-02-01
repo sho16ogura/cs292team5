@@ -196,4 +196,36 @@ func _on_timer_timeout():
 	lockout = 0
 	
 func checkRiverConnection(tile_pos):
-	return true
+	var tiles_to_visit = {Vector2i(8,0): 1}
+	var tiles_checked = {}
+	var temp = 0
+	
+	while tiles_to_visit.is_empty() == false:
+		temp = temp + 1
+		
+		var tile = tiles_to_visit.keys()[0]
+		print(tile)
+		if tiles_checked.get(tile) or tile == tile_pos:
+			tiles_to_visit.erase(tile)
+			continue
+		tiles_checked[tile] = 1
+		
+		if checkIfNeighborIsRiver(tile, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE):
+			tiles_to_visit[tile_map.get_neighbor_cell(tile, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE)] = 1
+		if checkIfNeighborIsRiver(tile, TileSet.CELL_NEIGHBOR_LEFT_SIDE):
+			tiles_to_visit[tile_map.get_neighbor_cell(tile, TileSet.CELL_NEIGHBOR_LEFT_SIDE)] = 1
+		if checkIfNeighborIsRiver(tile, TileSet.CELL_NEIGHBOR_RIGHT_SIDE):
+			tiles_to_visit[tile_map.get_neighbor_cell(tile, TileSet.CELL_NEIGHBOR_RIGHT_SIDE)] = 1
+	
+	if(tiles_checked.get(Vector2i(8, 12))):
+		return true
+	else: 
+		return false
+
+func checkIfNeighborIsRiver(tile, direction):
+	var neighbor = tile_map.get_neighbor_cell(tile, direction)
+	if tile_map.get_cell_atlas_coords(ground_layor, neighbor) == Vector2i(1,0) or \
+	tile_map.get_cell_atlas_coords(ground_layor, neighbor) == Vector2i(3,0):
+		return true
+	else:
+		return false
