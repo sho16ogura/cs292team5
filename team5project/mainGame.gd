@@ -20,15 +20,18 @@ Vector2i(-1,1),Vector2i(-1,0),Vector2i(-1,-1),Vector2i(0,-1),Vector2i(1,-1)]
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass #
+	pass #no function needed here at the moment
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 # Go to Project Setting -> Physics -> Common to see number of cycles per second
 func _process(_delta):	
 	
-	pass #no function needed here at the moment, add code to _on_timer_timeout for pulse related events		
+	pass 
+	#no function needed here at the moment
+	#add code to _on_timer_timeout for water pulse related events
+	#add code to _on_pump_timer_timeout for pump pulse related events
 
-func input(_event): 
+func _input(_event): 
 	
 	#if toggle_dig (J) is pressed, mode change to dig mode
 	if Input.is_action_just_pressed("toggle_dig"):
@@ -192,12 +195,12 @@ func _on_timer_timeout():
 		for x in range(16, 0 , -1):
 			var temp_vec = Vector2i(x, y)
 			if tile_map.get_cell_atlas_coords(ground_layor, temp_vec) == Vector2i(3, 0) and lockout == false:
-				if tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE)) == Vector2i(1,0) and leftlock == false: 
+				if checkIfNeighborIsRiverbed(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE) and leftlock == false: 
 					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE), 0, Vector2i(3,0))
-				elif tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_LEFT_SIDE)) == Vector2i(1,0) and leftlock == false: 
+				elif checkIfNeighborIsRiverbed(temp_vec, TileSet.CELL_NEIGHBOR_LEFT_SIDE) and leftlock == false: 
 					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_LEFT_SIDE), 0, Vector2i(3,0))
 					leftlock = true
-				elif tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_RIGHT_SIDE)) == Vector2i(1,0): 
+				elif checkIfNeighborIsRiverbed(temp_vec, TileSet.CELL_NEIGHBOR_RIGHT_SIDE): 
 					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_RIGHT_SIDE), 0, Vector2i(3,0))
 			else:
 				leftlock = false
@@ -231,7 +234,15 @@ func checkRiverConnection(tile_pos):
 	else: 
 		return false
 
-#checks if the neighbor of a tile in a specific direction is a river tile
+#checks if the neighbor of a tile in a specific direction is a riverbed
+func checkIfNeighborIsRiverbed(tile, direction):
+	var neighbor = tile_map.get_neighbor_cell(tile, direction)
+	if tile_map.get_cell_atlas_coords(ground_layor, neighbor) == Vector2i(1,0):
+		return true
+	else:
+		return false
+
+#checks if the neighbor of a tile in a specific direction is a river tile (riverbed or water)
 func checkIfNeighborIsRiver(tile, direction):
 	var neighbor = tile_map.get_neighbor_cell(tile, direction)
 	if tile_map.get_cell_atlas_coords(ground_layor, neighbor) == Vector2i(1,0) or \
@@ -239,4 +250,3 @@ func checkIfNeighborIsRiver(tile, direction):
 		return true
 	else:
 		return false
-
