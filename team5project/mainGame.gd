@@ -71,7 +71,7 @@ func _input(event):
 		
 		var mouse_pos : Vector2i = get_global_mouse_position() #global position in float
 		var tile_mouse_pos : Vector2i = tile_map.local_to_map(mouse_pos) #local position in int
-		
+		tile_mouse_pos = tile_mouse_pos + Vector2i(-1, -1)
 		
 		var sur_tiles = get_category_sur_tiles(tile_mouse_pos)
 		
@@ -203,7 +203,7 @@ func _on_timer_timeout():
 		tile_map.set_cell(ground_layor, Vector2i(8,1), 0, Vector2i(3,0))
 		lockout = true
 	
-	if tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 12)) == Vector2i(3, 0):
+	if tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 12)) == Vector2i(3, 0) and global_lockout != false:
 		global_lockout = true
 		print("game over!")
 	
@@ -223,6 +223,7 @@ func _on_timer_timeout():
 	
 	lockout = false
 	
+#check if removing a tile from the river prevents there from being a continuous line of river tiles from the top to the bottom of the screen
 func checkRiverConnection(tile_pos):
 
 	var tiles_to_visit = {Vector2i(8,0): 1}
@@ -249,6 +250,7 @@ func checkRiverConnection(tile_pos):
 	else: 
 		return false
 
+#checks if the neighbor of a tile in a specific direction is a river tile
 func checkIfNeighborIsRiver(tile, direction):
 	var neighbor = tile_map.get_neighbor_cell(tile, direction)
 	if tile_map.get_cell_atlas_coords(ground_layor, neighbor) == Vector2i(1,0) or \

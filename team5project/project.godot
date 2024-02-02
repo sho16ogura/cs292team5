@@ -15,6 +15,11 @@ run/main_scene="res://mainGame.tscn"
 config/features=PackedStringArray("4.2", "Mobile")
 config/icon="res://icon.svg"
 
+[display]
+
+window/size/viewport_width=854
+window/size/viewport_height=480
+
 [input]
 
 click={
@@ -40,4 +45,5 @@ toggle_pump={
 
 [rendering]
 
+textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="mobile"
