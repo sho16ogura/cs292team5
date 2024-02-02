@@ -6,15 +6,10 @@ extends Node2D
 
 var ground_layor = 0
 #var top_layor = 1
-
-var temp_count = 0
-
 var global_lockout = false
 
  #returns tile category int (0 = no data, 1 = ground, 2 = riverbed, 3 = river, 4 = pump)
 var tile_category_custom_data = "tile_category"
-
-
 
 enum MODES {DIG, UNDIG, PUMP}
 var mode_state = MODES.DIG # by default, player can dig ground
@@ -25,29 +20,15 @@ Vector2i(-1,1),Vector2i(-1,0),Vector2i(-1,-1),Vector2i(0,-1),Vector2i(1,-1)]
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	
-	
-	for i in range(13):
-		
-		var pos = Vector2i(8, i) #coordinate (8,i), which is all tiles in col 8 
-		var source_id = 0
-		var atlas_coord = Vector2i(1,0) #riverbed tile
-		tile_map.set_cell(ground_layor, pos, source_id, atlas_coord) #place riverbed at the middle tiles
-		
-	
-	var pos = Vector2i(8, 0) #coordinate (8,i), which is all tiles in col 8 
-	var source_id = 0
-	var atlas_coord = Vector2i(3, 0) #riverbed tile
-	tile_map.set_cell(ground_layor, pos, source_id, atlas_coord) #place water at the top of middle column
-
+	pass #
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 # Go to Project Setting -> Physics -> Common to see number of cycles per second
-func _process(delta):	
+func _process(_delta):	
 	
 	pass #no function needed here at the moment, add code to _on_timer_timeout for pulse related events		
-	
-func _input(event): 
+
+func input(_event): 
 	
 	#if toggle_dig (J) is pressed, mode change to dig mode
 	if Input.is_action_just_pressed("toggle_dig"):
@@ -203,7 +184,7 @@ func _on_timer_timeout():
 		tile_map.set_cell(ground_layor, Vector2i(8,1), 0, Vector2i(3,0))
 		lockout = true
 	
-	if tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 12)) == Vector2i(3, 0) and global_lockout != false:
+	if tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 12)) == Vector2i(3, 0) and global_lockout == false:
 		global_lockout = true
 		print("game over!")
 	
