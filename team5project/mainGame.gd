@@ -216,7 +216,6 @@ func checkRiverConnection(tile_pos):
 	while tiles_to_visit.is_empty() == false:
 		
 		var tile = tiles_to_visit.keys()[0]
-		print(tile)
 		if tiles_checked.get(tile) or tile == tile_pos:
 			tiles_to_visit.erase(tile)
 			continue
