@@ -1,13 +1,15 @@
 extends Node2D
 
 @onready var tile_map : TileMap = $TileMap
+@onready var timer : Timer = $TileMap/Timer
+@onready var pump_timer : Timer = $TileMap/PumpTimer
 
 var ground_layor = 0
 #var top_layor = 1
 
 var temp_count = 0
 
-
+var global_lockout = false
 
  #returns tile category int (0 = no data, 1 = ground, 2 = riverbed, 3 = river, 4 = pump)
 var tile_category_custom_data = "tile_category"
@@ -57,9 +59,10 @@ func _input(event):
 	
 	elif Input.is_action_just_pressed("toggle_pump"):
 		mode_state = MODES.PUMP
+		print("pump mode")
 	
 	#can add action by Project -> Project Settings -> Input Map -> Add new Action
-	elif Input.is_action_just_pressed("click"): #if left mouse button is clicked
+	elif Input.is_action_just_pressed("click") and global_lockout == false: #if left mouse button is clicked
 		
 		#add constraint to each kind of tile by TileSet (on the right) 
 		#-> Custom Data Layers (and add variable) -> paint (bottom)->paint properties
@@ -75,7 +78,7 @@ func _input(event):
 		var source_id = 0
 		
 		if mode_state == MODES.DIG:
-			var atlas_coord = Vector2i(1, 0) #riverbed tile
+			var riverbed_atlas_coord = Vector2i(1, 0) #riverbed tile
 			
 			#boolean variables for the following if statement
 			
@@ -93,14 +96,14 @@ func _input(event):
 			
 			#if following conditions are met, set cell to riverbed
 			if curr_tile_is_ground and surr_tiles_are_not_outside and will_not_make_riverbed_square:
-				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, atlas_coord) #set cell to riverbed 
+				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, riverbed_atlas_coord) #set cell to riverbed 
 				
 			else:
 				print("cannot dig here")
 				
 				
 		elif mode_state == MODES.UNDIG:
-			var atlas_coord = Vector2i(0,0) #ground tile
+			var ground_atlas_coord = Vector2i(0,0) #ground tile
 			
 			var curr_tile_is_riverbed = sur_tiles[0] == 2
 			
@@ -108,22 +111,40 @@ func _input(event):
 			var surr_tiles_are_not_outside = sur_tiles.all(func(c): return c!=0)
 			
 			if curr_tile_is_riverbed and surr_tiles_are_not_outside and checkRiverConnection(tile_mouse_pos):
-				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, atlas_coord)
+				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, ground_atlas_coord)
 			else:
 				print("cannot undig here")
 		
 		elif mode_state == MODES.PUMP:
-			var atlas_coord = Vector2i(0,1) #pump tile
+			var pump_atlas_coord = Vector2i(0,1) #pump tile
+			var ground_atlas_coord = Vector2i(0,0) #ground tile
 			
 			var curr_tile_is_ground = sur_tiles[0] == 1
 			
 			#if surrounding tiles contain no_data (outside border), false
 			var surr_tiles_are_not_outside = sur_tiles.all(func(c): return c!=0)
 			
+			#set pump, iterate and change back to ground
 			if curr_tile_is_ground and surr_tiles_are_not_outside:
-				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, atlas_coord)
 				
-				remove_surrounding_river(tile_mouse_pos, source_id)
+				#set pump
+				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, pump_atlas_coord)
+				
+					
+				
+				#remove surrounding river 10 times (pulses)
+				for i in range(10):
+					
+					#wait until the timer runs out of time (until river change state)
+					await get_tree().create_timer(2.0).timeout
+					
+					
+					remove_surrounding_river(tile_mouse_pos, source_id)
+					
+					
+				#change back to ground
+				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, ground_atlas_coord)
+				
 					
 			else:
 				print("cannot set pump here")
@@ -133,6 +154,9 @@ func _input(event):
 			
 		else:
 			print("error!!!")
+
+func _on_pump_timer_timeout():
+	pass
 			
 	
 func remove_surrounding_river(curr_pos, source_id):
@@ -170,38 +194,41 @@ func get_category_sur_tiles(curr_pos):
 # 2 second pulse, check water flow. order is down, left, then right. no support for water flowing up
 func _on_timer_timeout():
 	
-	var lockout = 0
-	var leftlock = 0
+	var lockout = false
+	var leftlock = false
 	
 	if tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 0)) == Vector2i(1, 0):
 		tile_map.set_cell(ground_layor, Vector2i(8,0), 0, Vector2i(3,0))
 	elif tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 0)) == Vector2i(3, 0) and tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 1)) != Vector2i(3, 0):
 		tile_map.set_cell(ground_layor, Vector2i(8,1), 0, Vector2i(3,0))
-		lockout = 1
+		lockout = true
+	
+	if tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 12)) == Vector2i(3, 0):
+		global_lockout = true
+		print("game over!")
 	
 	for y in range(12, 0, -1):
 		for x in range(16, 0 , -1):
 			var temp_vec = Vector2i(x, y)
-			if tile_map.get_cell_atlas_coords(ground_layor, temp_vec) == Vector2i(3, 0) and lockout != 1:
-				if tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE)) == Vector2i(1,0) and leftlock != 1: 
+			if tile_map.get_cell_atlas_coords(ground_layor, temp_vec) == Vector2i(3, 0) and lockout == false:
+				if tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE)) == Vector2i(1,0) and leftlock == false: 
 					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE), 0, Vector2i(3,0))
-				elif tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_LEFT_SIDE)) == Vector2i(1,0) and leftlock != 1: 
+				elif tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_LEFT_SIDE)) == Vector2i(1,0) and leftlock == false: 
 					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_LEFT_SIDE), 0, Vector2i(3,0))
-					leftlock = 1
+					leftlock = true
 				elif tile_map.get_cell_atlas_coords(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_RIGHT_SIDE)) == Vector2i(1,0): 
 					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_RIGHT_SIDE), 0, Vector2i(3,0))
 			else:
-				leftlock = 0
+				leftlock = false
 	
-	lockout = 0
+	lockout = false
 	
 func checkRiverConnection(tile_pos):
+
 	var tiles_to_visit = {Vector2i(8,0): 1}
 	var tiles_checked = {}
-	var temp = 0
 	
 	while tiles_to_visit.is_empty() == false:
-		temp = temp + 1
 		
 		var tile = tiles_to_visit.keys()[0]
 		print(tile)
@@ -229,3 +256,4 @@ func checkIfNeighborIsRiver(tile, direction):
 		return true
 	else:
 		return false
+
