@@ -18,6 +18,9 @@ var mode_state = MODES.DIG # by default, player can dig ground
 const NEIGHBOR_DIF = [Vector2i(0,0),Vector2i(1,0),Vector2i(1,1),Vector2i(0,1),
 Vector2i(-1,1),Vector2i(-1,0),Vector2i(-1,-1),Vector2i(0,-1),Vector2i(1,-1)]
 
+#start with 10 money
+var balance = 10
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	pass #no function needed here at the moment
@@ -34,10 +37,12 @@ func _input(_event):
 	#if toggle_dig (J) is pressed, mode change to dig mode
 	if Input.is_action_just_pressed("toggle_dig"):
 		mode_state = MODES.DIG
+		print("dig mode")
 	
 	#if toggle_undig (K) is pressed, mode change to undig mode
 	elif Input.is_action_just_pressed("toggle_undig"):
 		mode_state = MODES.UNDIG
+		print("undig mode")
 	
 	elif Input.is_action_just_pressed("toggle_pump"):
 		mode_state = MODES.PUMP
@@ -56,7 +61,7 @@ func _input(_event):
 		var sur_tiles = get_category_sur_tiles(tile_mouse_pos)
 		var source_id = 0
 		
-		if mode_state == MODES.DIG:
+		if mode_state == MODES.DIG and has_balance(1):
 			var riverbed_atlas_coord = Vector2i(1, 0) #riverbed tile
 			
 			#boolean variables for the following if statement
@@ -78,7 +83,7 @@ func _input(_event):
 			else:
 				print("cannot dig here")
 				
-		elif mode_state == MODES.UNDIG:
+		elif mode_state == MODES.UNDIG and has_balance(1):
 			var ground_atlas_coord = Vector2i(0,0) #ground tile
 			var curr_tile_is_riverbed = sur_tiles[0] == 2
 			
@@ -90,7 +95,7 @@ func _input(_event):
 			else:
 				print("cannot undig here")
 		
-		elif mode_state == MODES.PUMP:
+		elif mode_state == MODES.PUMP and has_balance(5):
 			var pump_atlas_coord = Vector2i(0,1) #pump tile
 			var ground_atlas_coord = Vector2i(0,0) #ground tile
 			var curr_tile_is_ground = sur_tiles[0] == 1
@@ -115,10 +120,21 @@ func _input(_event):
 			else:
 				print("cannot set pump here")
 		else:
-			print("error!!!")
+			print("not enough balance")
+			
+#check if balance exceeds specified fee and subtract
+func has_balance(fee):
+	print(balance-fee)
+	if balance >= fee:
+		balance -= fee
+		return true
+	
+	return false
 
-func _on_pump_timer_timeout():
-	pass
+#inc money by 5 for each 30s
+func _on_money_timer_timeout():
+	balance += 5
+	print(balance)
 
 func remove_surrounding_river(curr_pos, source_id):
 	var sur_tiles = get_category_sur_tiles(curr_pos)
@@ -218,3 +234,6 @@ func check_if_neighbor_is_river(tile, direction):
 		return true
 	else:
 		return false
+
+
+
