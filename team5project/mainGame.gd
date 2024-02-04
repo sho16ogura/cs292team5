@@ -218,3 +218,7 @@ func check_if_neighbor_is_river(tile, direction):
 		return true
 	else:
 		return false
+
+func check_neighbor(tile, direction, predicate):
+	var neighbor = tile_map.get_neighbor_cell(tile, direction)
+	return predicate.call(tile_map.get_cell_atlas_coords(ground_layor, neighbor))
