@@ -166,20 +166,20 @@ func _on_timer_timeout():
 	var lockout = false
 	var leftlock = false
 	
-	if tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 0)) == Vector2i(1, 0):
+	if get_tile(Vector2i(8, 0)) == Vector2i(1, 0):
 		tile_map.set_cell(ground_layor, Vector2i(8,0), 0, Vector2i(3,0))
-	elif tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 0)) == Vector2i(3, 0) and tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 1)) != Vector2i(3, 0):
+	elif get_tile(Vector2i(8, 0)) == Vector2i(3, 0) and get_tile(Vector2i(8, 1)) != Vector2i(3, 0):
 		tile_map.set_cell(ground_layor, Vector2i(8,1), 0, Vector2i(3,0))
 		lockout = true
 	
-	if tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 12)) == Vector2i(3, 0) and global_lockout == false:
+	if get_tile(Vector2i(8, 12)) == Vector2i(3, 0) and global_lockout == false:
 		global_lockout = true
 		print("game over!")
 	
 	for y in range(12, 0, -1):
 		for x in range(16, 0 , -1):
 			var temp_vec = Vector2i(x, y)
-			if tile_map.get_cell_atlas_coords(ground_layor, temp_vec) == Vector2i(3, 0) and lockout == false:
+			if get_tile(temp_vec) == Vector2i(3, 0) and lockout == false:
 				if check_neighbor(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE, is_riverbed_tile) and leftlock == false: 
 					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE), 0, Vector2i(3,0))
 				elif check_neighbor(temp_vec, TileSet.CELL_NEIGHBOR_LEFT_SIDE, is_riverbed_tile) and leftlock == false: 
@@ -218,11 +218,14 @@ func checkRiverConnection(tile_pos):
 	else: 
 		return false
 
+#returns the coordinates of the tile's sprite on the atlas
+func get_tile(location):
+	return tile_map.get_cell_atlas_coords(0, location)
+
 #Checks if a neighbor tile is a river, riverbed, or water tile
 func check_neighbor(tile, direction, predicate):
 	var neighbor = tile_map.get_neighbor_cell(tile, direction)
-	return predicate.call(tile_map.get_cell_atlas_coords(ground_layor, neighbor))
-
+	return predicate.call(get_tile(neighbor))
 
 #Checks if a tile is a riverbed tile
 func is_riverbed_tile(atlas_coords):
@@ -235,4 +238,3 @@ func is_river_tile(atlas_coords):
 #Checks if a tile is a water tile (unused)
 func is_water_tile(atlas_coords):
 	return atlas_coords == Vector2i(3, 0)
-
