@@ -48,8 +48,9 @@ layer_1/tile_data = PackedInt32Array()
 wait_time = 2.0
 autostart = true
 
-[node name="PumpTimer" type="Timer" parent="TileMap"]
-wait_time = 10.0
+[node name="MoneyTimer" type="Timer" parent="TileMap"]
+wait_time = 30.0
+autostart = true
 
 [connection signal="timeout" from="TileMap/Timer" to="." method="_on_timer_timeout"]
-[connection signal="timeout" from="TileMap/PumpTimer" to="." method="_on_pump_timer_timeout"]
+[connection signal="timeout" from="TileMap/MoneyTimer" to="." method="_on_money_timer_timeout"]
