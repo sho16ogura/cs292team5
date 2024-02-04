@@ -19,7 +19,7 @@ const NEIGHBOR_DIF = [Vector2i(0,0),Vector2i(1,0),Vector2i(1,1),Vector2i(0,1),
 Vector2i(-1,1),Vector2i(-1,0),Vector2i(-1,-1),Vector2i(0,-1),Vector2i(1,-1)]
 
 #start with 10 money
-var balance = 10
+var balance = 100000000
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
