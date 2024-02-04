@@ -163,18 +163,13 @@ func _on_timer_timeout():
 	for y in range(12, 0, -1):
 		for x in range(16, 0 , -1):
 			var temp_vec = Vector2i(x, y)
-<<<<<<< Updated upstream
-			if tile_map.get_cell_atlas_coords(ground_layor, temp_vec) == Vector2i(3, 0) and lockout == false:
-				if check_if_neighbor_is_riverbed(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE) and leftlock == false: 
-=======
 			if get_tile(temp_vec) == Vector2i(3, 0) and lockout == false:
 				if check_neighbor(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE, is_riverbed_tile) and leftlock == false: 
->>>>>>> Stashed changes
 					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE), 0, Vector2i(3,0))
-				elif check_if_neighbor_is_riverbed(temp_vec, TileSet.CELL_NEIGHBOR_LEFT_SIDE) and leftlock == false: 
+				elif check_neighbor(temp_vec, TileSet.CELL_NEIGHBOR_LEFT_SIDE, is_riverbed_tile) and leftlock == false: 
 					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_LEFT_SIDE), 0, Vector2i(3,0))
 					leftlock = true
-				elif check_if_neighbor_is_riverbed(temp_vec, TileSet.CELL_NEIGHBOR_RIGHT_SIDE): 
+				elif check_neighbor(temp_vec, TileSet.CELL_NEIGHBOR_RIGHT_SIDE, is_riverbed_tile): 
 					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_RIGHT_SIDE), 0, Vector2i(3,0))
 			else:
 				leftlock = false
@@ -195,11 +190,11 @@ func checkRiverConnection(tile_pos):
 			continue
 		tiles_checked[tile] = 1
 		
-		if check_if_neighbor_is_river(tile, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE):
+		if check_neighbor(tile, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE, is_river_tile):
 			tiles_to_visit[tile_map.get_neighbor_cell(tile, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE)] = 1
-		if check_if_neighbor_is_river(tile, TileSet.CELL_NEIGHBOR_LEFT_SIDE):
+		if check_neighbor(tile, TileSet.CELL_NEIGHBOR_LEFT_SIDE, is_river_tile):
 			tiles_to_visit[tile_map.get_neighbor_cell(tile, TileSet.CELL_NEIGHBOR_LEFT_SIDE)] = 1
-		if check_if_neighbor_is_river(tile, TileSet.CELL_NEIGHBOR_RIGHT_SIDE):
+		if check_neighbor(tile, TileSet.CELL_NEIGHBOR_RIGHT_SIDE, is_river_tile):
 			tiles_to_visit[tile_map.get_neighbor_cell(tile, TileSet.CELL_NEIGHBOR_RIGHT_SIDE)] = 1
 	
 	if(tiles_checked.get(Vector2i(8, 12))):
@@ -207,15 +202,6 @@ func checkRiverConnection(tile_pos):
 	else: 
 		return false
 
-<<<<<<< Updated upstream
-#checks if the neighbor of a tile in a specific direction is a riverbed
-func check_if_neighbor_is_riverbed(tile, direction):
-	var neighbor = tile_map.get_neighbor_cell(tile, direction)
-	if tile_map.get_cell_atlas_coords(ground_layor, neighbor) == Vector2i(1,0):
-		return true
-	else:
-		return false
-=======
 #returns the coordinates of the tile's sprite on the atlas
 func get_tile(location):
 	return tile_map.get_cell_atlas_coords(0, location)
@@ -224,13 +210,15 @@ func get_tile(location):
 func check_neighbor(tile, direction, predicate):
 	var neighbor = tile_map.get_neighbor_cell(tile, direction)
 	return predicate.call(get_tile(neighbor))
->>>>>>> Stashed changes
 
-#checks if the neighbor of a tile in a specific direction is a river tile (riverbed or water)
-func check_if_neighbor_is_river(tile, direction):
-	var neighbor = tile_map.get_neighbor_cell(tile, direction)
-	if tile_map.get_cell_atlas_coords(ground_layor, neighbor) == Vector2i(1,0) or \
-	tile_map.get_cell_atlas_coords(ground_layor, neighbor) == Vector2i(3,0):
-		return true
-	else:
-		return false
+#Checks if a tile is a riverbed tile
+func is_riverbed_tile(atlas_coords):
+	return atlas_coords == Vector2i(1, 0)
+
+#Checks if a tile is any river tile
+func is_river_tile(atlas_coords):
+	return atlas_coords == Vector2i(1, 0) or atlas_coords == Vector2i(3, 0)
+
+#Checks if a tile is a water tile (unused)
+func is_water_tile(atlas_coords):
+	return atlas_coords == Vector2i(3, 0)
