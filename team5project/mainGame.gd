@@ -167,10 +167,11 @@ func _on_timer_timeout():
 	
 	var lockout = false
 	var leftlock = false
+	var uplock = 0
 	
-	if get_tile_type(Vector2i(8, 0)) == Vector2i(1, 0):
+	if check_tile(Vector2i(8, 0), is_riverbed_tile):
 		tile_map.set_cell(ground_layor, Vector2i(8,0), 0, Vector2i(3,0))
-	elif get_tile_type(Vector2i(8, 0)) == Vector2i(3, 0) and get_tile_type(Vector2i(8, 1)) != Vector2i(3, 0):
+	elif check_tile(Vector2i(8, 0), is_water_tile) and check_tile(Vector2i(8, 1), is_riverbed_tile):
 		tile_map.set_cell(ground_layor, Vector2i(8,1), 0, Vector2i(3,0))
 		lockout = true
 	
@@ -181,7 +182,10 @@ func _on_timer_timeout():
 	for y in range(12, 0, -1):
 		for x in range(16, 0 , -1):
 			var temp_vec = Vector2i(x, y)
-			if get_tile_type(temp_vec) == Vector2i(3, 0) and lockout == false:
+			if uplock != 0:
+				uplock = uplock - 1
+				print(uplock)
+			if check_tile(temp_vec, is_water_tile) and lockout == false:
 				if check_neighbor(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE, is_riverbed_tile) and leftlock == false: 
 					set_tile_type(tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE), Vector2i(3,0))
 				elif check_neighbor(temp_vec, TileSet.CELL_NEIGHBOR_LEFT_SIDE, is_riverbed_tile) and leftlock == false: 
@@ -189,8 +193,12 @@ func _on_timer_timeout():
 					leftlock = true
 				elif check_neighbor(temp_vec, TileSet.CELL_NEIGHBOR_RIGHT_SIDE, is_riverbed_tile): 
 					set_tile_type(tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_RIGHT_SIDE), Vector2i(3,0))
+				elif check_neighbor(temp_vec, TileSet.CELL_NEIGHBOR_TOP_SIDE, is_riverbed_tile) and uplock == 0:
+					set_tile_type(tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_TOP_SIDE), Vector2i(3, 0))
+					uplock = 20
 			else:
 				leftlock = false
+				
 	
 	lockout = false
 	
