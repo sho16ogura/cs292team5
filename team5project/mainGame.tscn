@@ -1,7 +1,5 @@
 [gd_scene load_steps=5 format=3 uid="uid://yque0owxfk04"]
 
-[ext_resource type="Texture2D" path="res://tileset_sprint1.png" id="1_77bdm"]
-
 [ext_resource type="Script" path="res://mainGame.gd" id="1_n7f0u"]
 [ext_resource type="Texture2D" uid="uid://b0lwtrid0st1i" path="res://tileset_0.2.1.png" id="2_nkbjv"]
 

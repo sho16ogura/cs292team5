@@ -14,6 +14,8 @@ var tile_category_custom_data = "tile_category"
 enum MODES {DIG, UNDIG, PUMP}
 var mode_state = MODES.DIG # by default, player can dig ground
 
+enum TILES {LAND, PUMP, RIVERBED, LOW_WATER, WATER, HIGH_WATER}
+
 #array of coordinates of neighbors (curr, right, rightdown down, downleft, left, leftup, up, upright) if curr = (0,0)
 const NEIGHBOR_DIF = [Vector2i(0,0),Vector2i(1,0),Vector2i(1,1),Vector2i(0,1),
 Vector2i(-1,1),Vector2i(-1,0),Vector2i(-1,-1),Vector2i(0,-1),Vector2i(1,-1)]
@@ -166,27 +168,27 @@ func _on_timer_timeout():
 	var lockout = false
 	var leftlock = false
 	
-	if get_tile(Vector2i(8, 0)) == Vector2i(1, 0):
+	if get_tile_type(Vector2i(8, 0)) == Vector2i(1, 0):
 		tile_map.set_cell(ground_layor, Vector2i(8,0), 0, Vector2i(3,0))
-	elif get_tile(Vector2i(8, 0)) == Vector2i(3, 0) and get_tile(Vector2i(8, 1)) != Vector2i(3, 0):
+	elif get_tile_type(Vector2i(8, 0)) == Vector2i(3, 0) and get_tile_type(Vector2i(8, 1)) != Vector2i(3, 0):
 		tile_map.set_cell(ground_layor, Vector2i(8,1), 0, Vector2i(3,0))
 		lockout = true
 	
-	if get_tile(Vector2i(8, 12)) == Vector2i(3, 0) and global_lockout == false:
+	if get_tile_type(Vector2i(8, 12)) == Vector2i(3, 0) and global_lockout == false:
 		global_lockout = true
 		print("game over!")
 	
 	for y in range(12, 0, -1):
 		for x in range(16, 0 , -1):
 			var temp_vec = Vector2i(x, y)
-			if get_tile(temp_vec) == Vector2i(3, 0) and lockout == false:
+			if get_tile_type(temp_vec) == Vector2i(3, 0) and lockout == false:
 				if check_neighbor(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE, is_riverbed_tile) and leftlock == false: 
-					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE), 0, Vector2i(3,0))
+					set_tile_type(tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE), Vector2i(3,0))
 				elif check_neighbor(temp_vec, TileSet.CELL_NEIGHBOR_LEFT_SIDE, is_riverbed_tile) and leftlock == false: 
-					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_LEFT_SIDE), 0, Vector2i(3,0))
+					set_tile_type(tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_LEFT_SIDE), Vector2i(3,0))
 					leftlock = true
 				elif check_neighbor(temp_vec, TileSet.CELL_NEIGHBOR_RIGHT_SIDE, is_riverbed_tile): 
-					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_RIGHT_SIDE), 0, Vector2i(3,0))
+					set_tile_type(tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_RIGHT_SIDE), Vector2i(3,0))
 			else:
 				leftlock = false
 	
@@ -219,13 +221,22 @@ func checkRiverConnection(tile_pos):
 		return false
 
 #returns the coordinates of the tile's sprite on the atlas
-func get_tile(location):
+func get_tile_type(location):
 	return tile_map.get_cell_atlas_coords(0, location)
+
+#sets a tile at location to tile_type
+func set_tile_type(location, tile_type):
+	tile_map.set_cell(0, location, 0, tile_type)
+	return
+
+#Checks if the current tile is a river, riverbed, or water tile
+func check_tile(tile, predicate):
+	return predicate.call(get_tile_type(tile))
 
 #Checks if a neighbor tile is a river, riverbed, or water tile
 func check_neighbor(tile, direction, predicate):
 	var neighbor = tile_map.get_neighbor_cell(tile, direction)
-	return predicate.call(get_tile(neighbor))
+	return predicate.call(get_tile_type(neighbor))
 
 #Checks if a tile is a riverbed tile
 func is_riverbed_tile(atlas_coords):
