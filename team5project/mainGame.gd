@@ -2,7 +2,6 @@ extends Node2D
 
 @onready var tile_map : TileMap = $TileMap
 @onready var timer : Timer = $TileMap/Timer
-@onready var pump_timer : Timer = $TileMap/PumpTimer
 
 var ground_layor = 0
 #var top_layor = 1
@@ -14,12 +13,26 @@ var tile_category_custom_data = "tile_category"
 enum MODES {DIG, UNDIG, PUMP}
 var mode_state = MODES.DIG # by default, player can dig ground
 
+enum TILE {LAND, PUMP, CISTERN, RIVERBED, LOW_WATER, WATER, HIGH_WATER, LIGHT_ON, LIGHT_OFF}
+
+var tile_dict = {
+	TILE.LAND: Vector2i(0, 0),
+	TILE.PUMP: Vector2i(0, 1),
+	TILE.CISTERN: Vector2i(1, 1),
+	TILE.RIVERBED: Vector2i(1, 0),
+	TILE.LOW_WATER: Vector2i(2, 0),
+	TILE.WATER: Vector2i(3, 0),
+	TILE.HIGH_WATER: Vector2i(4, 0),
+	TILE.LIGHT_ON: Vector2i(4, 3),
+	TILE.LIGHT_OFF: Vector2i(4, 2)
+}
+
 #array of coordinates of neighbors (curr, right, rightdown down, downleft, left, leftup, up, upright) if curr = (0,0)
 const NEIGHBOR_DIF = [Vector2i(0,0),Vector2i(1,0),Vector2i(1,1),Vector2i(0,1),
 Vector2i(-1,1),Vector2i(-1,0),Vector2i(-1,-1),Vector2i(0,-1),Vector2i(1,-1)]
 
 #start with 10 money
-var balance = 10
+var balance = 100000000
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -146,7 +159,7 @@ func remove_surrounding_river(curr_pos, source_id):
 			var neighbor_pos = curr_pos + NEIGHBOR_DIF[i]
 			var atlas_coord = Vector2i(1,0) #riverbed tile
 			
-			tile_map.set_cell(ground_layor, neighbor_pos, source_id, atlas_coord)
+			decrease_water_depth(neighbor_pos)
 
 #get category of surrounding tiles (0=nodata, 1=ground, 2=riverbed, 3=river, 4=pump)
 func get_category_sur_tiles(curr_pos):
@@ -163,35 +176,35 @@ func get_category_sur_tiles(curr_pos):
 # 2 second pulse, check water flow. order is down, left, then right. no support for water flowing up
 func _on_timer_timeout():
 	
-	var lockout = false
-	var leftlock = false
+	var tiles_flowed_to = {}
 	
-	if tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 0)) == Vector2i(1, 0):
-		tile_map.set_cell(ground_layor, Vector2i(8,0), 0, Vector2i(3,0))
-	elif tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 0)) == Vector2i(3, 0) and tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 1)) != Vector2i(3, 0):
-		tile_map.set_cell(ground_layor, Vector2i(8,1), 0, Vector2i(3,0))
-		lockout = true
+	if check_tile(Vector2i(8, 0), is_river_not_high_water_tile):
+		increase_water_depth(Vector2i(8, 0))
+		if(check_tile(Vector2i(8, 0), is_high_water_tile)):
+			tiles_flowed_to[Vector2i(8, 0)] = 1
 	
-	if tile_map.get_cell_atlas_coords(ground_layor, Vector2i(8, 12)) == Vector2i(3, 0) and global_lockout == false:
+	if check_tile(Vector2i(8, 0), is_high_water_tile) and check_tile(Vector2i(8, 1), is_river_not_high_water_tile):
+		increase_water_depth(Vector2i(8, 1))
+		if(check_tile(Vector2i(8, 1), is_high_water_tile)):
+			tiles_flowed_to[Vector2i(8,1)] = 1
+	
+	if get_tile_type(Vector2i(8, 12)) == TILE.WATER and global_lockout == false:
 		global_lockout = true
 		print("game over!")
 	
 	for y in range(12, 0, -1):
 		for x in range(16, 0 , -1):
 			var temp_vec = Vector2i(x, y)
-			if tile_map.get_cell_atlas_coords(ground_layor, temp_vec) == Vector2i(3, 0) and lockout == false:
-				if check_neighbor(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE, is_riverbed_tile) and leftlock == false: 
-					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE), 0, Vector2i(3,0))
-				elif check_neighbor(temp_vec, TileSet.CELL_NEIGHBOR_LEFT_SIDE, is_riverbed_tile) and leftlock == false: 
-					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_LEFT_SIDE), 0, Vector2i(3,0))
-					leftlock = true
-				elif check_neighbor(temp_vec, TileSet.CELL_NEIGHBOR_RIGHT_SIDE, is_riverbed_tile): 
-					tile_map.set_cell(ground_layor, tile_map.get_neighbor_cell(temp_vec, TileSet.CELL_NEIGHBOR_RIGHT_SIDE), 0, Vector2i(3,0))
-			else:
-				leftlock = false
-	
-	lockout = false
-	
+			if check_tile(temp_vec, is_high_water_tile) and tiles_flowed_to.has(temp_vec) == false:
+				if check_neighbor(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE, is_river_not_high_water_tile):
+					tiles_flowed_to.merge(water_flow(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE))
+				elif check_neighbor(temp_vec, TileSet.CELL_NEIGHBOR_LEFT_SIDE, is_river_not_high_water_tile):
+					tiles_flowed_to.merge(water_flow(temp_vec, TileSet.CELL_NEIGHBOR_LEFT_SIDE))
+				elif check_neighbor(temp_vec, TileSet.CELL_NEIGHBOR_RIGHT_SIDE, is_river_not_high_water_tile): 
+					tiles_flowed_to.merge(water_flow(temp_vec, TileSet.CELL_NEIGHBOR_RIGHT_SIDE))
+				elif check_neighbor(temp_vec, TileSet.CELL_NEIGHBOR_TOP_SIDE, is_river_not_high_water_tile):
+					tiles_flowed_to.merge(water_flow(temp_vec, TileSet.CELL_NEIGHBOR_TOP_SIDE))
+
 #check if removing a tile from the river prevents there from being a continuous line of river tiles from the top to the bottom of the screen
 func checkRiverConnection(tile_pos):
 
@@ -212,27 +225,96 @@ func checkRiverConnection(tile_pos):
 			tiles_to_visit[tile_map.get_neighbor_cell(tile, TileSet.CELL_NEIGHBOR_LEFT_SIDE)] = 1
 		if check_neighbor(tile, TileSet.CELL_NEIGHBOR_RIGHT_SIDE, is_river_tile):
 			tiles_to_visit[tile_map.get_neighbor_cell(tile, TileSet.CELL_NEIGHBOR_RIGHT_SIDE)] = 1
+		if check_neighbor(tile, TileSet.CELL_NEIGHBOR_TOP_SIDE, is_river_tile):
+			tiles_to_visit[tile_map.get_neighbor_cell(tile, TileSet.CELL_NEIGHBOR_TOP_SIDE)] = 1
 	
 	if(tiles_checked.get(Vector2i(8, 12))):
 		return true
 	else: 
 		return false
 
+func water_flow(tile, direction):
+	var temp_dict = {}
+	var neighbor = tile_map.get_neighbor_cell(tile, direction)
+	
+	decrease_water_depth(tile)
+	increase_water_depth(neighbor)
+	
+	if check_tile(neighbor, is_high_water_tile):
+		temp_dict[neighbor] = 1
+	
+	return temp_dict
+
+func increase_water_depth(tile):
+	if check_tile(tile, is_river_tile) == false:
+		return
+	elif check_tile(tile, is_riverbed_tile):
+		set_tile_type(tile, TILE.LOW_WATER)
+	elif check_tile(tile, is_low_water_tile):
+		set_tile_type(tile, TILE.WATER)
+	else:
+		set_tile_type(tile, TILE.HIGH_WATER)
+
+func decrease_water_depth(tile):
+	if check_tile(tile, is_water_tile) == false:
+		return
+	elif check_tile(tile, is_high_water_tile):
+		set_tile_type(tile, TILE.WATER)
+	elif check_tile(tile, is_med_water_tile):
+		set_tile_type(tile, TILE.LOW_WATER)
+	else:
+		set_tile_type(tile, TILE.RIVERBED)
+
+#returns the coordinates of the tile's sprite on the atlas
+func get_tile_type(location):
+	return tile_dict.find_key(tile_map.get_cell_atlas_coords(0, location))
+
+#sets a tile at location to tile_type
+func set_tile_type(location, tile_type):
+	tile_map.set_cell(0, location, 0, tile_dict.get(tile_type))
+	return
+
+#Checks if the current tile is a river, riverbed, or water tile
+func check_tile(tile, predicate):
+	return predicate.call(get_tile_type(tile))
+
 #Checks if a neighbor tile is a river, riverbed, or water tile
 func check_neighbor(tile, direction, predicate):
 	var neighbor = tile_map.get_neighbor_cell(tile, direction)
-	return predicate.call(tile_map.get_cell_atlas_coords(ground_layor, neighbor))
-
-
-#Checks if a tile is a riverbed tile
-func is_riverbed_tile(atlas_coords):
-	return atlas_coords == Vector2i(1, 0)
+	return predicate.call(get_tile_type(neighbor))
 
 #Checks if a tile is any river tile
-func is_river_tile(atlas_coords):
-	return atlas_coords == Vector2i(1, 0) or atlas_coords == Vector2i(3, 0)
+func is_river_tile(tile):
+	return tile == TILE.RIVERBED or tile == TILE.LOW_WATER or tile == TILE.WATER or tile == TILE.HIGH_WATER
 
-#Checks if a tile is a water tile (unused)
-func is_water_tile(atlas_coords):
-	return atlas_coords == Vector2i(3, 0)
+#Checks if a tile is a water tile
+func is_water_tile(tile):
+	return tile == TILE.LOW_WATER or tile == TILE.WATER or tile == TILE.HIGH_WATER
 
+#Checks if a tile is riverbed, low, or med water
+func is_river_not_high_water_tile(tile):
+	return tile == TILE.RIVERBED or tile == TILE.LOW_WATER or tile == TILE.WATER
+
+#Checks if a tile is a med or high water tile
+func is_med_or_high_water_tile(tile):
+	return tile == TILE.WATER or tile == TILE.HIGH_WATER
+
+#Checks if a tile is a low or med water tile
+func is_low_or_med_water_tile(tile):
+	return tile == TILE.LOW_WATER or tile == TILE.WATER
+
+#Checks if a tile is a riverbed tile
+func is_riverbed_tile(tile):
+	return tile == TILE.RIVERBED
+
+#Checks if a tile is low water
+func is_low_water_tile(tile):
+	return tile == TILE.LOW_WATER
+
+#Checks if a tile is medium water
+func is_med_water_tile(tile):
+	return tile == TILE.WATER
+
+#Checks if a tile is deep water
+func is_high_water_tile(tile):
+	return tile == TILE.HIGH_WATER
