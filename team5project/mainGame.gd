@@ -11,7 +11,7 @@ var light_on_location = Vector2i(20, 10)
  #returns tile category int (0 = no data, 1 = ground, 2 = riverbed, 3 = river, 4 = pump)
 var tile_category_custom_data = "tile_category"
 
-enum MODES {DIG, UNDIG, PUMP}
+enum MODES {DIG, UNDIG, PUMP, CISTERN}
 var mode_state = MODES.DIG # by default, player can dig ground
 
 enum TILE {LAND, PUMP, CISTERN, RIVERBED, LOW_WATER, WATER, HIGH_WATER, LIGHT_ON, LIGHT_OFF}
@@ -70,6 +70,12 @@ func _input(_event):
 		set_tile_type(light_on_location, TILE.LIGHT_OFF)
 		set_tile_type(Vector2i(22, 10), TILE.LIGHT_ON)
 		light_on_location = Vector2i(22, 10)
+
+		
+	elif Input.is_action_just_pressed("toggle_cistern"):
+		mode_state = MODES.CISTERN
+		print("cistern mode")
+    
 	
 	#can add action by Project -> Project Settings -> Input Map -> Add new Action
 	elif Input.is_action_just_pressed("click") and global_lockout == false: #if left mouse button is clicked
@@ -142,6 +148,22 @@ func _input(_event):
 				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, ground_atlas_coord)
 			else:
 				print("cannot set pump here")
+				
+		elif mode_state == MODES.CISTERN and has_balance(2):
+			var pump_atlas_coord = Vector2i(1,1) #cistern tile
+			var ground_atlas_coord = Vector2i(0,0) #ground tile
+			var curr_tile_is_ground = sur_tiles[0] == 1
+			
+			#if surrounding tiles contain no_data (outside border), false
+			var surr_tiles_are_not_outside = sur_tiles.all(func(c): return c!=0)
+			
+			#set pump, iterate and change back to ground
+			if curr_tile_is_ground and surr_tiles_are_not_outside:
+				
+				#set cistern
+				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, pump_atlas_coord)
+				
+			
 		else:
 			print("not enough balance")
 			
