@@ -75,7 +75,10 @@ func _input(_event):
 	elif Input.is_action_just_pressed("toggle_cistern"):
 		mode_state = MODES.CISTERN
 		print("cistern mode")
-    
+		set_tile_type(light_on_location, TILE.LIGHT_OFF)
+		set_tile_type(Vector2i(24, 10), TILE.LIGHT_ON)
+		light_on_location = Vector2i(24, 10)
+	
 	
 	#can add action by Project -> Project Settings -> Input Map -> Add new Action
 	elif Input.is_action_just_pressed("click") and global_lockout == false: #if left mouse button is clicked
@@ -90,7 +93,7 @@ func _input(_event):
 		var sur_tiles = get_category_sur_tiles(tile_mouse_pos)
 		var source_id = 0
 		
-		if mode_state == MODES.DIG and has_balance(1):
+		if mode_state == MODES.DIG and check_and_reduce_balance(1):
 			var riverbed_atlas_coord = Vector2i(1, 0) #riverbed tile
 			
 			#boolean variables for the following if statement
@@ -112,7 +115,7 @@ func _input(_event):
 			else:
 				print("cannot dig here")
 				
-		elif mode_state == MODES.UNDIG and has_balance(1):
+		elif mode_state == MODES.UNDIG and check_and_reduce_balance(1):
 			var ground_atlas_coord = Vector2i(0,0) #ground tile
 			var curr_tile_is_riverbed = sur_tiles[0] == 2
 			
@@ -124,7 +127,7 @@ func _input(_event):
 			else:
 				print("cannot undig here")
 		
-		elif mode_state == MODES.PUMP and has_balance(5):
+		elif mode_state == MODES.PUMP and check_and_reduce_balance(5):
 			var pump_atlas_coord = Vector2i(0,1) #pump tile
 			var ground_atlas_coord = Vector2i(0,0) #ground tile
 			var curr_tile_is_ground = sur_tiles[0] == 1
@@ -149,7 +152,7 @@ func _input(_event):
 			else:
 				print("cannot set pump here")
 				
-		elif mode_state == MODES.CISTERN and has_balance(2):
+		elif mode_state == MODES.CISTERN and check_and_reduce_balance(2):
 			var pump_atlas_coord = Vector2i(1,1) #cistern tile
 			var ground_atlas_coord = Vector2i(0,0) #ground tile
 			var curr_tile_is_ground = sur_tiles[0] == 1
@@ -168,7 +171,7 @@ func _input(_event):
 			print("not enough balance")
 			
 #check if balance exceeds specified fee and subtract
-func has_balance(fee):
+func check_and_reduce_balance(fee):
 	print(balance-fee)
 	if balance >= fee:
 		balance -= fee
