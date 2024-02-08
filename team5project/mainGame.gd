@@ -6,6 +6,7 @@ extends Node2D
 var ground_layor = 0
 #var top_layor = 1
 var global_lockout = false
+var light_on_location = Vector2i(20, 10)
 
  #returns tile category int (0 = no data, 1 = ground, 2 = riverbed, 3 = river, 4 = pump)
 var tile_category_custom_data = "tile_category"
@@ -51,19 +52,30 @@ func _input(_event):
 	if Input.is_action_just_pressed("toggle_dig"):
 		mode_state = MODES.DIG
 		print("dig mode")
+		set_tile_type(light_on_location, TILE.LIGHT_OFF)
+		set_tile_type(Vector2i(20, 10), TILE.LIGHT_ON)
+		light_on_location = Vector2i(20, 10)
 	
 	#if toggle_undig (K) is pressed, mode change to undig mode
 	elif Input.is_action_just_pressed("toggle_undig"):
 		mode_state = MODES.UNDIG
 		print("undig mode")
+		set_tile_type(light_on_location, TILE.LIGHT_OFF)
+		set_tile_type(Vector2i(18, 10), TILE.LIGHT_ON)
+		light_on_location = Vector2i(18, 10)
 	
 	elif Input.is_action_just_pressed("toggle_pump"):
 		mode_state = MODES.PUMP
 		print("pump mode")
+		set_tile_type(light_on_location, TILE.LIGHT_OFF)
+		set_tile_type(Vector2i(22, 10), TILE.LIGHT_ON)
+		light_on_location = Vector2i(22, 10)
+
 		
 	elif Input.is_action_just_pressed("toggle_cistern"):
 		mode_state = MODES.CISTERN
 		print("cistern mode")
+    
 	
 	#can add action by Project -> Project Settings -> Input Map -> Add new Action
 	elif Input.is_action_just_pressed("click") and global_lockout == false: #if left mouse button is clicked
