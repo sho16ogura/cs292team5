@@ -33,7 +33,7 @@ const NEIGHBOR_DIF = [Vector2i(0,0),Vector2i(1,0),Vector2i(1,1),Vector2i(0,1),
 Vector2i(-1,1),Vector2i(-1,0),Vector2i(-1,-1),Vector2i(0,-1),Vector2i(1,-1)]
 
 #start with 10 money
-var balance = 100000000
+var balance = 100
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -75,7 +75,10 @@ func _input(_event):
 	elif Input.is_action_just_pressed("toggle_cistern"):
 		mode_state = MODES.CISTERN
 		print("cistern mode")
-    
+		set_tile_type(light_on_location, TILE.LIGHT_OFF)
+		set_tile_type(Vector2i(24, 10), TILE.LIGHT_ON)
+		light_on_location = Vector2i(24, 10)
+	
 	
 	#can add action by Project -> Project Settings -> Input Map -> Add new Action
 	elif Input.is_action_just_pressed("click") and global_lockout == false: #if left mouse button is clicked
