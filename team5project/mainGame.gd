@@ -14,6 +14,14 @@ var tile_category_custom_data = "tile_category"
 enum MODES {DIG, UNDIG, PUMP, CISTERN}
 var mode_state = MODES.DIG # by default, player can dig ground
 
+@onready var dig_undig_sfx = $TileMap/dig_undig_sfx
+@onready var hammer_sfx = $TileMap/hammer_sfx
+@onready var error_sfx = $TileMap/error_sfx
+@onready var destruction_sfx = $TileMap/destruction_sfx
+@onready var pumping_water_sfx = $TileMap/pumping_water_sfx
+
+var num_pump_running = 0
+
 enum TILE {LAND, PUMP, CISTERN, RIVERBED, LOW_WATER, WATER, HIGH_WATER, LIGHT_ON, LIGHT_OFF}
 
 var tile_dict = {
@@ -113,8 +121,12 @@ func _input(_event):
 			
 			#if following conditions are met, set cell to riverbed
 			if curr_tile_is_ground and surr_tiles_are_not_outside and will_not_make_riverbed_square and  check_and_reduce_balance(1):
+				
 				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, riverbed_atlas_coord) #set cell to riverbed 
+				dig_undig_sfx.play(0.2) #sound effect starts
+				
 			else:
+				error_sfx.play()
 				print("cannot dig here")
 				
 		elif mode_state == MODES.UNDIG:
@@ -125,8 +137,12 @@ func _input(_event):
 			var surr_tiles_are_not_outside = eight_sur_tiles.all(func(c): return c!=0)
 			
 			if curr_tile_is_riverbed and surr_tiles_are_not_outside and checkRiverConnection(tile_mouse_pos) and  check_and_reduce_balance(1):
-				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, ground_atlas_coord)
+				
+				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, ground_atlas_coord)#change cell to ground
+				dig_undig_sfx.play(0.2)#soundeffect
+				
 			else:
+				error_sfx.play()
 				print("cannot undig here")
 		
 		elif mode_state == MODES.PUMP:
@@ -142,11 +158,17 @@ func _input(_event):
 				
 				#set pump
 				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, pump_atlas_coord)
+				hammer_sfx.play() #for construction
+				
+				num_pump_running += 1
 				
 				#remove surrounding river 10 times (pulses)
 				for i in range(10):
 					#wait until the timer runs out of time (until river change state)
 					await get_tree().create_timer(2.0).timeout
+					
+					if not pumping_water_sfx.playing:
+						pumping_water_sfx.play()
 					
 					#if cistern is located next to the pump, strenthen the pump
 					var is_cistern_neighbor = four_sur_tiles.slice(1).any(func (c): return c==5)
@@ -155,11 +177,19 @@ func _input(_event):
 						drain_eight_neighbor_river(tile_mouse_pos, source_id)
 					else:
 						drain_four_neighbor_river(tile_mouse_pos, source_id)
+						
+				num_pump_running -= 1
+				
+				if num_pump_running == 0:
+					pumping_water_sfx.stop()
+					
+				destruction_sfx.play()
 					
 				#change back to ground
 				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, ground_atlas_coord)
 				
 			else:
+				error_sfx.play()
 				print("cannot set pump here")
 				
 		elif mode_state == MODES.CISTERN:
@@ -173,17 +203,20 @@ func _input(_event):
 			#if pump (to be strengthened) is located next to the cistern
 			var is_pump_neighbor = four_sur_tiles.slice(1).any(func (c): return c==4)
 			
-			print(eight_sur_tiles)
+			print(four_sur_tiles.slice(1))
 			#set pump, iterate and change back to ground
 			if curr_tile_is_ground and surr_tiles_are_not_outside and is_pump_neighbor and  check_and_reduce_balance(2):
 				
 				#set cistern
 				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, cistern_atlas_coord)
+				hammer_sfx.play()#constructing sound
 			else:
+				error_sfx.play()
 				print("cannot set cistern here")
 				
 			
 		else:
+			error_sfx.play()
 			print("not enough balance")
 			
 func will_be_riverbed_square(eight_sur_tiles):
@@ -211,7 +244,7 @@ func _on_money_timer_timeout():
 func drain_four_neighbor_river(curr_pos, source_id):
 	var four_sur_tiles = get_four_neighbor_category(curr_pos)
 	
-	for i in range(1,4):
+	for i in range(1,5):
 		if four_sur_tiles[i] == 3:
 			var neighbor_pos = curr_pos + FOUR_NEIGHBOR_DIF[i]
 			var atlas_coord = Vector2i(1,0) #riverbed tile
@@ -233,7 +266,7 @@ func drain_eight_neighbor_river(curr_pos, source_id):
 func get_four_neighbor_category(curr_pos):
 	var neighbor_tiles = [0,0,0,0,0]
 	
-	for i in range(4):
+	for i in range(5):
 		var tile_data : TileData = tile_map.get_cell_tile_data(ground_layor, curr_pos + FOUR_NEIGHBOR_DIF[i])
 		if tile_data:
 			neighbor_tiles[i] = tile_data.get_custom_data(tile_category_custom_data)
