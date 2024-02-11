@@ -14,6 +14,7 @@ var tile_category_custom_data = "tile_category"
 enum MODES {DIG, UNDIG, PUMP, CISTERN}
 var mode_state = MODES.DIG # by default, player can dig ground
 
+enum COUNTER {MONEY, SCORE}
 enum TILE {LAND, PUMP, CISTERN, RIVERBED, LOW_WATER, WATER, HIGH_WATER, LIGHT_ON, LIGHT_OFF}
 
 var tile_dict = {
@@ -32,8 +33,9 @@ var tile_dict = {
 const NEIGHBOR_DIF = [Vector2i(0,0),Vector2i(1,0),Vector2i(1,1),Vector2i(0,1),
 Vector2i(-1,1),Vector2i(-1,0),Vector2i(-1,-1),Vector2i(0,-1),Vector2i(1,-1)]
 
-#start with 10 money
+#start with 100 money and 0 score
 var balance = 100
+var score = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -211,6 +213,7 @@ func get_category_sur_tiles(curr_pos):
 # 2 second pulse, check water flow. order is down, left, then right. no support for water flowing up
 func _on_timer_timeout():
 	
+	score += 10
 	var tiles_flowed_to = {}
 	
 	if check_tile(Vector2i(8, 0), is_river_not_high_water_tile):
@@ -267,6 +270,16 @@ func checkRiverConnection(tile_pos):
 		return true
 	else: 
 		return false
+
+func update_counter(counter):
+	if counter == COUNTER.MONEY:
+		var temp_arr = str(balance).split("", true)
+		var temp_size = temp_arr.size()
+		for x in range (temp_size, temp_size - 7, -1):
+			
+			return
+	else: # COUNTER.SCORE
+		return
 
 func water_flow(tile, direction):
 	var temp_dict = {}
