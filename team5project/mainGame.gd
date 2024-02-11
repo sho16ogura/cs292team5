@@ -273,11 +273,11 @@ func checkRiverConnection(tile_pos):
 
 func update_counter(counter):
 	if counter == COUNTER.MONEY:
-		var temp_arr = str(balance).split("", true)
+		var temp_arr = left_pad_array(str(balance).split("", true))
 		var temp_size = temp_arr.size()
-		for x in range (temp_size, temp_size - 7, -1):
-			
+		for x in range (temp_size, temp_size-7, -1):
 			return
+		return
 	else: # COUNTER.SCORE
 		return
 
@@ -312,6 +312,11 @@ func decrease_water_depth(tile):
 		set_tile_type(tile, TILE.LOW_WATER)
 	else:
 		set_tile_type(tile, TILE.RIVERBED)
+
+func left_pad_array(array):
+	for x in 7:
+		array.push_front("0")
+	return array
 
 #returns the coordinates of the tile's sprite on the atlas
 func get_tile_type(location):
