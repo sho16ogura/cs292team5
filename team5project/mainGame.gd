@@ -159,7 +159,7 @@ func _input(_event):
 				for i in range(10):
 					#wait until the timer runs out of time (until river change state)
 					await get_tree().create_timer(2.0).timeout
-					remove_surrounding_river(tile_mouse_pos, source_id)
+					remove_surrounding_river(tile_mouse_pos)
 					
 				#change back to ground
 				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, ground_atlas_coord)
@@ -168,7 +168,6 @@ func _input(_event):
 				
 		elif mode_state == MODES.CISTERN and check_and_reduce_balance(2):
 			var pump_atlas_coord = Vector2i(1,1) #cistern tile
-			var ground_atlas_coord = Vector2i(0,0) #ground tile
 			var curr_tile_is_ground = sur_tiles[0] == 1
 			
 			#if surrounding tiles contain no_data (outside border), false
@@ -176,11 +175,8 @@ func _input(_event):
 			
 			#set pump, iterate and change back to ground
 			if curr_tile_is_ground and surr_tiles_are_not_outside:
-				
 				#set cistern
 				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, pump_atlas_coord)
-				
-			
 		else:
 			print("not enough balance")
 			
@@ -198,7 +194,7 @@ func _on_money_timer_timeout():
 	balance += 5
 	update_counter(COUNTER.MONEY)
 
-func remove_surrounding_river(curr_pos, source_id):
+func remove_surrounding_river(curr_pos):
 	var sur_tiles = get_category_sur_tiles(curr_pos)
 	
 	#surtiles except for index 0 (current tile)
@@ -206,7 +202,6 @@ func remove_surrounding_river(curr_pos, source_id):
 		#if there is river tile in the neighbor, change it to riverbed
 		if sur_tiles[i] == 3:
 			var neighbor_pos = curr_pos + NEIGHBOR_DIF[i]
-			var atlas_coord = Vector2i(1,0) #riverbed tile
 			
 			decrease_water_depth(neighbor_pos)
 
