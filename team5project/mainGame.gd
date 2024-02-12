@@ -17,6 +17,7 @@ var mode_state = MODES.DIG # by default, player can dig ground
 enum COUNTER {MONEY, SCORE}
 enum TILE {LAND, PUMP, CISTERN, RIVERBED, LOW_WATER, WATER, HIGH_WATER, LIGHT_ON, LIGHT_OFF}
 
+#dictionary to make calling tile locations easier and clearer
 var tile_dict = {
 	TILE.LAND: Vector2i(0, 0),
 	TILE.PUMP: Vector2i(0, 1),
@@ -26,7 +27,18 @@ var tile_dict = {
 	TILE.WATER: Vector2i(3, 0),
 	TILE.HIGH_WATER: Vector2i(4, 0),
 	TILE.LIGHT_ON: Vector2i(4, 3),
-	TILE.LIGHT_OFF: Vector2i(4, 2)
+	TILE.LIGHT_OFF: Vector2i(4, 2),
+	
+	"0": Vector2i(0, 4),
+	"1": Vector2i(1, 4),
+	"2": Vector2i(2, 4),
+	"3": Vector2i(3, 4),
+	"4": Vector2i(4, 4),
+	"5": Vector2i(0, 5),
+	"6": Vector2i(1, 5),
+	"7": Vector2i(2, 5),
+	"8": Vector2i(3, 5),
+	"9": Vector2i(4, 5)
 }
 
 #array of coordinates of neighbors (curr, right, rightdown down, downleft, left, leftup, up, upright) if curr = (0,0)
@@ -174,9 +186,9 @@ func _input(_event):
 			
 #check if balance exceeds specified fee and subtract
 func check_and_reduce_balance(fee):
-	print(balance-fee)
 	if balance >= fee:
 		balance -= fee
+		update_counter(COUNTER.MONEY)
 		return true
 	
 	return false
@@ -184,7 +196,7 @@ func check_and_reduce_balance(fee):
 #inc money by 5 for each 30s
 func _on_money_timer_timeout():
 	balance += 5
-	print(balance)
+	update_counter(COUNTER.MONEY)
 
 func remove_surrounding_river(curr_pos, source_id):
 	var sur_tiles = get_category_sur_tiles(curr_pos)
@@ -213,8 +225,11 @@ func get_category_sur_tiles(curr_pos):
 # 2 second pulse, check water flow. order is down, left, then right. no support for water flowing up
 func _on_timer_timeout():
 	
-	score += 10
 	var tiles_flowed_to = {}
+	
+	if global_lockout == false:
+		score += 10
+		update_counter(COUNTER.SCORE)
 	
 	if check_tile(Vector2i(8, 0), is_river_not_high_water_tile):
 		increase_water_depth(Vector2i(8, 0))
@@ -273,12 +288,14 @@ func checkRiverConnection(tile_pos):
 
 func update_counter(counter):
 	if counter == COUNTER.MONEY:
-		var temp_arr = left_pad_array(str(balance).split("", true))
-		var temp_size = temp_arr.size()
-		for x in range (temp_size, temp_size-7, -1):
-			return
+		var counter_array = fix_counter_array_size(str(balance).split("", true))
+		for x in 7:
+			set_tile_type(Vector2i(x+18, 6), counter_array[x])
 		return
 	else: # COUNTER.SCORE
+		var counter_array = fix_counter_array_size(str(score).split("", true))
+		for x in 7:
+			set_tile_type(Vector2i(x+18, 2), counter_array[x])
 		return
 
 func water_flow(tile, direction):
@@ -313,9 +330,11 @@ func decrease_water_depth(tile):
 	else:
 		set_tile_type(tile, TILE.RIVERBED)
 
-func left_pad_array(array):
-	for x in 7:
-		array.push_front("0")
+func fix_counter_array_size(array):
+	while array.size() < 7:
+		array.insert(0, "0")
+	while array.size() > 7:
+		array.remove_at(0)
 	return array
 
 #returns the coordinates of the tile's sprite on the atlas
