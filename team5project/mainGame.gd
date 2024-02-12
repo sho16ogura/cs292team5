@@ -11,9 +11,6 @@ var light_on_location = Vector2i(20, 10)
  #returns tile category int (0 = no data, 1 = ground, 2 = riverbed, 3 = river, 4 = pump)
 var tile_category_custom_data = "tile_category"
 
-enum MODES {DIG, UNDIG, PUMP, CISTERN}
-var mode_state = MODES.DIG # by default, player can dig ground
-
 @onready var dig_undig_sfx = $TileMap/dig_undig_sfx
 @onready var hammer_sfx = $TileMap/hammer_sfx
 @onready var error_sfx = $TileMap/error_sfx
@@ -22,8 +19,13 @@ var mode_state = MODES.DIG # by default, player can dig ground
 
 var num_pump_running = 0
 
+enum MODES {DIG, UNDIG, PUMP, CISTERN}
+var mode_state = MODES.DIG # by default, player can dig ground
+
+enum COUNTER {MONEY, SCORE}
 enum TILE {LAND, PUMP, CISTERN, RIVERBED, LOW_WATER, WATER, HIGH_WATER, LIGHT_ON, LIGHT_OFF}
 
+#dictionary to make calling tile locations easier and clearer
 var tile_dict = {
 	TILE.LAND: Vector2i(0, 0),
 	TILE.PUMP: Vector2i(0, 1),
@@ -33,7 +35,18 @@ var tile_dict = {
 	TILE.WATER: Vector2i(3, 0),
 	TILE.HIGH_WATER: Vector2i(4, 0),
 	TILE.LIGHT_ON: Vector2i(4, 3),
-	TILE.LIGHT_OFF: Vector2i(4, 2)
+	TILE.LIGHT_OFF: Vector2i(4, 2),
+	
+	"0": Vector2i(0, 4),
+	"1": Vector2i(1, 4),
+	"2": Vector2i(2, 4),
+	"3": Vector2i(3, 4),
+	"4": Vector2i(4, 4),
+	"5": Vector2i(0, 5),
+	"6": Vector2i(1, 5),
+	"7": Vector2i(2, 5),
+	"8": Vector2i(3, 5),
+	"9": Vector2i(4, 5)
 }
 
 #array of coordinates of neighbros (curr, right, down, left, up) if curr = (0,0)
@@ -43,8 +56,9 @@ const FOUR_NEIGHBOR_DIF = [Vector2i(0,0),Vector2i(1,0),Vector2i(0,1),Vector2i(-1
 const EIGHT_NEIGHBOR_DIF = [Vector2i(0,0),Vector2i(1,0),Vector2i(1,1),Vector2i(0,1),
 Vector2i(-1,1),Vector2i(-1,0),Vector2i(-1,-1),Vector2i(0,-1),Vector2i(1,-1)]
 
-#start with 10 money
-var balance = 100000000
+#start with 100 money and 0 score
+var balance = 100
+var score = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -229,9 +243,9 @@ func will_be_riverbed_square(eight_sur_tiles):
 			
 #check if balance exceeds specified fee and subtract
 func check_and_reduce_balance(fee):
-	print(balance-fee)
 	if balance >= fee:
 		balance -= fee
+		update_counter(COUNTER.MONEY)
 		return true
 	
 	return false
@@ -239,7 +253,7 @@ func check_and_reduce_balance(fee):
 #inc money by 5 for each 30s
 func _on_money_timer_timeout():
 	balance += 5
-	print(balance)
+	update_counter(COUNTER.MONEY)
 	
 func drain_four_neighbor_river(curr_pos, source_id):
 	var four_sur_tiles = get_four_neighbor_category(curr_pos)
@@ -289,6 +303,10 @@ func get_eight_neighbor_category(curr_pos):
 func _on_timer_timeout():
 	
 	var tiles_flowed_to = {}
+	
+	if global_lockout == false:
+		score += 10
+		update_counter(COUNTER.SCORE)
 	
 	if check_tile(Vector2i(8, 0), is_river_not_high_water_tile):
 		increase_water_depth(Vector2i(8, 0))
@@ -345,6 +363,18 @@ func checkRiverConnection(tile_pos):
 	else: 
 		return false
 
+func update_counter(counter):
+	if counter == COUNTER.MONEY:
+		var counter_array = fix_counter_array_size(str(balance).split("", true))
+		for x in 7:
+			set_tile_type(Vector2i(x+18, 6), counter_array[x])
+		return
+	else: # COUNTER.SCORE
+		var counter_array = fix_counter_array_size(str(score).split("", true))
+		for x in 7:
+			set_tile_type(Vector2i(x+18, 2), counter_array[x])
+		return
+
 func water_flow(tile, direction):
 	var temp_dict = {}
 	var neighbor = tile_map.get_neighbor_cell(tile, direction)
@@ -376,6 +406,13 @@ func decrease_water_depth(tile):
 		set_tile_type(tile, TILE.LOW_WATER)
 	else:
 		set_tile_type(tile, TILE.RIVERBED)
+
+func fix_counter_array_size(array):
+	while array.size() < 7:
+		array.insert(0, "0")
+	while array.size() > 7:
+		array.remove_at(0)
+	return array
 
 #returns the coordinates of the tile's sprite on the atlas
 func get_tile_type(location):
