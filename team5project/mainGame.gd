@@ -8,7 +8,7 @@ var ground_layor = 0
 var global_lockout = false
 var light_on_location = Vector2i(20, 10)
 
- #returns tile category int (0 = no data, 1 = ground, 2 = riverbed, 3 = river, 4 = pump)
+#returns tile category int (0 = no data, 1 = ground, 2 = riverbed, 3 = river, 4 = pump)
 var tile_category_custom_data = "tile_category"
 
 @onready var dig_undig_sfx = $TileMap/dig_undig_sfx
@@ -72,7 +72,7 @@ func _process(_delta):
 	#add code to _on_timer_timeout for water pulse related events
 	#add code to _on_pump_timer_timeout for pump pulse related events
 
-func _input(_event): 
+func _input(event): 
 	#if toggle_dig (J) is pressed, mode change to dig mode
 	if Input.is_action_just_pressed("toggle_dig"):
 		mode_state = MODES.DIG
@@ -96,7 +96,6 @@ func _input(_event):
 		set_tile_type(Vector2i(22, 10), TILE.LIGHT_ON)
 		light_on_location = Vector2i(22, 10)
 
-		
 	elif Input.is_action_just_pressed("toggle_cistern"):
 		mode_state = MODES.CISTERN
 		print("cistern mode")
@@ -104,6 +103,8 @@ func _input(_event):
 		set_tile_type(Vector2i(24, 10), TILE.LIGHT_ON)
 		light_on_location = Vector2i(24, 10)
 	
+	elif event is InputEventMouseMotion:
+		temp_func()
 	
 	#can add action by Project -> Project Settings -> Input Map -> Add new Action
 	elif Input.is_action_just_pressed("click") and global_lockout == false: #if left mouse button is clicked
@@ -467,3 +468,6 @@ func is_med_water_tile(tile):
 #Checks if a tile is deep water
 func is_high_water_tile(tile):
 	return tile == TILE.HIGH_WATER
+
+func temp_func():
+	return
