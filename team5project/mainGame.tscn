@@ -1,12 +1,7 @@
-[gd_scene load_steps=10 format=3 uid="uid://yque0owxfk04"]
+[gd_scene load_steps=5 format=3 uid="uid://yque0owxfk04"]
 
 [ext_resource type="Script" path="res://mainGame.gd" id="1_n7f0u"]
 [ext_resource type="Texture2D" uid="uid://41jmijnypst2" path="res://tileset_0.6.png" id="2_2dyma"]
-[ext_resource type="AudioStream" uid="uid://duqktdpccx1si" path="res://dig-undig.wav" id="3_k130k"]
-[ext_resource type="AudioStream" uid="uid://t8fmqk2owta7" path="res://hammer.mp3" id="4_58vkq"]
-[ext_resource type="AudioStream" uid="uid://d1twaokdntpq7" path="res://error.wav" id="5_hj26o"]
-[ext_resource type="AudioStream" uid="uid://cbhjguvy5pxft" path="res://destruction.wav" id="6_1mp51"]
-[ext_resource type="AudioStream" uid="uid://q1sc303erpj0" path="res://pumping-water.mp3" id="7_5c7lh"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_25llh"]
 texture = ExtResource("2_2dyma")
@@ -81,21 +76,6 @@ autostart = true
 [node name="MoneyTimer" type="Timer" parent="TileMap"]
 wait_time = 30.0
 autostart = true
-
-[node name="dig_undig_sfx" type="AudioStreamPlayer" parent="TileMap"]
-stream = ExtResource("3_k130k")
-
-[node name="hammer_sfx" type="AudioStreamPlayer" parent="TileMap"]
-stream = ExtResource("4_58vkq")
-
-[node name="error_sfx" type="AudioStreamPlayer" parent="TileMap"]
-stream = ExtResource("5_hj26o")
-
-[node name="destruction_sfx" type="AudioStreamPlayer" parent="TileMap"]
-stream = ExtResource("6_1mp51")
-
-[node name="pumping_water_sfx" type="AudioStreamPlayer" parent="TileMap"]
-stream = ExtResource("7_5c7lh")
 
 [connection signal="timeout" from="TileMap/Timer" to="." method="_on_timer_timeout"]
 [connection signal="timeout" from="TileMap/MoneyTimer" to="." method="_on_money_timer_timeout"]
