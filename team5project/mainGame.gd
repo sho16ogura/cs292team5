@@ -27,6 +27,7 @@ enum TILE {LAND, PUMP, CISTERN, RIVERBED, LOW_WATER, WATER, HIGH_WATER, LIGHT_ON
 
 #dictionary to make calling tile locations easier and clearer
 var tile_dict = {
+	#Game tiles
 	TILE.LAND: Vector2i(0, 0),
 	TILE.PUMP: Vector2i(0, 1),
 	TILE.CISTERN: Vector2i(1, 1),
@@ -36,7 +37,7 @@ var tile_dict = {
 	TILE.HIGH_WATER: Vector2i(4, 0),
 	TILE.LIGHT_ON: Vector2i(4, 3),
 	TILE.LIGHT_OFF: Vector2i(4, 2),
-	
+	#Score counter tiles
 	"0": Vector2i(0, 4),
 	"1": Vector2i(1, 4),
 	"2": Vector2i(2, 4),
@@ -80,6 +81,7 @@ func _input(event):
 		set_tile_type(light_on_location, TILE.LIGHT_OFF)
 		set_tile_type(Vector2i(20, 10), TILE.LIGHT_ON)
 		light_on_location = Vector2i(20, 10)
+		temp_func()
 	
 	#if toggle_undig (K) is pressed, mode change to undig mode
 	elif Input.is_action_just_pressed("toggle_undig"):
@@ -88,6 +90,7 @@ func _input(event):
 		set_tile_type(light_on_location, TILE.LIGHT_OFF)
 		set_tile_type(Vector2i(18, 10), TILE.LIGHT_ON)
 		light_on_location = Vector2i(18, 10)
+		temp_func()
 	
 	elif Input.is_action_just_pressed("toggle_pump"):
 		mode_state = MODES.PUMP
@@ -95,6 +98,7 @@ func _input(event):
 		set_tile_type(light_on_location, TILE.LIGHT_OFF)
 		set_tile_type(Vector2i(22, 10), TILE.LIGHT_ON)
 		light_on_location = Vector2i(22, 10)
+		temp_func()
 
 	elif Input.is_action_just_pressed("toggle_cistern"):
 		mode_state = MODES.CISTERN
@@ -102,6 +106,7 @@ func _input(event):
 		set_tile_type(light_on_location, TILE.LIGHT_OFF)
 		set_tile_type(Vector2i(24, 10), TILE.LIGHT_ON)
 		light_on_location = Vector2i(24, 10)
+		temp_func()
 	
 	elif event is InputEventMouseMotion:
 		temp_func()
