@@ -79,7 +79,6 @@ func _process(_delta):
 func _input(event): 
 	#if hovering mouse on a tile, highlight based on the tile
 	if event is InputEventMouseMotion:
-		print(prevhover, tile_map.local_to_map(get_global_mouse_position()))
 		#update prevhover (to delete previous highlight) and add highlight for current tile
 		prevhover = highlight_tile(prevhover)
 		
@@ -151,7 +150,7 @@ func _input(event):
 		elif mode_state == MODES.UNDIG:
 			var ground_atlas_coord = Vector2i(0,0) #ground tile
 			
-			if can_undig(eight_sur_tiles) and  check_and_reduce_balance(1):
+			if can_undig(eight_sur_tiles, tile_mouse_pos) and  check_and_reduce_balance(1):
 				
 				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, ground_atlas_coord)#change cell to ground
 				dig_undig_sfx.play(0.2)#soundeffect
@@ -254,7 +253,7 @@ func highlight_tile(prev_hover):
 				tile_map.set_cell(highlight_layer, tile_mouse_pos, source_id, highlight_cannot_set_coord)
 					
 		elif mode_state == MODES.UNDIG:
-			if can_undig(eight_sur_tiles):
+			if can_undig(eight_sur_tiles, tile_mouse_pos):
 				#blue highlight
 				tile_map.set_cell(highlight_layer, tile_mouse_pos, source_id, highlight_can_set_coord)
 			
@@ -296,7 +295,7 @@ func can_dig(eight_sur_tiles):
 	
 	return curr_tile_is_ground and surr_tiles_are_not_outside and will_not_make_riverbed_square
 
-func can_undig(eight_sur_tiles):
+func can_undig(eight_sur_tiles, tile_mouse_pos):
 	
 	#checks if the current tile is riverbed
 	var curr_tile_is_riverbed = eight_sur_tiles[0] == 2
@@ -305,7 +304,7 @@ func can_undig(eight_sur_tiles):
 	var surr_tiles_are_not_outside = eight_sur_tiles.all(func(c): return c!=0)
 	
 	#checks the undig operation does not cut river connection
-	var no_river_connection_loss = checkRiverConnection(eight_sur_tiles[0])
+	var no_river_connection_loss = checkRiverConnection(tile_mouse_pos)
 	
 	return curr_tile_is_riverbed and surr_tiles_are_not_outside and no_river_connection_loss
 
