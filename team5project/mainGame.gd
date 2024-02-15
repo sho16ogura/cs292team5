@@ -89,7 +89,7 @@ func _input(event):
 		set_tile_type(light_on_location, TILE.LIGHT_OFF)
 		set_tile_type(Vector2i(20, 10), TILE.LIGHT_ON)
 		light_on_location = Vector2i(20, 10)
-		temp_func()
+		prevhover = highlight_tile(prevhover)
 	
 	#if toggle_undig (K) is pressed, mode change to undig mode
 	elif Input.is_action_just_pressed("toggle_undig"):
@@ -98,7 +98,7 @@ func _input(event):
 		set_tile_type(light_on_location, TILE.LIGHT_OFF)
 		set_tile_type(Vector2i(18, 10), TILE.LIGHT_ON)
 		light_on_location = Vector2i(18, 10)
-		temp_func()
+		prevhover = highlight_tile(prevhover)
 	
 	elif Input.is_action_just_pressed("toggle_pump"):
 		mode_state = MODES.PUMP
@@ -106,7 +106,7 @@ func _input(event):
 		set_tile_type(light_on_location, TILE.LIGHT_OFF)
 		set_tile_type(Vector2i(22, 10), TILE.LIGHT_ON)
 		light_on_location = Vector2i(22, 10)
-		temp_func()
+		prevhover = highlight_tile(prevhover)
 
 	elif Input.is_action_just_pressed("toggle_cistern"):
 		mode_state = MODES.CISTERN
@@ -114,10 +114,10 @@ func _input(event):
 		set_tile_type(light_on_location, TILE.LIGHT_OFF)
 		set_tile_type(Vector2i(24, 10), TILE.LIGHT_ON)
 		light_on_location = Vector2i(24, 10)
-		temp_func()
+		prevhover = highlight_tile(prevhover)
 	
 	elif event is InputEventMouseMotion:
-		temp_func()
+		return
 	
 	#can add action by Project -> Project Settings -> Input Map -> Add new Action
 	elif Input.is_action_just_pressed("click") and global_lockout == false: #if left mouse button is clicked
@@ -332,11 +332,6 @@ func can_place_cistern(eight_sur_tiles):
 	
 	return curr_tile_is_ground and surr_tiles_are_not_outside and is_pump_neighbor
 	
-	
-	
-	
-	
-			
 func will_be_riverbed_square(eight_sur_tiles):
 	var right_up_square = eight_sur_tiles.slice(1,4).all(func(c): return c in [2,3])
 	var right_down_square = eight_sur_tiles.slice(3,6).all(func(c): return c in [2,3])
@@ -344,7 +339,6 @@ func will_be_riverbed_square(eight_sur_tiles):
 	var left_up_square = eight_sur_tiles.slice(7).all(func(c): return c==2 or c==3) and eight_sur_tiles[1] in [2,3]
 	return right_up_square or right_down_square or left_up_square or left_down_square
 	
-			
 #check if balance exceeds specified fee and subtract
 func check_and_reduce_balance(fee):
 	if balance >= fee:
@@ -582,6 +576,3 @@ func is_med_water_tile(tile):
 #Checks if a tile is deep water
 func is_high_water_tile(tile):
 	return tile == TILE.HIGH_WATER
-
-func temp_func():
-	return
