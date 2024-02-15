@@ -235,7 +235,7 @@ func highlight_tile(prev_hover):
 	var highlight_layer = 2
 	
 	var highlight_cannot_set_coord = Vector2i(0,2) #red highlight tile
-	var highlight_can_set_coord = Vector2i(1,2) #blue highlight tile
+	var highlight_can_set_coord = Vector2i(2,2) #blue highlight tile
 	
 	#erase the highlight of the previous cell
 	tile_map.set_cell(highlight_layer, prev_hover) 
