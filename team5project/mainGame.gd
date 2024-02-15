@@ -8,7 +8,7 @@ var ground_layor = 0
 var global_lockout = false
 var light_on_location = Vector2i(20, 10)
 
- #returns tile category int (0 = no data, 1 = ground, 2 = riverbed, 3 = river, 4 = pump)
+#returns tile category int (0 = no data, 1 = ground, 2 = riverbed, 3 = river, 4 = pump)
 var tile_category_custom_data = "tile_category"
 
 @onready var dig_undig_sfx = $TileMap/dig_undig_sfx
@@ -27,6 +27,7 @@ enum TILE {LAND, PUMP, CISTERN, RIVERBED, LOW_WATER, WATER, HIGH_WATER, LIGHT_ON
 
 #dictionary to make calling tile locations easier and clearer
 var tile_dict = {
+	#Game tiles
 	TILE.LAND: Vector2i(0, 0),
 	TILE.PUMP: Vector2i(0, 1),
 	TILE.CISTERN: Vector2i(1, 1),
@@ -36,7 +37,7 @@ var tile_dict = {
 	TILE.HIGH_WATER: Vector2i(4, 0),
 	TILE.LIGHT_ON: Vector2i(4, 3),
 	TILE.LIGHT_OFF: Vector2i(4, 2),
-	
+	#Score counter tiles
 	"0": Vector2i(0, 4),
 	"1": Vector2i(1, 4),
 	"2": Vector2i(2, 4),
@@ -72,7 +73,7 @@ func _process(_delta):
 	#add code to _on_timer_timeout for water pulse related events
 	#add code to _on_pump_timer_timeout for pump pulse related events
 
-func _input(_event): 
+func _input(event): 
 	#if toggle_dig (J) is pressed, mode change to dig mode
 	if Input.is_action_just_pressed("toggle_dig"):
 		mode_state = MODES.DIG
@@ -80,6 +81,7 @@ func _input(_event):
 		set_tile_type(light_on_location, TILE.LIGHT_OFF)
 		set_tile_type(Vector2i(20, 10), TILE.LIGHT_ON)
 		light_on_location = Vector2i(20, 10)
+		temp_func()
 	
 	#if toggle_undig (K) is pressed, mode change to undig mode
 	elif Input.is_action_just_pressed("toggle_undig"):
@@ -88,6 +90,7 @@ func _input(_event):
 		set_tile_type(light_on_location, TILE.LIGHT_OFF)
 		set_tile_type(Vector2i(18, 10), TILE.LIGHT_ON)
 		light_on_location = Vector2i(18, 10)
+		temp_func()
 	
 	elif Input.is_action_just_pressed("toggle_pump"):
 		mode_state = MODES.PUMP
@@ -95,15 +98,18 @@ func _input(_event):
 		set_tile_type(light_on_location, TILE.LIGHT_OFF)
 		set_tile_type(Vector2i(22, 10), TILE.LIGHT_ON)
 		light_on_location = Vector2i(22, 10)
+		temp_func()
 
-		
 	elif Input.is_action_just_pressed("toggle_cistern"):
 		mode_state = MODES.CISTERN
 		print("cistern mode")
 		set_tile_type(light_on_location, TILE.LIGHT_OFF)
 		set_tile_type(Vector2i(24, 10), TILE.LIGHT_ON)
 		light_on_location = Vector2i(24, 10)
+		temp_func()
 	
+	elif event is InputEventMouseMotion:
+		temp_func()
 	
 	#can add action by Project -> Project Settings -> Input Map -> Add new Action
 	elif Input.is_action_just_pressed("click") and global_lockout == false: #if left mouse button is clicked
@@ -468,3 +474,6 @@ func is_med_water_tile(tile):
 #Checks if a tile is deep water
 func is_high_water_tile(tile):
 	return tile == TILE.HIGH_WATER
+
+func temp_func():
+	return
