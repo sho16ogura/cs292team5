@@ -1,0 +1,76 @@
+[gd_scene load_steps=6 format=3 uid="uid://cqpx1ehejg0ob"]
+
+[ext_resource type="Script" path="res://pause menu/pause_menu.gd" id="1_8vtnn"]
+
+[sub_resource type="SystemFont" id="SystemFont_xp7vc"]
+font_names = PackedStringArray("Impact")
+subpixel_positioning = 0
+
+[sub_resource type="SystemFont" id="SystemFont_isphp"]
+font_names = PackedStringArray("Impact")
+font_weight = 100
+subpixel_positioning = 0
+
+[sub_resource type="SystemFont" id="SystemFont_hesga"]
+font_names = PackedStringArray("Impact")
+subpixel_positioning = 0
+
+[sub_resource type="SystemFont" id="SystemFont_0lffa"]
+font_names = PackedStringArray("Impact")
+subpixel_positioning = 0
+
+[node name="PauseMenu" type="Control"]
+process_mode = 2
+modulate = Color(0.901961, 0.945098, 0.972549, 1)
+self_modulate = Color(0.384314, 0.133333, 0.254902, 1)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_8vtnn")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -48.0
+offset_top = -81.5
+offset_right = 48.0
+offset_bottom = 81.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("SystemFont_xp7vc")
+theme_override_font_sizes/font_size = 32
+text = "PAUSE"
+horizontal_alignment = 1
+
+[node name="ResumeButton" type="Button" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("SystemFont_isphp")
+text = "Resume"
+
+[node name="ReturnMainMenuButton" type="Button" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("SystemFont_hesga")
+text = "Main Menu"
+
+[node name="InstructionButton" type="Button" parent="Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("SystemFont_0lffa")
+text = "Instruction"

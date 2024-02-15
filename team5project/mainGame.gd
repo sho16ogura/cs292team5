@@ -5,6 +5,9 @@ extends Node2D
 
 var ground_layor = 0
 #var top_layor = 1
+
+var prevhover : Vector2i = Vector2i(0,0)
+
 var global_lockout = false
 var light_on_location = Vector2i(20, 10)
 
@@ -74,6 +77,11 @@ func _process(_delta):
 	#add code to _on_pump_timer_timeout for pump pulse related events
 
 func _input(event): 
+	#if hovering mouse on a tile, highlight based on the tile
+	if event is InputEventMouseMotion:
+		#update prevhover (to delete previous highlight) and add highlight for current tile
+		prevhover = highlight_tile(prevhover)
+		
 	#if toggle_dig (J) is pressed, mode change to dig mode
 	if Input.is_action_just_pressed("toggle_dig"):
 		mode_state = MODES.DIG
@@ -128,19 +136,9 @@ func _input(event):
 		if mode_state == MODES.DIG:
 			var riverbed_atlas_coord = Vector2i(1, 0) #riverbed tile
 			
-			#boolean variables for the following if statement
-			var curr_tile_is_ground = eight_sur_tiles[0] == 1 
-			
-			#if surrounding tiles contain no_data (outside border), false
-			var surr_tiles_are_not_outside = eight_sur_tiles.all(func(c): return c!=0)
-			
-			#if square of riverbed or river is made, false
-			var will_not_make_riverbed_square = not will_be_riverbed_square(eight_sur_tiles)
-			
-			#print(sur_tiles, sur_tiles.slice(1,4).any(func(c): return c!=2),sur_tiles.slice(3,6).any(func(c): return c!=2),sur_tiles.slice(5,8).any(func(c): return c!=2),(sur_tiles[1] != 2 or sur_tiles.slice(7).any(func(c): return c!=2)) )
-			
+
 			#if following conditions are met, set cell to riverbed
-			if curr_tile_is_ground and surr_tiles_are_not_outside and will_not_make_riverbed_square and  check_and_reduce_balance(1):
+			if can_dig(eight_sur_tiles) and  check_and_reduce_balance(1):
 				
 				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, riverbed_atlas_coord) #set cell to riverbed 
 				dig_undig_sfx.play(0.2) #sound effect starts
@@ -151,12 +149,8 @@ func _input(event):
 				
 		elif mode_state == MODES.UNDIG:
 			var ground_atlas_coord = Vector2i(0,0) #ground tile
-			var curr_tile_is_riverbed = eight_sur_tiles[0] == 2
 			
-			#if surrounding tiles contain no_data (outside border), false
-			var surr_tiles_are_not_outside = eight_sur_tiles.all(func(c): return c!=0)
-			
-			if curr_tile_is_riverbed and surr_tiles_are_not_outside and checkRiverConnection(tile_mouse_pos) and  check_and_reduce_balance(1):
+			if can_undig(eight_sur_tiles, tile_mouse_pos) and  check_and_reduce_balance(1):
 				
 				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, ground_atlas_coord)#change cell to ground
 				dig_undig_sfx.play(0.2)#soundeffect
@@ -168,13 +162,9 @@ func _input(event):
 		elif mode_state == MODES.PUMP:
 			var pump_atlas_coord = Vector2i(0,1) #pump tile
 			var ground_atlas_coord = Vector2i(0,0) #ground tile
-			var curr_tile_is_ground = eight_sur_tiles[0] == 1
-			
-			#if surrounding tiles contain no_data (outside border), false
-			var surr_tiles_are_not_outside = eight_sur_tiles.all(func(c): return c!=0)
 			
 			#set pump, iterate and change back to ground
-			if curr_tile_is_ground and surr_tiles_are_not_outside and  check_and_reduce_balance(5):
+			if can_place_pump(eight_sur_tiles) and  check_and_reduce_balance(5):
 				
 				#set pump
 				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, pump_atlas_coord)
@@ -215,17 +205,10 @@ func _input(event):
 		elif mode_state == MODES.CISTERN:
 			var cistern_atlas_coord = Vector2i(1,1) #cistern tile
 			var ground_atlas_coord = Vector2i(0,0) #ground tile
-			var curr_tile_is_ground = eight_sur_tiles[0] == 1
 			
-			#if surrounding tiles contain no_data (outside border), false
-			var surr_tiles_are_not_outside = eight_sur_tiles.all(func(c): return c!=0)
 			
-			#if pump (to be strengthened) is located next to the cistern
-			var is_pump_neighbor = four_sur_tiles.slice(1).any(func (c): return c==4)
-			
-			print(four_sur_tiles.slice(1))
 			#set pump, iterate and change back to ground
-			if curr_tile_is_ground and surr_tiles_are_not_outside and is_pump_neighbor and  check_and_reduce_balance(2):
+			if can_place_cistern(eight_sur_tiles) and  check_and_reduce_balance(2):
 				
 				#set cistern
 				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, cistern_atlas_coord)
@@ -238,6 +221,121 @@ func _input(event):
 		else:
 			error_sfx.play()
 			print("not enough balance")
+			
+		
+func highlight_tile(prev_hover):
+	var mouse_pos : Vector2i = get_global_mouse_position() #global position in float
+	var tile_mouse_pos : Vector2i = tile_map.local_to_map(mouse_pos) #local position in int
+	tile_mouse_pos = tile_mouse_pos + Vector2i(-1, -1)
+	
+	var eight_sur_tiles = get_eight_neighbor_category(tile_mouse_pos)
+	var four_sur_tiles = get_four_neighbor_category(tile_mouse_pos)
+	var source_id = 1
+	
+	var highlight_layer = 2
+	
+	var highlight_cannot_set_coord = Vector2i(0,2) #red highlight tile
+	var highlight_can_set_coord = Vector2i(2,2) #blue highlight tile
+	
+	#erase the highlight of the previous cell
+	tile_map.set_cell(highlight_layer, prev_hover) 
+	
+	#if the mouse is in the range of (0,0) ~ (16,12) (inside the green tiles), hover
+	if 0 <= tile_mouse_pos[0] and tile_mouse_pos[0] <= 16 and 0 <= tile_mouse_pos[1] and tile_mouse_pos[1] <= 12:
+		
+		if mode_state == MODES.DIG:
+			if can_dig(eight_sur_tiles):
+				#blue highlight
+				tile_map.set_cell(highlight_layer, tile_mouse_pos, source_id, highlight_can_set_coord)
+			
+			else:	
+				#red highlight
+				tile_map.set_cell(highlight_layer, tile_mouse_pos, source_id, highlight_cannot_set_coord)
+					
+		elif mode_state == MODES.UNDIG:
+			if can_undig(eight_sur_tiles, tile_mouse_pos):
+				#blue highlight
+				tile_map.set_cell(highlight_layer, tile_mouse_pos, source_id, highlight_can_set_coord)
+			
+			else:	
+				#red highlight
+				tile_map.set_cell(highlight_layer, tile_mouse_pos, source_id, highlight_cannot_set_coord)
+				
+		elif mode_state == MODES.PUMP:
+			if can_place_pump(eight_sur_tiles):
+				#blue highlight
+				tile_map.set_cell(highlight_layer, tile_mouse_pos, source_id, highlight_can_set_coord)
+			
+			else:	
+				#red highlight
+				tile_map.set_cell(highlight_layer, tile_mouse_pos, source_id, highlight_cannot_set_coord)
+				
+		elif mode_state == MODES.CISTERN:
+			if can_place_cistern(eight_sur_tiles):
+				#blue highlight
+				tile_map.set_cell(highlight_layer, tile_mouse_pos, source_id, highlight_can_set_coord)
+			
+			else:	
+				#red highlight
+				tile_map.set_cell(highlight_layer, tile_mouse_pos, source_id, highlight_cannot_set_coord)
+			
+	return tile_mouse_pos
+		
+	
+func can_dig(eight_sur_tiles):
+
+	#boolean variables for the following if statement
+	var curr_tile_is_ground = eight_sur_tiles[0] == 1 
+			
+	#if surrounding tiles contain no_data (outside border), false
+	var surr_tiles_are_not_outside = eight_sur_tiles.all(func(c): return c!=0)
+			
+	#if square of riverbed or river is made, false
+	var will_not_make_riverbed_square = not will_be_riverbed_square(eight_sur_tiles)
+	
+	return curr_tile_is_ground and surr_tiles_are_not_outside and will_not_make_riverbed_square
+
+func can_undig(eight_sur_tiles, tile_mouse_pos):
+	
+	#checks if the current tile is riverbed
+	var curr_tile_is_riverbed = eight_sur_tiles[0] == 2
+			
+	#if surrounding tiles contain no_data (outside border), false
+	var surr_tiles_are_not_outside = eight_sur_tiles.all(func(c): return c!=0)
+	
+	#checks the undig operation does not cut river connection
+	var no_river_connection_loss = checkRiverConnection(tile_mouse_pos)
+	
+	return curr_tile_is_riverbed and surr_tiles_are_not_outside and no_river_connection_loss
+
+func can_place_pump(eight_sur_tiles):
+	
+	var curr_tile_is_ground = eight_sur_tiles[0] == 1
+			
+	#if surrounding tiles contain no_data (outside border), false
+	var surr_tiles_are_not_outside = eight_sur_tiles.all(func(c): return c!=0)
+	
+	return curr_tile_is_ground and surr_tiles_are_not_outside
+			
+	
+func can_place_cistern(eight_sur_tiles):
+	var curr_tile_is_ground = eight_sur_tiles[0] == 1
+			
+	#if surrounding tiles contain no_data (outside border), false
+	var surr_tiles_are_not_outside = eight_sur_tiles.all(func(c): return c!=0)
+			
+	#create four neighboring tiles array based on eight neighboring tiles
+	var four_sur_tiles = [eight_sur_tiles[0],eight_sur_tiles[1],eight_sur_tiles[3], eight_sur_tiles[5], eight_sur_tiles[7]]
+	
+	#if pump (to be strengthened) is located next to the cistern
+	var is_pump_neighbor = four_sur_tiles.slice(1).any(func (c): return c==4)
+	
+	return curr_tile_is_ground and surr_tiles_are_not_outside and is_pump_neighbor
+	
+	
+	
+	
+	
 			
 func will_be_riverbed_square(eight_sur_tiles):
 	var right_up_square = eight_sur_tiles.slice(1,4).all(func(c): return c in [2,3])
@@ -327,6 +425,7 @@ func _on_timer_timeout():
 	if get_tile_type(Vector2i(8, 12)) == TILE.WATER and global_lockout == false:
 		global_lockout = true
 		print("game over!")
+		get_tree().change_scene_to_file("res://end screen/end_screen.tscn")
 	
 	for y in range(12, 0, -1):
 		for x in range(16, 0 , -1):
