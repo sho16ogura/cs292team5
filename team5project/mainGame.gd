@@ -3,8 +3,8 @@ extends Node2D
 @onready var tile_map : TileMap = $TileMap
 @onready var timer : Timer = $TileMap/Timer
 
-var ground_layor = 0
-#var top_layor = 1
+var ground_layer = 0
+var top_layer = 1
 
 var prevhover : Vector2i = Vector2i(0,0)
 
@@ -140,7 +140,7 @@ func _input(event):
 			#if following conditions are met, set cell to riverbed
 			if can_dig(eight_sur_tiles) and  check_and_reduce_balance(1):
 				
-				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, riverbed_atlas_coord) #set cell to riverbed 
+				tile_map.set_cell(ground_layer, tile_mouse_pos, source_id, riverbed_atlas_coord) #set cell to riverbed 
 				dig_undig_sfx.play(0.2) #sound effect starts
 				
 			else:
@@ -152,7 +152,7 @@ func _input(event):
 			
 			if can_undig(eight_sur_tiles, tile_mouse_pos) and  check_and_reduce_balance(1):
 				
-				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, ground_atlas_coord)#change cell to ground
+				tile_map.set_cell(ground_layer, tile_mouse_pos, source_id, ground_atlas_coord)#change cell to ground
 				dig_undig_sfx.play(0.2)#soundeffect
 				
 			else:
@@ -167,7 +167,7 @@ func _input(event):
 			if can_place_pump(eight_sur_tiles) and  check_and_reduce_balance(5):
 				
 				#set pump
-				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, pump_atlas_coord)
+				tile_map.set_cell(ground_layer, tile_mouse_pos, source_id, pump_atlas_coord)
 				hammer_sfx.play() #for construction
 				
 				num_pump_running += 1
@@ -196,7 +196,7 @@ func _input(event):
 				destruction_sfx.play()
 					
 				#change back to ground
-				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, ground_atlas_coord)
+				tile_map.set_cell(ground_layer, tile_mouse_pos, source_id, ground_atlas_coord)
 				
 			else:
 				error_sfx.play()
@@ -211,7 +211,7 @@ func _input(event):
 			if can_place_cistern(eight_sur_tiles) and  check_and_reduce_balance(2):
 				
 				#set cistern
-				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, cistern_atlas_coord)
+				tile_map.set_cell(ground_layer, tile_mouse_pos, source_id, cistern_atlas_coord)
 				hammer_sfx.play()#constructing sound
 			else:
 				error_sfx.play()
@@ -385,9 +385,15 @@ func get_four_neighbor_category(curr_pos):
 	var neighbor_tiles = [0,0,0,0,0]
 	
 	for i in range(5):
-		var tile_data : TileData = tile_map.get_cell_tile_data(ground_layor, curr_pos + FOUR_NEIGHBOR_DIF[i])
-		if tile_data:
-			neighbor_tiles[i] = tile_data.get_custom_data(tile_category_custom_data)
+		var ground_tile_data : TileData = tile_map.get_cell_tile_data(ground_layer, curr_pos + FOUR_NEIGHBOR_DIF[i])
+		var top_tile_data : TileData = tile_map.get_cell_tile_data(top_layer, curr_pos + FOUR_NEIGHBOR_DIF[i])
+		
+		if ground_tile_data:
+			neighbor_tiles[i] = ground_tile_data.get_custom_data(tile_category_custom_data)
+			
+		#overwrite if there is buildings
+		if top_tile_data:
+			neighbor_tiles[i] = top_tile_data.get_custom_data(tile_category_custom_data)
 			
 	return neighbor_tiles
 	
@@ -397,9 +403,13 @@ func get_eight_neighbor_category(curr_pos):
 	
 	#for each neighboring tiles (curr, right, rightdown, down, downleft, left, leftup, up, upright)
 	for i in range(9):
-		var tile_data : TileData = tile_map.get_cell_tile_data(ground_layor, curr_pos + EIGHT_NEIGHBOR_DIF[i])
-		if tile_data:
-			neighbor_tiles[i] = tile_data.get_custom_data(tile_category_custom_data)
+		var ground_tile_data : TileData = tile_map.get_cell_tile_data(ground_layer, curr_pos + EIGHT_NEIGHBOR_DIF[i])
+		var top_tile_data : TileData = tile_map.get_cell_tile_data(top_layer, curr_pos + EIGHT_NEIGHBOR_DIF[i])
+		if ground_tile_data:
+			neighbor_tiles[i] = ground_tile_data.get_custom_data(tile_category_custom_data)
+			
+		if top_tile_data:
+			neighbor_tiles[i] = top_tile_data.get_custom_data(tile_category_custom_data)
 			
 	return neighbor_tiles
 
