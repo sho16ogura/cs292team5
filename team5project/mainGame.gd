@@ -321,6 +321,7 @@ func _on_timer_timeout():
 	if get_tile_type(Vector2i(8, 12)) == TILE.WATER and global_lockout == false:
 		global_lockout = true
 		print("game over!")
+		get_tree().change_scene_to_file("res://end screen/end_screen.tscn")
 	
 	for y in range(12, 0, -1):
 		for x in range(16, 0 , -1):
