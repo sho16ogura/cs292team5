@@ -4,7 +4,9 @@ extends Node2D
 @onready var timer : Timer = $TileMap/Timer
 
 var ground_layer = 0
-var top_layer = 1
+var building_layer = 1
+var flood_layer = 2
+var highlight_layer = 3
 
 var prevhover : Vector2i = Vector2i(0,0)
 
@@ -60,13 +62,24 @@ const FOUR_NEIGHBOR_DIF = [Vector2i(0,0),Vector2i(1,0),Vector2i(0,1),Vector2i(-1
 const EIGHT_NEIGHBOR_DIF = [Vector2i(0,0),Vector2i(1,0),Vector2i(1,1),Vector2i(0,1),
 Vector2i(-1,1),Vector2i(-1,0),Vector2i(-1,-1),Vector2i(0,-1),Vector2i(1,-1)]
 
+#stores coordinate of buildings
+var buildings = {}
+
 #start with 100 money and 0 score
 var balance = 100
 var score = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass #no function needed here at the moment
+	
+	#find buildings and put into variable
+	for x in range(1,16):
+		for y in range(1,13):
+			var curr_pos = Vector2i(x,y)
+			var building_tile_data = tile_map.get_cell_tile_data(building_layer, curr_pos)
+		
+			if building_tile_data and building_tile_data.get_custom_data(tile_category_custom_data):
+				buildings[curr_pos]=0
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 # Go to Project Setting -> Physics -> Common to see number of cycles per second
@@ -232,8 +245,6 @@ func highlight_tile(prev_hover):
 	var four_sur_tiles = get_four_neighbor_category(tile_mouse_pos)
 	var source_id = 1
 	
-	var highlight_layer = 2
-	
 	var highlight_cannot_set_coord = Vector2i(0,2) #red highlight tile
 	var highlight_can_set_coord = Vector2i(2,2) #blue highlight tile
 	
@@ -353,6 +364,14 @@ func _on_money_timer_timeout():
 	balance += 5
 	update_counter(COUNTER.MONEY)
 	
+
+func _on_flood_timer_timeout():
+	for curr_pos in buildings:
+		var for_sur_tiles = get_four_neighbor_category(curr_pos)
+		if 	for_sur_tiles.any(func(c): return c==3):
+			pass
+	
+	
 func drain_four_neighbor_river(curr_pos, source_id):
 	var four_sur_tiles = get_four_neighbor_category(curr_pos)
 	
@@ -380,14 +399,14 @@ func get_four_neighbor_category(curr_pos):
 	
 	for i in range(5):
 		var ground_tile_data : TileData = tile_map.get_cell_tile_data(ground_layer, curr_pos + FOUR_NEIGHBOR_DIF[i])
-		var top_tile_data : TileData = tile_map.get_cell_tile_data(top_layer, curr_pos + FOUR_NEIGHBOR_DIF[i])
+		var building_tile_data : TileData = tile_map.get_cell_tile_data(building_layer, curr_pos + FOUR_NEIGHBOR_DIF[i])
 		
 		if ground_tile_data:
 			neighbor_tiles[i] = ground_tile_data.get_custom_data(tile_category_custom_data)
 			
 		#overwrite if there is buildings
-		if top_tile_data:
-			neighbor_tiles[i] = top_tile_data.get_custom_data(tile_category_custom_data)
+		if building_tile_data:
+			neighbor_tiles[i] = building_tile_data.get_custom_data(tile_category_custom_data)
 			
 	return neighbor_tiles
 	
@@ -398,12 +417,12 @@ func get_eight_neighbor_category(curr_pos):
 	#for each neighboring tiles (curr, right, rightdown, down, downleft, left, leftup, up, upright)
 	for i in range(9):
 		var ground_tile_data : TileData = tile_map.get_cell_tile_data(ground_layer, curr_pos + EIGHT_NEIGHBOR_DIF[i])
-		var top_tile_data : TileData = tile_map.get_cell_tile_data(top_layer, curr_pos + EIGHT_NEIGHBOR_DIF[i])
+		var building_tile_data : TileData = tile_map.get_cell_tile_data(building_layer, curr_pos + EIGHT_NEIGHBOR_DIF[i])
 		if ground_tile_data:
 			neighbor_tiles[i] = ground_tile_data.get_custom_data(tile_category_custom_data)
 			
-		if top_tile_data:
-			neighbor_tiles[i] = top_tile_data.get_custom_data(tile_category_custom_data)
+		if building_tile_data:
+			neighbor_tiles[i] = building_tile_data.get_custom_data(tile_category_custom_data)
 			
 	return neighbor_tiles
 
@@ -576,3 +595,5 @@ func is_med_water_tile(tile):
 #Checks if a tile is deep water
 func is_high_water_tile(tile):
 	return tile == TILE.HIGH_WATER
+
+
