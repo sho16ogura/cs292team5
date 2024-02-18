@@ -353,6 +353,8 @@ func _on_money_timer_timeout():
 	balance += 5
 	update_counter(COUNTER.MONEY)
 	
+	timer.wait_time *= 0.9
+	
 func drain_four_neighbor_river(curr_pos, source_id):
 	var four_sur_tiles = get_four_neighbor_category(curr_pos)
 	
@@ -401,6 +403,7 @@ func get_eight_neighbor_category(curr_pos):
 func _on_timer_timeout():
 	
 	var tiles_flowed_to = {}
+	var tile_directions = [TileSet.CELL_NEIGHBOR_BOTTOM_SIDE, TileSet.CELL_NEIGHBOR_LEFT_SIDE, TileSet.CELL_NEIGHBOR_RIGHT_SIDE, TileSet.CELL_NEIGHBOR_TOP_SIDE]
 	
 	if global_lockout == false:
 		score += 10
@@ -424,15 +427,16 @@ func _on_timer_timeout():
 	for y in range(12, 0, -1):
 		for x in range(16, 0 , -1):
 			var temp_vec = Vector2i(x, y)
+			tile_directions.shuffle()
 			if check_tile(temp_vec, is_high_water_tile) and tiles_flowed_to.has(temp_vec) == false:
-				if check_neighbor(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE, is_river_not_high_water_tile):
-					tiles_flowed_to.merge(water_flow(temp_vec, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE))
-				elif check_neighbor(temp_vec, TileSet.CELL_NEIGHBOR_LEFT_SIDE, is_river_not_high_water_tile):
-					tiles_flowed_to.merge(water_flow(temp_vec, TileSet.CELL_NEIGHBOR_LEFT_SIDE))
-				elif check_neighbor(temp_vec, TileSet.CELL_NEIGHBOR_RIGHT_SIDE, is_river_not_high_water_tile): 
-					tiles_flowed_to.merge(water_flow(temp_vec, TileSet.CELL_NEIGHBOR_RIGHT_SIDE))
-				elif check_neighbor(temp_vec, TileSet.CELL_NEIGHBOR_TOP_SIDE, is_river_not_high_water_tile):
-					tiles_flowed_to.merge(water_flow(temp_vec, TileSet.CELL_NEIGHBOR_TOP_SIDE))
+				if check_neighbor(temp_vec, tile_directions[0], is_river_not_high_water_tile):
+					tiles_flowed_to.merge(water_flow(temp_vec, tile_directions[0]))
+				elif check_neighbor(temp_vec, tile_directions[1], is_river_not_high_water_tile):
+					tiles_flowed_to.merge(water_flow(temp_vec, tile_directions[1]))
+				elif check_neighbor(temp_vec, tile_directions[2], is_river_not_high_water_tile): 
+					tiles_flowed_to.merge(water_flow(temp_vec, tile_directions[2]))
+				elif check_neighbor(temp_vec, tile_directions[3], is_river_not_high_water_tile):
+					tiles_flowed_to.merge(water_flow(temp_vec, tile_directions[3]))
 
 #check if removing a tile from the river prevents there from being a continuous line of river tiles from the top to the bottom of the screen
 func checkRiverConnection(tile_pos):
