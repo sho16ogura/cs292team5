@@ -114,7 +114,12 @@ wait_time = 30.0
 autostart = true
 
 [node name="FloodTimer" type="Timer" parent="TileMap"]
-wait_time = 10.0
+wait_time = 5.0
+autostart = true
+
+[node name="GameOverTimer" type="Timer" parent="TileMap"]
+wait_time = 0.2
+autostart = true
 
 [node name="dig_undig_sfx" type="AudioStreamPlayer" parent="TileMap"]
 stream = ExtResource("3_k130k")
@@ -134,3 +139,4 @@ stream = ExtResource("7_5c7lh")
 [connection signal="timeout" from="TileMap/Timer" to="." method="_on_timer_timeout"]
 [connection signal="timeout" from="TileMap/MoneyTimer" to="." method="_on_money_timer_timeout"]
 [connection signal="timeout" from="TileMap/FloodTimer" to="." method="_on_flood_timer_timeout"]
+[connection signal="timeout" from="TileMap/GameOverTimer" to="." method="_on_game_over_timer_timeout"]

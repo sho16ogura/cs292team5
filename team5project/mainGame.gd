@@ -65,20 +65,23 @@ Vector2i(-1,1),Vector2i(-1,0),Vector2i(-1,-1),Vector2i(0,-1),Vector2i(1,-1)]
 #stores coordinate of buildings
 var buildings = {}
 
+#if the Vector2i(8,12) is filled with water, true
+var game_over = false
+
 #start with 100 money and 0 score
 var balance = 100
 var score = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	
 	#find buildings and put into variable
 	for x in range(1,16):
-		for y in range(1,13):
+		for y in range(1,12):
 			var curr_pos = Vector2i(x,y)
 			var building_tile_data = tile_map.get_cell_tile_data(building_layer, curr_pos)
-		
-			if building_tile_data and building_tile_data.get_custom_data(tile_category_custom_data):
+			
+			#if the building belongs to category 6 (breakables), add it to building dist {pos:0 water level}
+			if building_tile_data and building_tile_data.get_custom_data(tile_category_custom_data) == 6:
 				buildings[curr_pos]=0
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -366,10 +369,105 @@ func _on_money_timer_timeout():
 	
 
 func _on_flood_timer_timeout():
+	print(buildings)
+	var broken_buildings = []
+	
 	for curr_pos in buildings:
-		var for_sur_tiles = get_four_neighbor_category(curr_pos)
-		if 	for_sur_tiles.any(func(c): return c==3):
-			pass
+		
+		var four_sur_tiles = get_four_neighbor_category(curr_pos)
+		
+		#if there are river tile in the neighboring four tiles
+		if 	four_sur_tiles.any(func(c): return c==3):
+			broken_buildings = building_inc_water_level(curr_pos, broken_buildings)
+			
+	#if there is broken building, remove list of buildings to be considered in the future
+	if broken_buildings:
+		for b in broken_buildings:
+			buildings.erase(b)
+			
+func _on_game_over_timer_timeout():
+	if game_over:
+		#inc water level and destruct
+		for x in range(1, 8):
+			var curr_pos1 = Vector2i(x, 12)
+			var right_curr_pos1 = Vector2i(x+1, 12)
+			var curr_pos2 = Vector2i(16-x,12)
+			var left_curr_pos2 = Vector2i(15-x, 12)
+			
+			var river_tiles = [Vector2i(2,0), Vector2i(3,0), Vector2i(4,0)]
+			
+			var is_river_right = tile_map.get_cell_atlas_coords(flood_layer, right_curr_pos1) in river_tiles or\
+								tile_map.get_cell_atlas_coords(ground_layer, right_curr_pos1) in river_tiles
+			var is_river_left = tile_map.get_cell_atlas_coords(flood_layer, left_curr_pos2) in river_tiles or\
+								tile_map.get_cell_atlas_coords(ground_layer, left_curr_pos2) in river_tiles
+			print(right_curr_pos1, left_curr_pos2)
+			
+			#if right or left tile is flooded, curr_pos is also flooded
+			if 	is_river_right:
+				building_inc_water_level(curr_pos1, [])
+				
+			if is_river_left:
+				building_inc_water_level(curr_pos2, [])
+		return 
+		
+	const GAME_OVER_TILE = Vector2i(8,12)
+	var is_game_over_pos_river = tile_map.get_cell_atlas_coords(ground_layer, GAME_OVER_TILE) == Vector2i(2,0)
+	
+	#if Vector2i(8,12) is filled with water, gameover
+	if is_game_over_pos_river:
+	
+		buildings[GAME_OVER_TILE] = 0
+		building_inc_water_level(GAME_OVER_TILE, [])
+		
+		for x in range(1, 8):
+			var curr_pos1 = Vector2i(x, 12)
+			var curr_pos2 = Vector2i(16-x,12)
+			buildings[curr_pos1] = 0
+			buildings[curr_pos2] = 0
+		
+		game_over = true
+			
+func building_inc_water_level(curr_pos, broken_buildings):
+	var ground_layer = 0
+	var building_layer = 1
+	var flood_layer = 2
+		
+	var water_source_id = 0
+	var building_source_id = 1
+		
+	var shallow_water = Vector2i(2,0)
+	var deep_water = Vector2i(3,0)
+	var deepest_water = Vector2i(4,0)
+	var broken_house_diff = Vector2i(0,1)
+		
+	#add water over building
+	if buildings[curr_pos] == 0:
+		tile_map.set_cell(flood_layer, curr_pos, water_source_id, shallow_water)
+				
+	#increment water depth
+	elif buildings[curr_pos] == 1:
+		tile_map.set_cell(flood_layer, curr_pos, water_source_id, deep_water)
+				
+	#graphic of broken house
+	elif buildings[curr_pos] == 2:
+		var original_building = tile_map.get_cell_atlas_coords(building_layer, curr_pos)
+		tile_map.set_cell(building_layer, curr_pos, building_source_id, original_building+broken_house_diff)
+				
+	#house is broken and becomes deep water
+	elif buildings[curr_pos] == 3:
+		tile_map.set_cell(building_layer, curr_pos) #remove building
+		tile_map.set_cell(flood_layer, curr_pos) #remove water in flood layer
+		tile_map.set_cell(ground_layer, curr_pos, water_source_id, deep_water)#add water in ground layer
+				
+		broken_buildings.append(curr_pos)
+				
+		destruction_sfx.play()
+					
+	buildings[curr_pos] += 1
+	return broken_buildings
+			
+		
+		
 	
 	
 func drain_four_neighbor_river(curr_pos, source_id):
@@ -595,5 +693,3 @@ func is_med_water_tile(tile):
 #Checks if a tile is deep water
 func is_high_water_tile(tile):
 	return tile == TILE.HIGH_WATER
-
-
