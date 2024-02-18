@@ -3,8 +3,10 @@ extends Node2D
 @onready var tile_map : TileMap = $TileMap
 @onready var timer : Timer = $TileMap/Timer
 
-var ground_layor = 0
-#var top_layor = 1
+var ground_layer = 0
+var building_layer = 1
+var flood_layer = 2
+var highlight_layer = 3
 
 var prevhover : Vector2i = Vector2i(0,0)
 
@@ -60,13 +62,27 @@ const FOUR_NEIGHBOR_DIF = [Vector2i(0,0),Vector2i(1,0),Vector2i(0,1),Vector2i(-1
 const EIGHT_NEIGHBOR_DIF = [Vector2i(0,0),Vector2i(1,0),Vector2i(1,1),Vector2i(0,1),
 Vector2i(-1,1),Vector2i(-1,0),Vector2i(-1,-1),Vector2i(0,-1),Vector2i(1,-1)]
 
+#stores coordinate of buildings
+var buildings = {}
+
+#if the Vector2i(8,12) is filled with water, true
+var game_over = false
+
 #start with 100 money and 0 score
 var balance = 100
 var score = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass #no function needed here at the moment
+	#find buildings and put into variable
+	for x in range(1,16):
+		for y in range(1,12):
+			var curr_pos = Vector2i(x,y)
+			var building_tile_data = tile_map.get_cell_tile_data(building_layer, curr_pos)
+			
+			#if the building belongs to category 6 (breakables), add it to building dist {pos:0 water level}
+			if building_tile_data and building_tile_data.get_custom_data(tile_category_custom_data) == 6:
+				buildings[curr_pos]=0
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 # Go to Project Setting -> Physics -> Common to see number of cycles per second
@@ -140,7 +156,7 @@ func _input(event):
 			#if following conditions are met, set cell to riverbed
 			if can_dig(eight_sur_tiles) and  check_and_reduce_balance(1):
 				
-				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, riverbed_atlas_coord) #set cell to riverbed 
+				tile_map.set_cell(ground_layer, tile_mouse_pos, source_id, riverbed_atlas_coord) #set cell to riverbed 
 				dig_undig_sfx.play(0.2) #sound effect starts
 				
 			else:
@@ -152,7 +168,7 @@ func _input(event):
 			
 			if can_undig(eight_sur_tiles, tile_mouse_pos) and  check_and_reduce_balance(1):
 				
-				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, ground_atlas_coord)#change cell to ground
+				tile_map.set_cell(ground_layer, tile_mouse_pos, source_id, ground_atlas_coord)#change cell to ground
 				dig_undig_sfx.play(0.2)#soundeffect
 				
 			else:
@@ -167,7 +183,7 @@ func _input(event):
 			if can_place_pump(eight_sur_tiles) and  check_and_reduce_balance(5):
 				
 				#set pump
-				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, pump_atlas_coord)
+				tile_map.set_cell(ground_layer, tile_mouse_pos, source_id, pump_atlas_coord)
 				hammer_sfx.play() #for construction
 				
 				num_pump_running += 1
@@ -196,7 +212,7 @@ func _input(event):
 				destruction_sfx.play()
 					
 				#change back to ground
-				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, ground_atlas_coord)
+				tile_map.set_cell(ground_layer, tile_mouse_pos, source_id, ground_atlas_coord)
 				
 			else:
 				error_sfx.play()
@@ -211,7 +227,7 @@ func _input(event):
 			if can_place_cistern(eight_sur_tiles) and  check_and_reduce_balance(2):
 				
 				#set cistern
-				tile_map.set_cell(ground_layor, tile_mouse_pos, source_id, cistern_atlas_coord)
+				tile_map.set_cell(ground_layer, tile_mouse_pos, source_id, cistern_atlas_coord)
 				hammer_sfx.play()#constructing sound
 			else:
 				error_sfx.play()
@@ -231,8 +247,6 @@ func highlight_tile(prev_hover):
 	var eight_sur_tiles = get_eight_neighbor_category(tile_mouse_pos)
 	var four_sur_tiles = get_four_neighbor_category(tile_mouse_pos)
 	var source_id = 1
-	
-	var highlight_layer = 2
 	
 	var highlight_cannot_set_coord = Vector2i(0,2) #red highlight tile
 	var highlight_can_set_coord = Vector2i(2,2) #blue highlight tile
@@ -353,7 +367,107 @@ func _on_money_timer_timeout():
 	balance += 5
 	update_counter(COUNTER.MONEY)
 	
+
 	timer.wait_time *= 0.9
+
+
+func _on_flood_timer_timeout():
+	print(buildings)
+	var broken_buildings = []
+	
+	for curr_pos in buildings:
+		
+		var four_sur_tiles = get_four_neighbor_category(curr_pos)
+		
+		#if there are river tile in the neighboring four tiles
+		if 	four_sur_tiles.any(func(c): return c==3):
+			broken_buildings = building_inc_water_level(curr_pos, broken_buildings)
+			
+	#if there is broken building, remove list of buildings to be considered in the future
+	if broken_buildings:
+		for b in broken_buildings:
+			buildings.erase(b)
+			
+func _on_game_over_timer_timeout():
+	if game_over:
+		#inc water level and destruct
+		for x in range(1, 8):
+			var curr_pos1 = Vector2i(x, 12)
+			var right_curr_pos1 = Vector2i(x+1, 12)
+			var curr_pos2 = Vector2i(16-x,12)
+			var left_curr_pos2 = Vector2i(15-x, 12)
+			
+			var river_tiles = [Vector2i(2,0), Vector2i(3,0), Vector2i(4,0)]
+			
+			var is_river_right = tile_map.get_cell_atlas_coords(flood_layer, right_curr_pos1) in river_tiles or\
+								tile_map.get_cell_atlas_coords(ground_layer, right_curr_pos1) in river_tiles
+			var is_river_left = tile_map.get_cell_atlas_coords(flood_layer, left_curr_pos2) in river_tiles or\
+								tile_map.get_cell_atlas_coords(ground_layer, left_curr_pos2) in river_tiles
+			print(right_curr_pos1, left_curr_pos2)
+			
+			#if right or left tile is flooded, curr_pos is also flooded
+			if 	is_river_right:
+				building_inc_water_level(curr_pos1, [])
+				
+			if is_river_left:
+				building_inc_water_level(curr_pos2, [])
+		return 
+		
+	const GAME_OVER_TILE = Vector2i(8,12)
+	var is_game_over_pos_river = tile_map.get_cell_atlas_coords(ground_layer, GAME_OVER_TILE) == Vector2i(2,0)
+	
+	#if Vector2i(8,12) is filled with water, gameover
+	if is_game_over_pos_river:
+	
+		buildings[GAME_OVER_TILE] = 0
+		building_inc_water_level(GAME_OVER_TILE, [])
+		
+		for x in range(1, 8):
+			var curr_pos1 = Vector2i(x, 12)
+			var curr_pos2 = Vector2i(16-x,12)
+			buildings[curr_pos1] = 0
+			buildings[curr_pos2] = 0
+		
+		game_over = true
+			
+func building_inc_water_level(curr_pos, broken_buildings):
+	var ground_layer = 0
+	var building_layer = 1
+	var flood_layer = 2
+		
+	var water_source_id = 0
+	var building_source_id = 1
+		
+	var shallow_water = Vector2i(2,0)
+	var deep_water = Vector2i(3,0)
+	var deepest_water = Vector2i(4,0)
+	var broken_house_diff = Vector2i(0,1)
+		
+	#add water over building
+	if buildings[curr_pos] == 0:
+		tile_map.set_cell(flood_layer, curr_pos, water_source_id, shallow_water)
+				
+	#increment water depth
+	elif buildings[curr_pos] == 1:
+		tile_map.set_cell(flood_layer, curr_pos, water_source_id, deep_water)
+				
+	#graphic of broken house
+	elif buildings[curr_pos] == 2:
+		var original_building = tile_map.get_cell_atlas_coords(building_layer, curr_pos)
+		tile_map.set_cell(building_layer, curr_pos, building_source_id, original_building+broken_house_diff)
+				
+	#house is broken and becomes deep water
+	elif buildings[curr_pos] == 3:
+		tile_map.set_cell(building_layer, curr_pos) #remove building
+		tile_map.set_cell(flood_layer, curr_pos) #remove water in flood layer
+		tile_map.set_cell(ground_layer, curr_pos, water_source_id, deep_water)#add water in ground layer
+				
+		broken_buildings.append(curr_pos)
+				
+		destruction_sfx.play()
+					
+	buildings[curr_pos] += 1
+	return broken_buildings
 	
 func drain_four_neighbor_river(curr_pos, source_id):
 	var four_sur_tiles = get_four_neighbor_category(curr_pos)
@@ -381,9 +495,15 @@ func get_four_neighbor_category(curr_pos):
 	var neighbor_tiles = [0,0,0,0,0]
 	
 	for i in range(5):
-		var tile_data : TileData = tile_map.get_cell_tile_data(ground_layor, curr_pos + FOUR_NEIGHBOR_DIF[i])
-		if tile_data:
-			neighbor_tiles[i] = tile_data.get_custom_data(tile_category_custom_data)
+		var ground_tile_data : TileData = tile_map.get_cell_tile_data(ground_layer, curr_pos + FOUR_NEIGHBOR_DIF[i])
+		var building_tile_data : TileData = tile_map.get_cell_tile_data(building_layer, curr_pos + FOUR_NEIGHBOR_DIF[i])
+		
+		if ground_tile_data:
+			neighbor_tiles[i] = ground_tile_data.get_custom_data(tile_category_custom_data)
+			
+		#overwrite if there is buildings
+		if building_tile_data:
+			neighbor_tiles[i] = building_tile_data.get_custom_data(tile_category_custom_data)
 			
 	return neighbor_tiles
 	
@@ -393,9 +513,13 @@ func get_eight_neighbor_category(curr_pos):
 	
 	#for each neighboring tiles (curr, right, rightdown, down, downleft, left, leftup, up, upright)
 	for i in range(9):
-		var tile_data : TileData = tile_map.get_cell_tile_data(ground_layor, curr_pos + EIGHT_NEIGHBOR_DIF[i])
-		if tile_data:
-			neighbor_tiles[i] = tile_data.get_custom_data(tile_category_custom_data)
+		var ground_tile_data : TileData = tile_map.get_cell_tile_data(ground_layer, curr_pos + EIGHT_NEIGHBOR_DIF[i])
+		var building_tile_data : TileData = tile_map.get_cell_tile_data(building_layer, curr_pos + EIGHT_NEIGHBOR_DIF[i])
+		if ground_tile_data:
+			neighbor_tiles[i] = ground_tile_data.get_custom_data(tile_category_custom_data)
+			
+		if building_tile_data:
+			neighbor_tiles[i] = building_tile_data.get_custom_data(tile_category_custom_data)
 			
 	return neighbor_tiles
 
