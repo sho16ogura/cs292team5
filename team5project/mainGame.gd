@@ -43,7 +43,7 @@ var tile_dict = {
 	TILE.LIGHT_ON: Vector2i(4, 3),
 	TILE.LIGHT_OFF: Vector2i(4, 2),
 	#Score/Money counter tiles
-	"Neg": Vector2i(4, 1),
+	"Neg": Vector2i(3, 7),
 	"0": Vector2i(0, 4),
 	"1": Vector2i(1, 4),
 	"2": Vector2i(2, 4),
