@@ -42,7 +42,8 @@ var tile_dict = {
 	TILE.HIGH_WATER: Vector2i(4, 0),
 	TILE.LIGHT_ON: Vector2i(4, 3),
 	TILE.LIGHT_OFF: Vector2i(4, 2),
-	#Score counter tiles
+	#Score/Money counter tiles
+	"Neg": Vector2i(4, 1),
 	"0": Vector2i(0, 4),
 	"1": Vector2i(1, 4),
 	"2": Vector2i(2, 4),
@@ -389,6 +390,8 @@ func _on_flood_timer_timeout():
 		#if there are river tile in the neighboring four tiles
 		if 	four_sur_tiles.any(func(c): return c==3):
 			broken_buildings = building_inc_water_level(curr_pos, broken_buildings)
+			score -= 50
+			update_counter(COUNTER.SCORE)
 			
 	#if there is broken building, remove list of buildings to be considered in the future
 	if broken_buildings:
@@ -470,7 +473,7 @@ func building_inc_water_level(curr_pos, broken_buildings):
 		tile_map.set_cell(ground_layer, curr_pos, water_source_id, deep_water)#add water in ground layer
 				
 		broken_buildings.append(curr_pos)
-				
+		
 		destruction_sfx.play()
 					
 	buildings[curr_pos] += 1
@@ -604,9 +607,15 @@ func update_counter(counter):
 			set_tile_type(Vector2i(x+18, 6), counter_array[x])
 		return
 	else: # COUNTER.SCORE
-		var counter_array = fix_counter_array_size(str(score).split("", true))
-		for x in 7:
-			set_tile_type(Vector2i(x+18, 2), counter_array[x])
+		if score > 0:
+			var counter_array = fix_counter_array_size(str(score).split("", true))
+			for x in 7:
+				set_tile_type(Vector2i(x+18, 2), counter_array[x])
+		else:
+			var counter_array = fix_counter_array_size(str(absi(score)).split("", true))
+			for x in 7:
+				set_tile_type(Vector2i(x+18, 2), counter_array[x])
+			set_tile_type(Vector2i(18, 2), "Neg")
 		return
 
 func water_flow(tile, direction):
