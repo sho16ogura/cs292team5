@@ -166,7 +166,7 @@ func _input(event):
 		elif mode_state == MODES.UNDIG:
 			var ground_atlas_coord = Vector2i(0,0) #ground tile
 			
-			if can_undig(eight_sur_tiles, tile_mouse_pos) and  check_and_reduce_balance(1):
+			if can_undig(eight_sur_tiles, tile_mouse_pos):
 				
 				tile_map.set_cell(ground_layer, tile_mouse_pos, source_id, ground_atlas_coord)#change cell to ground
 				dig_undig_sfx.play(0.2)#soundeffect
@@ -310,17 +310,24 @@ func can_dig(eight_sur_tiles):
 	return curr_tile_is_ground and surr_tiles_are_not_outside and will_not_make_riverbed_square
 
 func can_undig(eight_sur_tiles, tile_mouse_pos):
+	var cost = 0
 	
-	#checks if the current tile is riverbed
-	var curr_tile_is_riverbed = eight_sur_tiles[0] == 2
-			
+	if check_tile(tile_mouse_pos, is_riverbed_tile):
+		cost = 1
+	elif check_tile(tile_mouse_pos, is_low_or_med_water_tile):
+		cost = 2
+	elif check_tile(tile_mouse_pos, is_high_water_tile):
+		cost = 3
+	else:
+		return false
+	
 	#if surrounding tiles contain no_data (outside border), false
 	var surr_tiles_are_not_outside = eight_sur_tiles.all(func(c): return c!=0)
 	
 	#checks the undig operation does not cut river connection
-	var no_river_connection_loss = checkRiverConnection(tile_mouse_pos)
+	var no_river_connection_loss = check_river_connection(tile_mouse_pos)
 	
-	return curr_tile_is_riverbed and surr_tiles_are_not_outside and no_river_connection_loss
+	return surr_tiles_are_not_outside and no_river_connection_loss and check_and_reduce_balance(cost)
 
 func can_place_pump(eight_sur_tiles):
 	
@@ -563,7 +570,7 @@ func _on_timer_timeout():
 					tiles_flowed_to.merge(water_flow(temp_vec, tile_directions[3]))
 
 #check if removing a tile from the river prevents there from being a continuous line of river tiles from the top to the bottom of the screen
-func checkRiverConnection(tile_pos):
+func check_river_connection(tile_pos):
 
 	var tiles_to_visit = {Vector2i(8,0): 1}
 	var tiles_checked = {}
