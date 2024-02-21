@@ -107,10 +107,11 @@ layer_3/name = "highlight"
 layer_3/tile_data = PackedInt32Array()
 
 [node name="Timer" type="Timer" parent="TileMap"]
+wait_time = 0.5
 autostart = true
 
 [node name="MoneyTimer" type="Timer" parent="TileMap"]
-wait_time = 30.0
+wait_time = 2.0
 autostart = true
 
 [node name="FloodTimer" type="Timer" parent="TileMap"]

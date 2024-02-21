@@ -72,7 +72,7 @@ var game_over = false
 var balance = 100
 var score = 0
 
-const COSTS = {"dig": 5, "undig":5, "pump": 10, "cistern": 10, "house_broken": 0}
+const COSTS = {"dig": 10, "undig":10, "pump": 20, "cistern": 20, "house_broken": 0}
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -368,15 +368,13 @@ func reduce_balance(fee):
 
 #inc money by 5 for each 30s
 func _on_money_timer_timeout():
-	balance += 5
+	balance += 1
 	update_counter(COUNTER.MONEY)
 	
-
-	timer.wait_time *= 0.9
+	timer.wait_time *= 0.99
 
 
 func _on_flood_timer_timeout():
-	print(buildings)
 	var broken_buildings = []
 	
 	for curr_pos in buildings:
@@ -402,11 +400,19 @@ func _on_flood_timer_timeout():
 			building_dec_water_level(curr_pos)
 			
 	#if there is broken building, remove list of buildings to be considered in the future
-	if broken_buildings:
+	if broken_buildings and not game_over:
 		for b in broken_buildings:
 			buildings.erase(b)
 			
 func _on_game_over_timer_timeout():
+	
+	#if the rightmost house is broken, can move on to ending
+	var can_move_on_to_ending = tile_map.get_cell_atlas_coords(ground_layer,Vector2i(15,12)) == Vector2i(3,0)
+	if can_move_on_to_ending:
+		global_lockout = true
+		print("game over!")
+		get_tree().change_scene_to_file("res://end screen/end_screen.tscn")
+		
 	if game_over:
 		#inc water level and destruct
 		for x in range(1, 8):
@@ -421,7 +427,6 @@ func _on_game_over_timer_timeout():
 								tile_map.get_cell_atlas_coords(ground_layer, right_curr_pos1) in river_tiles
 			var is_river_left = tile_map.get_cell_atlas_coords(flood_layer, left_curr_pos2) in river_tiles or\
 								tile_map.get_cell_atlas_coords(ground_layer, left_curr_pos2) in river_tiles
-			print(right_curr_pos1, left_curr_pos2)
 			
 			#if right or left tile is flooded, curr_pos is also flooded
 			if 	is_river_right:
@@ -431,6 +436,7 @@ func _on_game_over_timer_timeout():
 				building_inc_water_level(curr_pos2, [])
 		return 
 		
+	
 	const GAME_OVER_TILE = Vector2i(8,12)
 	var is_game_over_pos_river = tile_map.get_cell_atlas_coords(ground_layer, GAME_OVER_TILE) == Vector2i(2,0)
 	
@@ -447,7 +453,10 @@ func _on_game_over_timer_timeout():
 			buildings[curr_pos2] = 0
 		
 		game_over = true
-			
+		
+		timer.stop() #to stop scoring and showing destruction animation
+		$TileMap/MoneyTimer.stop() #to stop increasing money while destruction animation
+
 func building_inc_water_level(curr_pos, broken_buildings):
 		
 	var water_source_id = 0
