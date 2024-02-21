@@ -19,6 +19,8 @@ var tile_category_custom_data = "tile_category"
 @onready var error_sfx = $TileMap/error_sfx
 @onready var destruction_sfx = $TileMap/destruction_sfx
 @onready var pumping_water_sfx = $TileMap/pumping_water_sfx
+@onready var end_screen = $end_screen
+@onready var tilemap = $TileMap
 
 var num_pump_running = 0
 
@@ -403,6 +405,9 @@ func get_eight_neighbor_category(curr_pos):
 			
 	return neighbor_tiles
 
+#func get_score() -> int:
+#	return score
+	
 # 2 second pulse, check water flow. order is down, left, then right. no support for water flowing up
 func _on_timer_timeout():
 	
@@ -425,6 +430,12 @@ func _on_timer_timeout():
 	if get_tile_type(Vector2i(8, 12)) == TILE.WATER and global_lockout == false:
 		global_lockout = true
 		print("game over!")
+		#end_screen.set_score(score - 10)
+		#end_screen.visible = true
+		#tilemap.visible = false
+		#score = get_score()
+		#await get_tree().create_timer(2).timeout
+		print(score)
 		get_tree().change_scene_to_file("res://end screen/end_screen.tscn")
 	
 	for y in range(12, 0, -1):
