@@ -72,6 +72,8 @@ var game_over = false
 var balance = 100
 var score = 0
 
+const COSTS = {"dig": 5, "undig":5, "pump": 10, "cistern": 10, "house_broken": 0}
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	#find buildings and put into variable
@@ -154,7 +156,7 @@ func _input(event):
 			
 
 			#if following conditions are met, set cell to riverbed
-			if can_dig(eight_sur_tiles) and  check_and_reduce_balance(1):
+			if can_dig(eight_sur_tiles) and  check_and_reduce_balance(COSTS["dig"]):
 				
 				tile_map.set_cell(ground_layer, tile_mouse_pos, source_id, riverbed_atlas_coord) #set cell to riverbed 
 				dig_undig_sfx.play(0.2) #sound effect starts
@@ -166,7 +168,7 @@ func _input(event):
 		elif mode_state == MODES.UNDIG:
 			var ground_atlas_coord = Vector2i(0,0) #ground tile
 			
-			if can_undig(eight_sur_tiles, tile_mouse_pos) and  check_and_reduce_balance(1):
+			if can_undig(eight_sur_tiles, tile_mouse_pos) and  check_and_reduce_balance(COSTS["undig"]):
 				
 				tile_map.set_cell(ground_layer, tile_mouse_pos, source_id, ground_atlas_coord)#change cell to ground
 				dig_undig_sfx.play(0.2)#soundeffect
@@ -180,7 +182,7 @@ func _input(event):
 			var ground_atlas_coord = Vector2i(0,0) #ground tile
 			
 			#set pump, iterate and change back to ground
-			if can_place_pump(eight_sur_tiles) and  check_and_reduce_balance(5):
+			if can_place_pump(eight_sur_tiles) and  check_and_reduce_balance(COSTS["pump"]):
 				
 				#set pump
 				tile_map.set_cell(ground_layer, tile_mouse_pos, source_id, pump_atlas_coord)
@@ -200,9 +202,9 @@ func _input(event):
 					var is_cistern_neighbor = four_sur_tiles.slice(1).any(func (c): return c==5)
 			
 					if is_cistern_neighbor:
-						drain_eight_neighbor_river(tile_mouse_pos, source_id)
+						drain_eight_neighbor_river(tile_mouse_pos)
 					else:
-						drain_four_neighbor_river(tile_mouse_pos, source_id)
+						drain_four_neighbor_river(tile_mouse_pos)
 						
 				num_pump_running -= 1
 				
@@ -220,11 +222,9 @@ func _input(event):
 				
 		elif mode_state == MODES.CISTERN:
 			var cistern_atlas_coord = Vector2i(1,1) #cistern tile
-			var ground_atlas_coord = Vector2i(0,0) #ground tile
-			
 			
 			#set pump, iterate and change back to ground
-			if can_place_cistern(eight_sur_tiles) and  check_and_reduce_balance(2):
+			if can_place_cistern(eight_sur_tiles) and  check_and_reduce_balance(COSTS["cistern"]):
 				
 				#set cistern
 				tile_map.set_cell(ground_layer, tile_mouse_pos, source_id, cistern_atlas_coord)
@@ -245,7 +245,6 @@ func highlight_tile(prev_hover):
 	tile_mouse_pos = tile_mouse_pos + Vector2i(-1, -1)
 	
 	var eight_sur_tiles = get_eight_neighbor_category(tile_mouse_pos)
-	var four_sur_tiles = get_four_neighbor_category(tile_mouse_pos)
 	var source_id = 1
 	
 	var highlight_cannot_set_coord = Vector2i(0,2) #red highlight tile
@@ -361,6 +360,11 @@ func check_and_reduce_balance(fee):
 		return true
 	
 	return false
+	
+func reduce_balance(fee):
+	balance -= fee
+	update_counter(COUNTER.MONEY)
+	return true
 
 #inc money by 5 for each 30s
 func _on_money_timer_timeout():
@@ -377,11 +381,25 @@ func _on_flood_timer_timeout():
 	
 	for curr_pos in buildings:
 		
-		var four_sur_tiles = get_four_neighbor_category(curr_pos)
+		#create list of atlas coords for each four neighbor
+		var four_neighbor_coord = []		
+		for i in range(len(FOUR_NEIGHBOR_DIF)):
+			four_neighbor_coord.append(FOUR_NEIGHBOR_DIF[i]+curr_pos)
+			#four_neighbor_coord[i] = curr_pos + four_neighbor_coord[i]
 		
-		#if there are river tile in the neighboring four tiles
-		if 	four_sur_tiles.any(func(c): return c==3):
+		var is_neighbor_deep_or_deepest_river = four_neighbor_coord.any(\
+				func(c): return tile_map.get_cell_atlas_coords(ground_layer, c) in [Vector2i(3,0),Vector2i(4,0)])
+		
+		var is_neighbor_pump = four_neighbor_coord.any(\
+				func(c): return tile_map.get_cell_atlas_coords(ground_layer, c) == Vector2i(0,1) )
+			
+		#if there are river tile and no pump tiles in the neighboring four tiles, increment flood level
+		if 	is_neighbor_deep_or_deepest_river and not is_neighbor_pump:
 			broken_buildings = building_inc_water_level(curr_pos, broken_buildings)
+			
+		#if there are pump tile and no river tile in the neighboring for tiles, increment flood level
+		elif not is_neighbor_deep_or_deepest_river and is_neighbor_pump:
+			building_dec_water_level(curr_pos)
 			
 	#if there is broken building, remove list of buildings to be considered in the future
 	if broken_buildings:
@@ -431,16 +449,12 @@ func _on_game_over_timer_timeout():
 		game_over = true
 			
 func building_inc_water_level(curr_pos, broken_buildings):
-	var ground_layer = 0
-	var building_layer = 1
-	var flood_layer = 2
 		
 	var water_source_id = 0
 	var building_source_id = 1
 		
 	var shallow_water = Vector2i(2,0)
 	var deep_water = Vector2i(3,0)
-	var deepest_water = Vector2i(4,0)
 	var broken_house_diff = Vector2i(0,1)
 		
 	#add water over building
@@ -463,23 +477,48 @@ func building_inc_water_level(curr_pos, broken_buildings):
 		tile_map.set_cell(ground_layer, curr_pos, water_source_id, deep_water)#add water in ground layer
 				
 		broken_buildings.append(curr_pos)
+		
+		reduce_balance(COSTS["house_broken"])
 				
 		destruction_sfx.play()
+		
 					
 	buildings[curr_pos] += 1
 	return broken_buildings
 	
-func drain_four_neighbor_river(curr_pos, source_id):
+func building_dec_water_level(curr_pos):
+	var water_source_id = 0
+	var building_source_id = 1
+		
+	var shallow_water = Vector2i(2,0)
+	#var deep_water = Vector2i(3,0)
+	var broken_house_diff = Vector2i(0,1)
+				
+	#decrement water depth
+	if buildings[curr_pos] == 0:
+		return
+		
+	if buildings[curr_pos] == 1:
+		tile_map.set_cell(flood_layer, curr_pos)
+				
+	#decrement water level
+	elif buildings[curr_pos] == 2:
+		var original_building = tile_map.get_cell_atlas_coords(building_layer, curr_pos)
+		tile_map.set_cell(flood_layer, curr_pos, water_source_id, shallow_water)
+		tile_map.set_cell(building_layer, curr_pos, building_source_id, original_building-broken_house_diff)
+	
+	buildings[curr_pos] -= 1
+	
+func drain_four_neighbor_river(curr_pos):
 	var four_sur_tiles = get_four_neighbor_category(curr_pos)
 	
 	for i in range(1,5):
 		if four_sur_tiles[i] == 3:
 			var neighbor_pos = curr_pos + FOUR_NEIGHBOR_DIF[i]
-			var atlas_coord = Vector2i(1,0) #riverbed tile
 			
 			decrease_water_depth(neighbor_pos)
 
-func drain_eight_neighbor_river(curr_pos, source_id):
+func drain_eight_neighbor_river(curr_pos):
 	var eight_sur_tiles = get_eight_neighbor_category(curr_pos)
 	
 	#surtiles except for index 0 (current tile)
@@ -487,7 +526,6 @@ func drain_eight_neighbor_river(curr_pos, source_id):
 		#if there is river tile in the neighbor, change it to riverbed
 		if eight_sur_tiles[i] == 3:
 			var neighbor_pos = curr_pos + EIGHT_NEIGHBOR_DIF[i]
-			var atlas_coord = Vector2i(1,0) #riverbed tile
 			
 			decrease_water_depth(neighbor_pos)
 			
