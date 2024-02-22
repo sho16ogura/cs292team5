@@ -21,8 +21,8 @@ var tile_category_custom_data = "tile_category"
 @onready var error_sfx = $TileMap/error_sfx
 @onready var destruction_sfx = $TileMap/destruction_sfx
 @onready var pumping_water_sfx = $TileMap/pumping_water_sfx
-@onready var end_screen = $end_screen
-@onready var tilemap = $TileMap
+#@onready var end_screen = $end_screen
+#@onready var tilemap = $TileMap
 
 var num_pump_running = 0
 
@@ -82,6 +82,13 @@ const COSTS = {
 	"undig_deep_river": 15, 
 	"pump": 20, 
 	"cistern": 10
+}
+
+const PENALTIES = {
+	"shallow" : 20,
+	"medium" : 30,
+	"deep" : 50,
+	"broken": 200
 }
 
 # Called when the node enters the scene tree for the first time.
@@ -426,7 +433,6 @@ func _on_flood_timer_timeout():
 		if 	is_neighbor_deep_or_deepest_river and not is_neighbor_pump:
 			broken_buildings = building_inc_water_level(curr_pos, broken_buildings)
 			#score -= 50
-			update_counter(COUNTER.SCORE)
 			
 		#if there are pump tile and no river tile in the neighboring for tiles, increment flood level
 		elif not is_neighbor_deep_or_deepest_river and is_neighbor_pump:
@@ -504,16 +510,19 @@ func building_inc_water_level(curr_pos, broken_buildings):
 	#add water over building
 	if buildings[curr_pos] == 0:
 		tile_map.set_cell(flood_layer, curr_pos, water_source_id, shallow_water)
+		decrease_score(PENALTIES["shallow"])
 				
 	#increment water depth
 	elif buildings[curr_pos] == 1:
 		tile_map.set_cell(flood_layer, curr_pos, water_source_id, deep_water)
-				
+		decrease_score(PENALTIES["medium"])
+		
 	#graphic of broken house
 	elif buildings[curr_pos] == 2:
 		var original_building = tile_map.get_cell_atlas_coords(building_layer, curr_pos)
 		tile_map.set_cell(building_layer, curr_pos, building_source_id, original_building+broken_house_diff)
-				
+		decrease_score(PENALTIES["deep"])
+		
 	#house is broken and becomes deep water
 	elif buildings[curr_pos] == 3:
 		tile_map.set_cell(building_layer, curr_pos) #remove building
@@ -524,9 +533,17 @@ func building_inc_water_level(curr_pos, broken_buildings):
 		
 		destruction_sfx.play()
 		
+		decrease_score(PENALTIES["broken"])
+		
 					
 	buildings[curr_pos] += 1
 	return broken_buildings
+
+func decrease_score(penalty):
+	if not game_over:
+		score -= penalty
+		update_counter(COUNTER.SCORE)
+			
 	
 func building_dec_water_level(curr_pos):
 	var water_source_id = 0
