@@ -1,7 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://b5j3kmh5ma6mx"]
+[gd_scene load_steps=7 format=3 uid="uid://b5j3kmh5ma6mx"]
 
 [ext_resource type="Script" path="res://main menu/main menu/main_menu.gd" id="1_sn3hk"]
 [ext_resource type="Texture2D" uid="uid://eess7uyvg1uh" path="res://tile_0014.png" id="1_w8vvv"]
+[ext_resource type="AudioStream" uid="uid://rkepwtflhojx" path="res://Sakura-Girl-Beach-chosic.com_.mp3" id="4_lye30"]
+[ext_resource type="PackedScene" uid="uid://bayrvi5tdmxbb" path="res://settings menu/settings_menu.tscn" id="4_ska44"]
 
 [sub_resource type="SystemFont" id="SystemFont_iqhrx"]
 font_names = PackedStringArray("Impact")
@@ -37,7 +39,7 @@ anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 offset_right = -913.0
-offset_bottom = -791.0
+offset_bottom = -643.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 12
@@ -69,7 +71,7 @@ alignment = 1
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2
-theme_override_constants/separation = 32
+theme_override_constants/separation = 22
 alignment = 1
 
 [node name="Separator2" type="Control" parent="MarginContainer/HBoxContainer/VBoxContainer"]
@@ -83,9 +85,28 @@ theme_override_font_sizes/font_size = 24
 text = "Start Game
 "
 
+[node name="Settings_Button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(120, 32)
+layout_mode = 2
+theme_override_fonts/font = SubResource("SystemFont_ef1sv")
+theme_override_font_sizes/font_size = 24
+text = "Instruction"
+
 [node name="Exit_Button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(120, 32)
 layout_mode = 2
 theme_override_fonts/font = SubResource("SystemFont_ef1sv")
 theme_override_font_sizes/font_size = 24
 text = "Exit Game"
+
+[node name="Settings_Menu" parent="." instance=ExtResource("4_ska44")]
+visible = false
+layout_mode = 1
+offset_left = -458.0
+offset_top = 19.0
+offset_right = -458.0
+offset_bottom = -770.0
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_lye30")
+autoplay = true
