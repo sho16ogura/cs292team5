@@ -549,21 +549,24 @@ func building_dec_water_level(curr_pos):
 	var building_source_id = 1
 		
 	var shallow_water = Vector2i(2,0)
-	#var deep_water = Vector2i(3,0)
+	var deep_water = Vector2i(3,0)
 	var broken_house_diff = Vector2i(0,1)
 				
 	#decrement water depth
 	if buildings[curr_pos] == 0:
 		return
 		
-	if buildings[curr_pos] == 1:
+	elif buildings[curr_pos] == 1:
 		tile_map.set_cell(flood_layer, curr_pos)
+		
+	elif buildings[curr_pos] == 2:
+		tile_map.set_cell(flood_layer, curr_pos, water_source_id, shallow_water)
 				
 	#decrement water level
-	elif buildings[curr_pos] == 2:
+	elif buildings[curr_pos] == 3:
 		var original_building = tile_map.get_cell_atlas_coords(building_layer, curr_pos)
-		tile_map.set_cell(flood_layer, curr_pos, water_source_id, shallow_water)
-		tile_map.set_cell(building_layer, curr_pos, building_source_id, original_building-broken_house_diff)
+		tile_map.set_cell(flood_layer, curr_pos, water_source_id, deep_water)
+		tile_map.set_cell(building_layer, curr_pos, building_source_id, original_building+broken_house_diff)
 	
 	buildings[curr_pos] -= 1
 	

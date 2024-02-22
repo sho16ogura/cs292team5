@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://b5j3kmh5ma6mx"]
+[gd_scene load_steps=7 format=3 uid="uid://b5j3kmh5ma6mx"]
 
 [ext_resource type="Script" path="res://main menu/main menu/main_menu.gd" id="1_sn3hk"]
 [ext_resource type="Texture2D" uid="uid://eess7uyvg1uh" path="res://tile_0014.png" id="1_w8vvv"]
+[ext_resource type="AudioStream" uid="uid://rkepwtflhojx" path="res://Sakura-Girl-Beach-chosic.com_.mp3" id="4_lye30"]
 [ext_resource type="PackedScene" uid="uid://bayrvi5tdmxbb" path="res://settings menu/settings_menu.tscn" id="4_ska44"]
 
 [sub_resource type="SystemFont" id="SystemFont_iqhrx"]
@@ -105,3 +106,7 @@ offset_left = -458.0
 offset_top = 19.0
 offset_right = -458.0
 offset_bottom = -770.0
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_lye30")
+autoplay = true
