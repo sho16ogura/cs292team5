@@ -21,6 +21,8 @@ var tile_category_custom_data = "tile_category"
 @onready var error_sfx = $TileMap/error_sfx
 @onready var destruction_sfx = $TileMap/destruction_sfx
 @onready var pumping_water_sfx = $TileMap/pumping_water_sfx
+#@onready var end_screen = $end_screen
+#@onready var tilemap = $TileMap
 
 var num_pump_running = 0
 
@@ -82,6 +84,13 @@ const COSTS = {
 	"cistern": 10
 }
 
+const PENALTIES = {
+	"shallow" : 20,
+	"medium" : 30,
+	"deep" : 50,
+	"broken": 200
+}
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	#find buildings and put into variable
@@ -108,8 +117,13 @@ func _input(event):
 		#update prevhover (to delete previous highlight) and add highlight for current tile
 		prevhover = highlight_tile(prevhover)
 		
+	if Input.is_action_just_pressed("pause"):
+		#get_tree().change_scene_to_file("res://pause menu/pause_menu.tscn")
+		#Global.switch_scene_without_reset("res://pause menu/pause_menu.tscn")
+		pass
+		
 	#if toggle_dig (J) is pressed, mode change to dig mode
-	if Input.is_action_just_pressed("toggle_dig"):
+	elif Input.is_action_just_pressed("toggle_dig"):
 		mode_state = MODES.DIG
 		print("dig mode")
 		set_tile_type(light_on_location, TILE.LIGHT_OFF)
@@ -418,9 +432,6 @@ func _on_flood_timer_timeout():
 		#if there are river tile and no pump tiles in the neighboring four tiles, increment flood level
 		if 	is_neighbor_deep_or_deepest_river and not is_neighbor_pump:
 			broken_buildings = building_inc_water_level(curr_pos, broken_buildings)
-			if global_lockout == false:
-				score -= 50
-				update_counter(COUNTER.SCORE)
 			
 		#if there are pump tile and no river tile in the neighboring for tiles, increment flood level
 		elif not is_neighbor_deep_or_deepest_river and is_neighbor_pump:
@@ -438,7 +449,9 @@ func _on_game_over_timer_timeout():
 	if can_move_on_to_ending:
 		global_lockout = true
 		print("game over!")
-		get_tree().change_scene_to_file("res://end screen/end_screen.tscn")
+		Global.score = score
+	
+		Global.switch_scene("res://end screen/end_screen.tscn")
 		
 	if game_over:
 		#inc water level and destruct
@@ -496,16 +509,19 @@ func building_inc_water_level(curr_pos, broken_buildings):
 	#add water over building
 	if buildings[curr_pos] == 0:
 		tile_map.set_cell(flood_layer, curr_pos, water_source_id, shallow_water)
+		decrease_score(PENALTIES["shallow"])
 				
 	#increment water depth
 	elif buildings[curr_pos] == 1:
 		tile_map.set_cell(flood_layer, curr_pos, water_source_id, deep_water)
-				
+		decrease_score(PENALTIES["medium"])
+		
 	#graphic of broken house
 	elif buildings[curr_pos] == 2:
 		var original_building = tile_map.get_cell_atlas_coords(building_layer, curr_pos)
 		tile_map.set_cell(building_layer, curr_pos, building_source_id, original_building+broken_house_diff)
-				
+		decrease_score(PENALTIES["deep"])
+		
 	#house is broken and becomes deep water
 	elif buildings[curr_pos] == 3:
 		tile_map.set_cell(building_layer, curr_pos) #remove building
@@ -516,30 +532,42 @@ func building_inc_water_level(curr_pos, broken_buildings):
 		
 		destruction_sfx.play()
 		
+		decrease_score(PENALTIES["broken"])
+		
 					
 	buildings[curr_pos] += 1
 	return broken_buildings
+
+func decrease_score(penalty):
+	if not game_over:
+		score -= penalty
+		update_counter(COUNTER.SCORE)
+			
 	
 func building_dec_water_level(curr_pos):
 	var water_source_id = 0
 	var building_source_id = 1
 		
 	var shallow_water = Vector2i(2,0)
-	#var deep_water = Vector2i(3,0)
+	var deep_water = Vector2i(3,0)
 	var broken_house_diff = Vector2i(0,1)
 				
 	#decrement water depth
 	if buildings[curr_pos] == 0:
 		return
 		
-	if buildings[curr_pos] == 1:
+	elif buildings[curr_pos] == 1:
 		tile_map.set_cell(flood_layer, curr_pos)
+		
+	elif buildings[curr_pos] == 2:
+		tile_map.set_cell(flood_layer, curr_pos, water_source_id, shallow_water)
 				
 	#decrement water level
-	elif buildings[curr_pos] == 2:
-		var original_building = tile_map.get_cell_atlas_coords(building_layer, curr_pos)
-		tile_map.set_cell(flood_layer, curr_pos, water_source_id, shallow_water)
-		tile_map.set_cell(building_layer, curr_pos, building_source_id, original_building-broken_house_diff)
+	elif buildings[curr_pos] == 3:
+		return
+		#var original_building = tile_map.get_cell_atlas_coords(building_layer, curr_pos)
+		#tile_map.set_cell(flood_layer, curr_pos, water_source_id, deep_water)
+		#tile_map.set_cell(building_layer, curr_pos, building_source_id, original_building+broken_house_diff)
 	
 	buildings[curr_pos] -= 1
 	
@@ -595,6 +623,9 @@ func get_eight_neighbor_category(curr_pos):
 			
 	return neighbor_tiles
 
+#func get_score() -> int:
+#	return score
+	
 # 2 second pulse, check water flow. order is down, left, then right. no support for water flowing up
 func _on_timer_timeout():
 	
@@ -616,9 +647,17 @@ func _on_timer_timeout():
 			tiles_flowed_to[Vector2i(8,1)] = 1
 	
 	if get_tile_type(Vector2i(8, 12)) == TILE.WATER and global_lockout == false:
-		global_lockout = true
-		print("game over!")
-		get_tree().change_scene_to_file("res://end screen/end_screen.tscn")
+		pass
+		#global_lockout = true
+		#print("game over!")
+		#end_screen.set_score(score - 10)
+		#end_screen.visible = true
+		#tilemap.visible = false
+		#score = get_score()
+		#await get_tree().create_timer(2).timeout
+		#print(score)
+		#Global.score = score
+		#get_tree().change_scene_to_file("res://end screen/end_screen.tscn")
 	
 	for y in range(12, 0, -1):
 		for x in range(16, 0 , -1):
