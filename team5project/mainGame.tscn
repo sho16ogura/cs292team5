@@ -1,7 +1,7 @@
 [gd_scene load_steps=14 format=3 uid="uid://yque0owxfk04"]
 
 [ext_resource type="Script" path="res://mainGame.gd" id="1_n7f0u"]
-[ext_resource type="Texture2D" uid="uid://dai2gfitcugp6" path="res://tileset_0.6.1.png" id="2_gx5xf"]
+[ext_resource type="Texture2D" uid="uid://dai2gfitcugp6" path="res://tileset_0.6.1.png" id="2_go7m6"]
 [ext_resource type="AudioStream" uid="uid://duqktdpccx1si" path="res://dig-undig.wav" id="3_k130k"]
 [ext_resource type="Texture2D" uid="uid://cmayp06vjjacm" path="res://buildings_rock_tree_highlight.png" id="3_vsg0t"]
 [ext_resource type="AudioStream" uid="uid://t8fmqk2owta7" path="res://hammer.mp3" id="4_58vkq"]
@@ -11,8 +11,8 @@
 [ext_resource type="PackedScene" uid="uid://mkomnbmd7eoh" path="res://end screen/end_screen.tscn" id="9_b40u0"]
 [ext_resource type="PackedScene" uid="uid://cqpx1ehejg0ob" path="res://pause menu/pause_menu.tscn" id="10_wqmq7"]
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_odmwb"]
-texture = ExtResource("2_gx5xf")
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_foav8"]
+texture = ExtResource("2_go7m6")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 0:0/0/custom_data_0 = 1
@@ -90,7 +90,7 @@ tile_size = Vector2i(32, 32)
 custom_data_layer_0/name = "tile_category"
 custom_data_layer_0/type = 2
 sources/1 = SubResource("TileSetAtlasSource_n0c1u")
-sources/0 = SubResource("TileSetAtlasSource_odmwb")
+sources/0 = SubResource("TileSetAtlasSource_foav8")
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource("1_n7f0u")

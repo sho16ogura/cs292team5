@@ -420,8 +420,9 @@ func _on_flood_timer_timeout():
 		#if there are river tile and no pump tiles in the neighboring four tiles, increment flood level
 		if 	is_neighbor_deep_or_deepest_river and not is_neighbor_pump:
 			broken_buildings = building_inc_water_level(curr_pos, broken_buildings)
-			score -= 50
-			update_counter(COUNTER.SCORE)
+			if global_lockout == false:
+				score -= 50
+				update_counter(COUNTER.SCORE)
 			
 		#if there are pump tile and no river tile in the neighboring for tiles, increment flood level
 		elif not is_neighbor_deep_or_deepest_river and is_neighbor_pump:
