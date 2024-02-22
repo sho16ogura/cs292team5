@@ -5,7 +5,7 @@ extends Control
 @onready var exit_button = $MarginContainer/HBoxContainer/VBoxContainer/Exit_Button as Button
 @onready var settings_button = $MarginContainer/HBoxContainer/VBoxContainer/Settings_Button as Button
 #@onready var instruction_button = $MarginContainer/HBoxContainer/VBoxContainer/Instruction_Button as Button
-@onready var start_level = preload("res://mainGame.tscn") as PackedScene
+#@onready var start_level = preload("res://mainGame.tscn") as PackedScene
 @onready var settings_menu = $Settings_Menu as SettingsMenu
 @onready var margin_container = $MarginContainer as MarginContainer
 
@@ -13,7 +13,8 @@ func _ready():
 	handling_connecting_signals()
 	
 func on_start_pressed() -> void:
-	get_tree().change_scene_to_packed(start_level)
+	Global.switch_scene("res://mainGame.tscn")
+	#get_tree().change_scene_to_packed(start_level)
 
 func on_exit_pressed() -> void:
 	get_tree().quit()

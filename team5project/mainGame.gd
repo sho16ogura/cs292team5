@@ -110,8 +110,13 @@ func _input(event):
 		#update prevhover (to delete previous highlight) and add highlight for current tile
 		prevhover = highlight_tile(prevhover)
 		
+	if Input.is_action_just_pressed("pause"):
+		#get_tree().change_scene_to_file("res://pause menu/pause_menu.tscn")
+		#Global.switch_scene_without_reset("res://pause menu/pause_menu.tscn")
+		pass
+		
 	#if toggle_dig (J) is pressed, mode change to dig mode
-	if Input.is_action_just_pressed("toggle_dig"):
+	elif Input.is_action_just_pressed("toggle_dig"):
 		mode_state = MODES.DIG
 		print("dig mode")
 		set_tile_type(light_on_location, TILE.LIGHT_OFF)
@@ -420,7 +425,7 @@ func _on_flood_timer_timeout():
 		#if there are river tile and no pump tiles in the neighboring four tiles, increment flood level
 		if 	is_neighbor_deep_or_deepest_river and not is_neighbor_pump:
 			broken_buildings = building_inc_water_level(curr_pos, broken_buildings)
-			score -= 50
+			#score -= 50
 			update_counter(COUNTER.SCORE)
 			
 		#if there are pump tile and no river tile in the neighboring for tiles, increment flood level
@@ -439,7 +444,9 @@ func _on_game_over_timer_timeout():
 	if can_move_on_to_ending:
 		global_lockout = true
 		print("game over!")
-		get_tree().change_scene_to_file("res://end screen/end_screen.tscn")
+		Global.score = score
+	
+		Global.switch_scene("res://end screen/end_screen.tscn")
 		
 	if game_over:
 		#inc water level and destruct
@@ -620,15 +627,17 @@ func _on_timer_timeout():
 			tiles_flowed_to[Vector2i(8,1)] = 1
 	
 	if get_tile_type(Vector2i(8, 12)) == TILE.WATER and global_lockout == false:
-		global_lockout = true
-		print("game over!")
+		pass
+		#global_lockout = true
+		#print("game over!")
 		#end_screen.set_score(score - 10)
 		#end_screen.visible = true
 		#tilemap.visible = false
 		#score = get_score()
 		#await get_tree().create_timer(2).timeout
-		print(score)
-		get_tree().change_scene_to_file("res://end screen/end_screen.tscn")
+		#print(score)
+		#Global.score = score
+		#get_tree().change_scene_to_file("res://end screen/end_screen.tscn")
 	
 	for y in range(12, 0, -1):
 		for x in range(16, 0 , -1):
