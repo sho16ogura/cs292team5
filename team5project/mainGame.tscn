@@ -1,7 +1,7 @@
 [gd_scene load_steps=14 format=3 uid="uid://yque0owxfk04"]
 
 [ext_resource type="Script" path="res://mainGame.gd" id="1_n7f0u"]
-[ext_resource type="Texture2D" uid="uid://dai2gfitcugp6" path="res://tileset_0.6.1.png" id="2_gx5xf"]
+[ext_resource type="Texture2D" uid="uid://41jmijnypst2" path="res://tileset_0.6.png" id="2_2dyma"]
 [ext_resource type="AudioStream" uid="uid://duqktdpccx1si" path="res://dig-undig.wav" id="3_k130k"]
 [ext_resource type="Texture2D" uid="uid://cmayp06vjjacm" path="res://buildings_rock_tree_highlight.png" id="3_vsg0t"]
 [ext_resource type="AudioStream" uid="uid://t8fmqk2owta7" path="res://hammer.mp3" id="4_58vkq"]
@@ -11,8 +11,8 @@
 [ext_resource type="PackedScene" uid="uid://mkomnbmd7eoh" path="res://end screen/end_screen.tscn" id="9_pphkb"]
 [ext_resource type="PackedScene" uid="uid://cqpx1ehejg0ob" path="res://pause menu/pause_menu.tscn" id="10_y5324"]
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_odmwb"]
-texture = ExtResource("2_gx5xf")
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_25llh"]
+texture = ExtResource("2_2dyma")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 0:0/0/custom_data_0 = 1
@@ -59,7 +59,6 @@ texture_region_size = Vector2i(32, 32)
 0:7/0 = 0
 1:7/0 = 0
 2:7/0 = 0
-3:7/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_n0c1u"]
 texture = ExtResource("3_vsg0t")
@@ -89,8 +88,8 @@ texture_region_size = Vector2i(32, 32)
 tile_size = Vector2i(32, 32)
 custom_data_layer_0/name = "tile_category"
 custom_data_layer_0/type = 2
+sources/0 = SubResource("TileSetAtlasSource_25llh")
 sources/1 = SubResource("TileSetAtlasSource_n0c1u")
-sources/0 = SubResource("TileSetAtlasSource_odmwb")
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource("1_n7f0u")
@@ -110,11 +109,10 @@ layer_3/name = "highlight"
 layer_3/tile_data = PackedInt32Array()
 
 [node name="Timer" type="Timer" parent="TileMap"]
-wait_time = 0.5
 autostart = true
 
 [node name="MoneyTimer" type="Timer" parent="TileMap"]
-wait_time = 2.0
+wait_time = 30.0
 autostart = true
 
 [node name="FloodTimer" type="Timer" parent="TileMap"]
