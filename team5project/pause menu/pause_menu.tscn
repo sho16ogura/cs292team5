@@ -1,8 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://cqpx1ehejg0ob"]
+[gd_scene load_steps=5 format=3 uid="uid://cqpx1ehejg0ob"]
 
 [ext_resource type="Script" path="res://pause_menu.gd" id="1_4yw8a"]
 [ext_resource type="Texture2D" uid="uid://eess7uyvg1uh" path="res://tile_0014.png" id="2_lpafv"]
-[ext_resource type="PackedScene" uid="uid://bayrvi5tdmxbb" path="res://settings menu/settings_menu.tscn" id="3_oeqh2"]
 
 [sub_resource type="SystemFont" id="SystemFont_yj0ut"]
 font_names = PackedStringArray("Impact")
@@ -72,14 +71,4 @@ layout_mode = 2
 theme_override_fonts/font = SubResource("SystemFont_junjl")
 text = "Resume Game"
 
-[node name="Instruction_Button" type="Button" parent="GridContainer"]
-layout_mode = 2
-theme_override_fonts/font = SubResource("SystemFont_junjl")
-text = "Instruction"
-
-[node name="Settings_Menu" parent="." instance=ExtResource("3_oeqh2")]
-visible = false
-layout_mode = 1
-
 [connection signal="pressed" from="GridContainer/Resume_Button" to="." method="_on_resume_button_pressed"]
-[connection signal="pressed" from="GridContainer/Instruction_Button" to="." method="_on_instruction_button_pressed"]

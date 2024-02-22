@@ -8,6 +8,7 @@ extends Control
 @onready var start_level = preload("res://mainGame.tscn") as PackedScene
 @onready var settings_menu = $Settings_Menu as SettingsMenu
 @onready var margin_container = $MarginContainer as MarginContainer
+#@onready var main_game = $Node2D
 
 func _ready():
 	handling_connecting_signals()

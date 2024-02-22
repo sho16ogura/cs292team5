@@ -1,8 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://mkomnbmd7eoh"]
+[gd_scene load_steps=5 format=3 uid="uid://mkomnbmd7eoh"]
 
 [ext_resource type="Script" path="res://end screen/end_screen.gd" id="1_dx8cw"]
 [ext_resource type="Texture2D" uid="uid://bow4opl3ptpvq" path="res://tile_0014_end_game.png" id="1_qn51r"]
-[ext_resource type="AudioStream" uid="uid://con41i8e4thap" path="res://Sakura-Girl-Peach-chosic.com_.mp3" id="3_6pwnc"]
 
 [sub_resource type="SystemFont" id="SystemFont_2ifao"]
 font_names = PackedStringArray("Impact")
@@ -93,7 +92,3 @@ layout_mode = 2
 theme_override_fonts/font = SubResource("SystemFont_gqcxq")
 theme_override_font_sizes/font_size = 24
 text = "Main Menu"
-
-[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("3_6pwnc")
-autoplay = true
