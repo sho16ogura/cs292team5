@@ -61,15 +61,18 @@ layout_direction = 1
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
+theme_override_colors/font_color = Color(0.764706, 0.698039, 0.890196, 0.192157)
 theme_override_fonts/font = SubResource("SystemFont_y0byd")
 text = "* Your goal is stopping the water from reaching the bottom of the screen.
 * Controls:
 - Mouse to select and click tiles change
+- Space to pause the game
 - A: to remove river tiles (you cannot prevent the river from reaching the bottom of the screen)
 - S: to place riverbed tiles (default, cannot make a square)
 - D:  to place pumps (pump drains neighboring four tiles) 
 - F: to place cisterns (improves efficiency of pump, need to be placed next to pump)
 "
+editable = false
 virtual_keyboard_enabled = false
 middle_mouse_paste_enabled = false
 
