@@ -564,9 +564,10 @@ func building_dec_water_level(curr_pos):
 				
 	#decrement water level
 	elif buildings[curr_pos] == 3:
-		var original_building = tile_map.get_cell_atlas_coords(building_layer, curr_pos)
-		tile_map.set_cell(flood_layer, curr_pos, water_source_id, deep_water)
-		tile_map.set_cell(building_layer, curr_pos, building_source_id, original_building+broken_house_diff)
+		return
+		#var original_building = tile_map.get_cell_atlas_coords(building_layer, curr_pos)
+		#tile_map.set_cell(flood_layer, curr_pos, water_source_id, deep_water)
+		#tile_map.set_cell(building_layer, curr_pos, building_source_id, original_building+broken_house_diff)
 	
 	buildings[curr_pos] -= 1
 	
