@@ -626,7 +626,7 @@ func _on_timer_timeout():
 	if get_tile_type(Vector2i(8, 12)) == TILE.WATER and global_lockout == false:
 		global_lockout = true
 		print("game over!")
-		end_screen.set_score(score)
+		end_screen.set_score(score + 10)
 		end_screen.visible = true
 		tilemap.visible = false
 		print(score)
