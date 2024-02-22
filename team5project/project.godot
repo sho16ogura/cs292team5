@@ -13,6 +13,7 @@ config_version=5
 config/name="team5provisional"
 run/main_scene="res://main menu/main menu/main_menu.tscn"
 config/features=PackedStringArray("4.2", "Mobile")
+run/max_fps=60
 config/icon="res://icon.svg"
 
 [autoload]
@@ -24,6 +25,7 @@ Global="*res://global.gd"
 window/size/viewport_width=854
 window/size/viewport_height=480
 window/stretch/mode="viewport"
+window/vsync/vsync_mode=0
 
 [input]
 
