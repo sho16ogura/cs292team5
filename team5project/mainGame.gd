@@ -439,7 +439,10 @@ func _on_game_over_timer_timeout():
 	if can_move_on_to_ending:
 		global_lockout = true
 		print("game over!")
-		get_tree().change_scene_to_file("res://end screen/end_screen.tscn")
+		tilemap.visible = false
+		end_screen.set_score(score - 10)
+		end_screen.visible = true
+		# get_tree().change_scene_to_file("res://end screen/end_screen.tscn")
 		
 	if game_over:
 		#inc water level and destruct

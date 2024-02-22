@@ -8,8 +8,8 @@
 [ext_resource type="AudioStream" uid="uid://d1twaokdntpq7" path="res://error.wav" id="5_hj26o"]
 [ext_resource type="AudioStream" uid="uid://cbhjguvy5pxft" path="res://destruction.wav" id="6_1mp51"]
 [ext_resource type="AudioStream" uid="uid://q1sc303erpj0" path="res://pumping-water.mp3" id="7_5c7lh"]
-[ext_resource type="PackedScene" uid="uid://mkomnbmd7eoh" path="res://end screen/end_screen.tscn" id="9_pphkb"]
-[ext_resource type="PackedScene" uid="uid://cqpx1ehejg0ob" path="res://pause menu/pause_menu.tscn" id="10_y5324"]
+[ext_resource type="PackedScene" uid="uid://mkomnbmd7eoh" path="res://end screen/end_screen.tscn" id="9_b40u0"]
+[ext_resource type="PackedScene" uid="uid://cqpx1ehejg0ob" path="res://pause menu/pause_menu.tscn" id="10_wqmq7"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_odmwb"]
 texture = ExtResource("2_gx5xf")
@@ -140,20 +140,23 @@ stream = ExtResource("6_1mp51")
 [node name="pumping_water_sfx" type="AudioStreamPlayer" parent="TileMap"]
 stream = ExtResource("7_5c7lh")
 
-[node name="end_screen" parent="." instance=ExtResource("9_pphkb")]
+[node name="end_screen" parent="." instance=ExtResource("9_b40u0")]
 visible = false
-custom_minimum_size = Vector2(100, 400)
-offset_left = 2.0
-offset_top = 2.0
-offset_right = 852.0
-offset_bottom = 477.0
+custom_minimum_size = Vector2(400, 200)
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_right = 856.0
+offset_bottom = 481.0
+grow_horizontal = 1
+grow_vertical = 1
 
-[node name="pause_menu" parent="." instance=ExtResource("10_y5324")]
+[node name="pause_menu" parent="." instance=ExtResource("10_wqmq7")]
 visible = false
-offset_left = 435.0
-offset_top = 241.0
-offset_right = 435.0
-offset_bottom = 241.0
+offset_left = 434.0
+offset_top = 240.0
+offset_right = 434.0
+offset_bottom = 240.0
 
 [connection signal="timeout" from="TileMap/Timer" to="." method="_on_timer_timeout"]
 [connection signal="timeout" from="TileMap/MoneyTimer" to="." method="_on_money_timer_timeout"]
