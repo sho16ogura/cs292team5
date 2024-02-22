@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://b5j3kmh5ma6mx"]
+[gd_scene load_steps=7 format=3 uid="uid://b5j3kmh5ma6mx"]
 
 [ext_resource type="Script" path="res://main menu/main menu/main_menu.gd" id="1_sn3hk"]
 [ext_resource type="Texture2D" uid="uid://eess7uyvg1uh" path="res://tile_0014.png" id="1_w8vvv"]
 [ext_resource type="AudioStream" uid="uid://rkepwtflhojx" path="res://Sakura-Girl-Beach-chosic.com_.mp3" id="3_d4pl2"]
+[ext_resource type="PackedScene" uid="uid://bayrvi5tdmxbb" path="res://settings menu/settings_menu.tscn" id="4_r5g4m"]
 
 [sub_resource type="SystemFont" id="SystemFont_iqhrx"]
 font_names = PackedStringArray("Impact")
@@ -84,14 +85,7 @@ theme_override_font_sizes/font_size = 24
 text = "Start Game
 "
 
-[node name="Start_Button2" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
-custom_minimum_size = Vector2(120, 32)
-layout_mode = 2
-theme_override_fonts/font = SubResource("SystemFont_ef1sv")
-theme_override_font_sizes/font_size = 24
-text = "Settings"
-
-[node name="Start_Button3" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Instruction_Button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(120, 32)
 layout_mode = 2
 theme_override_fonts/font = SubResource("SystemFont_ef1sv")
@@ -108,3 +102,11 @@ text = "Exit Game"
 [node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="."]
 stream = ExtResource("3_d4pl2")
 autoplay = true
+
+[node name="Settings_Menu" parent="." instance=ExtResource("4_r5g4m")]
+visible = false
+layout_mode = 1
+offset_left = 3.0
+offset_top = 1.0
+offset_right = -922.0
+offset_bottom = -771.0

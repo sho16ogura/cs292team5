@@ -436,10 +436,15 @@ func _on_game_over_timer_timeout():
 	
 	#if the rightmost house is broken, can move on to ending
 	var can_move_on_to_ending = tile_map.get_cell_atlas_coords(ground_layer,Vector2i(15,12)) == Vector2i(3,0)
+	print(can_move_on_to_ending)
+	
 	if can_move_on_to_ending:
-		global_lockout = true
-		print("game over!")
-		get_tree().change_scene_to_file("res://end screen/end_screen.tscn")
+		#global_lockout = true
+		#print("game over!")
+		#get_tree().change_scene_to_file("res://end screen/end_screen.tscn")
+		timer.start()
+		$TileMap/GameOverTimer.stop()
+		return
 		
 	if game_over:
 		#inc water level and destruct
@@ -622,13 +627,13 @@ func _on_timer_timeout():
 	if get_tile_type(Vector2i(8, 12)) == TILE.WATER and global_lockout == false:
 		global_lockout = true
 		print("game over!")
-		#end_screen.set_score(score - 10)
-		#end_screen.visible = true
-		#tilemap.visible = false
+		end_screen.set_score(score - 10)
+		end_screen.visible = true
+		tilemap.visible = false
 		#score = get_score()
 		#await get_tree().create_timer(2).timeout
 		print(score)
-		get_tree().change_scene_to_file("res://end screen/end_screen.tscn")
+		#get_tree().change_scene_to_file("res://end screen/end_screen.tscn")
 	
 	for y in range(12, 0, -1):
 		for x in range(16, 0 , -1):
