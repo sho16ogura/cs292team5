@@ -73,6 +73,7 @@ theme_override_fonts/font = SubResource("SystemFont_junjl")
 text = "Resume Game"
 
 [node name="Instruction_Button" type="Button" parent="GridContainer"]
+visible = false
 layout_mode = 2
 theme_override_fonts/font = SubResource("SystemFont_junjl")
 text = "Instruction"
