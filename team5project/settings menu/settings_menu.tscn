@@ -1,0 +1,83 @@
+[gd_scene load_steps=5 format=3 uid="uid://bayrvi5tdmxbb"]
+
+[ext_resource type="Script" path="res://settings menu/settings_menu.gd" id="1_dy5ih"]
+
+[sub_resource type="SystemFont" id="SystemFont_8lba5"]
+font_names = PackedStringArray("Impact")
+subpixel_positioning = 0
+
+[sub_resource type="SystemFont" id="SystemFont_y0byd"]
+font_names = PackedStringArray("Impact")
+font_weight = 150
+subpixel_positioning = 0
+
+[sub_resource type="SystemFont" id="SystemFont_oeo85"]
+font_names = PackedStringArray("Impact")
+subpixel_positioning = 0
+
+[node name="Settings_Menu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_dy5ih")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = -48
+alignment = 1
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 12
+theme_override_fonts/font = SubResource("SystemFont_8lba5")
+theme_override_font_sizes/font_size = 24
+text = "Instruction"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 140
+
+[node name="TextEdit" type="TextEdit" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(800, 260)
+layout_direction = 1
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0.764706, 0.698039, 0.890196, 0.192157)
+theme_override_fonts/font = SubResource("SystemFont_y0byd")
+text = "* Your goal is stopping the water from reaching the bottom of the screen.
+* Controls:
+- Mouse to select and click tiles change
+- Space to pause the game
+- A: to remove river tiles (you cannot prevent the river from reaching the bottom of the screen)
+- S: to place riverbed tiles (default, cannot make a square)
+- D:  to place pumps (pump drains neighboring four tiles) 
+- F: to place cisterns (improves efficiency of pump, need to be placed next to pump)
+"
+editable = false
+virtual_keyboard_enabled = false
+middle_mouse_paste_enabled = false
+
+[node name="Exit_Button" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 10
+theme_override_fonts/font = SubResource("SystemFont_oeo85")
+text = "Exit"
