@@ -255,11 +255,10 @@ func _input(event):
 		elif mode_state == MODES.CISTERN:
 			var cistern_atlas_coord = Vector2i(1,1) #cistern tile
 			
-			reduce_balance(COSTS["cistern"])
-			
 			#set pump, iterate and change back to ground
 			if can_place_cistern(eight_sur_tiles):
 				
+				reduce_balance(COSTS["cistern"])
 				#set cistern
 				tile_map.set_cell(ground_layer, tile_mouse_pos, source_id, cistern_atlas_coord)
 				hammer_sfx.play()#constructing sound
