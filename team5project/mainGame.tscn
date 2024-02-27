@@ -141,10 +141,15 @@ stream = ExtResource("7_5c7lh")
 
 [node name="pause_menu" parent="." instance=ExtResource("9_xps7o")]
 visible = false
-offset_left = 438.0
-offset_top = 238.0
-offset_right = 438.0
-offset_bottom = 238.0
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 430.0
+offset_top = 241.0
+offset_right = 430.0
+offset_bottom = 241.0
+grow_horizontal = 1
+grow_vertical = 1
 
 [connection signal="timeout" from="TileMap/Timer" to="." method="_on_timer_timeout"]
 [connection signal="timeout" from="TileMap/MoneyTimer" to="." method="_on_money_timer_timeout"]
