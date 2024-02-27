@@ -92,7 +92,7 @@ sources/1 = SubResource("TileSetAtlasSource_n0c1u")
 sources/0 = SubResource("TileSetAtlasSource_foav8")
 
 [node name="Node2D" type="Node2D"]
-position = Vector2(0, 99)
+position = Vector2(0, 100)
 script = ExtResource("1_n7f0u")
 
 [node name="TileMap" type="TileMap" parent="."]
