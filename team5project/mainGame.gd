@@ -11,7 +11,7 @@ var highlight_layer = 3
 var prevhover : Vector2i = Vector2i(0,0)
 
 var global_lockout = false
-var light_on_location = Vector2i(20, 10)
+var light_on_location = Vector2i(23, 8)
 
 #returns tile category int (0 = no data, 1 = ground, 2 = riverbed, 3 = river, 4 = pump)
 var tile_category_custom_data = "tile_category"
@@ -104,8 +104,8 @@ func _input(event):
 		mode_state = MODES.DIG
 		print("dig mode")
 		set_tile_type(light_on_location, TILE.LIGHT_OFF)
-		set_tile_type(Vector2i(20, 10), TILE.LIGHT_ON)
-		light_on_location = Vector2i(20, 10)
+		set_tile_type(Vector2i(23, 8), TILE.LIGHT_ON)
+		light_on_location = Vector2i(23, 8)
 		prevhover = highlight_tile(prevhover)
 	
 	#if toggle_undig (K) is pressed, mode change to undig mode
@@ -113,24 +113,24 @@ func _input(event):
 		mode_state = MODES.UNDIG
 		print("undig mode")
 		set_tile_type(light_on_location, TILE.LIGHT_OFF)
-		set_tile_type(Vector2i(18, 10), TILE.LIGHT_ON)
-		light_on_location = Vector2i(18, 10)
+		set_tile_type(Vector2i(19, 8), TILE.LIGHT_ON)
+		light_on_location = Vector2i(19, 8)
 		prevhover = highlight_tile(prevhover)
 	
 	elif Input.is_action_just_pressed("toggle_pump"):
 		mode_state = MODES.PUMP
 		print("pump mode")
 		set_tile_type(light_on_location, TILE.LIGHT_OFF)
-		set_tile_type(Vector2i(22, 10), TILE.LIGHT_ON)
-		light_on_location = Vector2i(22, 10)
+		set_tile_type(Vector2i(19, 11), TILE.LIGHT_ON)
+		light_on_location = Vector2i(19, 11)
 		prevhover = highlight_tile(prevhover)
 
 	elif Input.is_action_just_pressed("toggle_cistern"):
 		mode_state = MODES.CISTERN
 		print("cistern mode")
 		set_tile_type(light_on_location, TILE.LIGHT_OFF)
-		set_tile_type(Vector2i(24, 10), TILE.LIGHT_ON)
-		light_on_location = Vector2i(24, 10)
+		set_tile_type(Vector2i(23, 11), TILE.LIGHT_ON)
+		light_on_location = Vector2i(23, 11)
 		prevhover = highlight_tile(prevhover)
 	
 	elif event is InputEventMouseMotion:
@@ -603,8 +603,8 @@ func check_river_connection(tile_pos):
 func update_counter(counter):
 	if counter == COUNTER.MONEY:
 		var counter_array = fix_counter_array_size(str(balance).split("", true))
-		for x in 7:
-			set_tile_type(Vector2i(x+18, 6), counter_array[x])
+		for x in 5:
+			set_tile_type(Vector2i(x+18, 6), counter_array[x+2])
 		return
 	else: # COUNTER.SCORE
 		if score > 0:
