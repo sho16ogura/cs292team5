@@ -55,7 +55,11 @@ var tile_dict = {
 	"6": Vector2i(1, 5),
 	"7": Vector2i(2, 5),
 	"8": Vector2i(3, 5),
-	"9": Vector2i(4, 5)
+	"9": Vector2i(4, 5),
+	"red0": Vector2i(0, 9),
+	"red1": Vector2i(1, 9),
+	"red2": Vector2i(2, 9),
+	"red5": Vector2i(3, 9)
 }
 
 #array of coordinates of neighbros (curr, right, down, left, up) if curr = (0,0)
@@ -303,6 +307,7 @@ func highlight_tile(prev_hover):
 			if can_undig(eight_sur_tiles, tile_mouse_pos):
 				#blue highlight
 				tile_map.set_cell(highlight_layer, tile_mouse_pos, source_id, highlight_can_set_coord)
+				update_undig_price(tile_mouse_pos)
 			
 			else:	
 				#red highlight
@@ -441,7 +446,13 @@ func _on_flood_timer_timeout():
 	if broken_buildings and not game_over:
 		for b in broken_buildings:
 			buildings.erase(b)
-			
+	
+	for y in range(12, 0, -1):
+		for x in range(16, 0 , -1):
+			var temp_vec = Vector2i(x, y)
+			if check_if_water_is_isolated(temp_vec):
+				decrease_water_depth(temp_vec)
+
 func _on_game_over_timer_timeout():
 	
 	#if the rightmost house is broken, can move on to ending
@@ -672,6 +683,11 @@ func _on_timer_timeout():
 					tiles_flowed_to.merge(water_flow(temp_vec, tile_directions[2]))
 				elif check_neighbor(temp_vec, tile_directions[3], is_river_not_high_water_tile):
 					tiles_flowed_to.merge(water_flow(temp_vec, tile_directions[3]))
+	
+	var mouse_pos : Vector2i = get_global_mouse_position() #global position in float
+	var tile_mouse_pos : Vector2i = tile_map.local_to_map(mouse_pos) #local position in int
+	tile_mouse_pos = tile_mouse_pos + Vector2i(-1, -1)
+	update_undig_price(tile_mouse_pos)
 
 #check if removing a tile from the river prevents there from being a continuous line of river tiles from the top to the bottom of the screen
 func check_river_connection(tile_pos):
@@ -730,6 +746,28 @@ func water_flow(tile, direction):
 		temp_dict[neighbor] = 1
 	
 	return temp_dict
+
+func update_undig_price(tile_mouse_pos):
+	if check_tile(tile_mouse_pos, is_low_or_med_water_tile):
+		set_tile_type(Vector2i(18, 9), "red0")
+		set_tile_type(Vector2i(19, 9), "red1")
+		set_tile_type(Vector2i(20, 9), "red0")
+	elif check_tile(tile_mouse_pos, is_high_water_tile):
+		set_tile_type(Vector2i(18, 9), "red0")
+		set_tile_type(Vector2i(19, 9), "red1")
+		set_tile_type(Vector2i(20, 9), "red5")
+	else:
+		set_tile_type(Vector2i(18, 9), "0")
+		set_tile_type(Vector2i(19, 9), "0")
+		set_tile_type(Vector2i(20, 9), "5")
+	return
+
+func check_if_water_is_isolated(loc):
+	return \
+	not check_neighbor(loc, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE, is_water_tile) and\
+	not check_neighbor(loc, TileSet.CELL_NEIGHBOR_TOP_SIDE, is_water_tile) and\
+	not check_neighbor(loc, TileSet.CELL_NEIGHBOR_LEFT_SIDE, is_water_tile) and\
+	not check_neighbor(loc, TileSet.CELL_NEIGHBOR_RIGHT_SIDE, is_water_tile)
 
 func increase_water_depth(tile):
 	if check_tile(tile, is_river_tile) == false:
