@@ -165,12 +165,13 @@ func _input(event):
 		#-> Custom Data Layers (and add variable) -> paint (bottom)->paint properties
 		#->painting on 
 		
+		
 		var mouse_pos : Vector2i = get_global_mouse_position() #global position in float
 		var tile_mouse_pos : Vector2i = tile_map.local_to_map(mouse_pos) #local position in int
 		tile_mouse_pos = tile_mouse_pos + Vector2i(-1, -1)
 		
 		var eight_sur_tiles = get_eight_neighbor_category(tile_mouse_pos)
-		var four_sur_tiles = get_four_neighbor_category(tile_mouse_pos)
+		#var four_sur_tiles = get_four_neighbor_category(tile_mouse_pos)
 		var source_id = 0
 		
 		if mode_state == MODES.DIG:
@@ -231,8 +232,8 @@ func _input(event):
 						pumping_water_sfx.play()
 					
 					#if cistern is located next to the pump, strenthen the pump
-					var is_cistern_neighbor = four_sur_tiles.slice(1).any(func (c): return c==5)
-			
+					var is_cistern_neighbor = get_four_neighbor_category(tile_mouse_pos).slice(1).any(func (c): return c==5)
+					
 					if is_cistern_neighbor:
 						drain_eight_neighbor_river(tile_mouse_pos)
 					else:
