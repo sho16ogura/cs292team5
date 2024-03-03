@@ -194,6 +194,7 @@ offset_right = 438.0
 offset_bottom = 238.0
 
 [node name="tutorial" type="Node2D" parent="."]
+position = Vector2(0, -100)
 script = ExtResource("10_f8e5e")
 
 [connection signal="timeout" from="TileMap/Timer" to="." method="_on_timer_timeout"]
