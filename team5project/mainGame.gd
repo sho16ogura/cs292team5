@@ -807,6 +807,8 @@ func set_tile_type(location, tile_type):
 
 #Checks if the current tile is a river, riverbed, or water tile
 func check_tile(tile, predicate):
+	if typeof(get_tile_type(tile)) == TYPE_STRING:
+		return false
 	return predicate.call(get_tile_type(tile))
 
 #Checks if a neighbor tile is a river, riverbed, or water tile
