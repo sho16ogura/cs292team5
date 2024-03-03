@@ -99,6 +99,7 @@ text = "Start Game
 "
 
 [node name="Settings_Button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+visible = false
 custom_minimum_size = Vector2(120, 32)
 layout_mode = 2
 theme_override_fonts/font = SubResource("FontVariation_vr27o")
@@ -111,6 +112,10 @@ layout_mode = 2
 theme_override_fonts/font = SubResource("FontVariation_me2gr")
 theme_override_font_sizes/font_size = 20
 text = "Exit Game"
+
+[node name="Tutorial_Button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "Tutorial"
 
 [node name="Settings_Menu" parent="." instance=ExtResource("4_ska44")]
 visible = false
