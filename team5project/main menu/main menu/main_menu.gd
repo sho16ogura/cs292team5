@@ -18,6 +18,7 @@ func _ready():
 	handling_connecting_signals()
 	
 func on_start_pressed() -> void:
+	Global.tutorial = true
 	Global.switch_scene("res://mainGame.tscn")
 	#get_tree().change_scene_to_packed(start_level)
 

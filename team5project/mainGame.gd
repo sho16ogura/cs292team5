@@ -545,11 +545,11 @@ func decrease_score(penalty):
 	
 func building_dec_water_level(curr_pos):
 	var water_source_id = 0
-	var building_source_id = 1
+	#var building_source_id = 1
 		
 	var shallow_water = Vector2i(2,0)
-	var deep_water = Vector2i(3,0)
-	var broken_house_diff = Vector2i(0,1)
+	#var deep_water = Vector2i(3,0)
+	#var broken_house_diff = Vector2i(0,1)
 				
 	#decrement water depth
 	if buildings[curr_pos] == 0:
@@ -810,3 +810,4 @@ func is_med_water_tile(tile):
 #Checks if a tile is deep water
 func is_high_water_tile(tile):
 	return tile == TILE.HIGH_WATER
+

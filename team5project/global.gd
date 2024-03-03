@@ -3,6 +3,7 @@ extends Node
 var score = 0
 var current_scene = null
 var next_scene = null
+var tutorial = false
 
 func _ready():
 	var root = get_tree().root
