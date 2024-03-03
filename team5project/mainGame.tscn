@@ -144,10 +144,10 @@ visible = false
 anchors_preset = 0
 anchor_right = 0.0
 anchor_bottom = 0.0
-offset_left = 430.0
-offset_top = 241.0
-offset_right = 430.0
-offset_bottom = 241.0
+offset_left = 427.0
+offset_top = 240.0
+offset_right = 427.0
+offset_bottom = 240.0
 grow_horizontal = 1
 grow_vertical = 1
 

@@ -1,0 +1,66 @@
+[gd_scene load_steps=7 format=3 uid="uid://dfp36d3bwhxxc"]
+
+[ext_resource type="FontVariation" uid="uid://5rr2s8877l3r" path="res://new_font_variation.tres" id="1_3xygl"]
+[ext_resource type="Script" path="res://settings menu 2/settings_menu.gd" id="1_mdjh6"]
+[ext_resource type="FontFile" uid="uid://bajhcr7csr6jm" path="res://PressStart2P.ttf" id="2_svo61"]
+[ext_resource type="PackedScene" uid="uid://bsxt5fh3njshd" path="res://settings menu 2/settings_tab_container.tscn" id="4_tk0ys"]
+
+[sub_resource type="FontVariation" id="FontVariation_hon0j"]
+fallbacks = Array[Font]([ExtResource("2_svo61")])
+base_font = ExtResource("1_3xygl")
+
+[sub_resource type="FontVariation" id="FontVariation_45bhe"]
+base_font = ExtResource("2_svo61")
+
+[node name="Settings_Menu_2" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_mdjh6")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = -48
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/outline_size = 4
+theme_override_constants/shadow_outline_size = 2
+theme_override_constants/line_spacing = 2
+theme_override_fonts/font = SubResource("FontVariation_hon0j")
+theme_override_font_sizes/font_size = 24
+text = "Settings"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="Settings_Tab_Container" parent="MarginContainer/VBoxContainer" instance=ExtResource("4_tk0ys")]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Exit_Button" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 8
+theme_override_fonts/font = SubResource("FontVariation_45bhe")
+text = "Exit"

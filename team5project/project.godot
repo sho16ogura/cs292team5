@@ -27,6 +27,10 @@ window/size/viewport_height=480
 window/stretch/mode="viewport"
 window/vsync/vsync_mode=0
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/paulloz.colorblindness/plugin.cfg")
+
 [gui]
 
 theme/custom_font="res://new_font_variation.tres"

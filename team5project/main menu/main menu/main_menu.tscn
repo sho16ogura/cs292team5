@@ -1,12 +1,13 @@
-[gd_scene load_steps=12 format=3 uid="uid://b5j3kmh5ma6mx"]
+[gd_scene load_steps=13 format=3 uid="uid://b5j3kmh5ma6mx"]
 
 [ext_resource type="Script" path="res://main menu/main menu/main_menu.gd" id="1_sn3hk"]
-[ext_resource type="Texture2D" uid="uid://eess7uyvg1uh" path="res://tile_0014.png" id="1_w8vvv"]
+[ext_resource type="Texture2D" uid="uid://gi4olcu077qn" path="res://Water_FirstGame.png" id="2_puijr"]
 [ext_resource type="FontVariation" uid="uid://5rr2s8877l3r" path="res://new_font_variation.tres" id="3_jn30q"]
 [ext_resource type="FontFile" uid="uid://bajhcr7csr6jm" path="res://PressStart2P.ttf" id="4_kfs6g"]
 [ext_resource type="AudioStream" uid="uid://rkepwtflhojx" path="res://Sakura-Girl-Beach-chosic.com_.mp3" id="4_lye30"]
 [ext_resource type="PackedScene" uid="uid://bayrvi5tdmxbb" path="res://settings menu/settings_menu.tscn" id="4_ska44"]
 [ext_resource type="PackedScene" uid="uid://bn78c4xmom6n" path="res://credits menu/credits_menu.tscn" id="7_r8yaf"]
+[ext_resource type="PackedScene" uid="uid://dfp36d3bwhxxc" path="res://settings menu 2/settings_menu.tscn" id="8_03a01"]
 
 [sub_resource type="FontVariation" id="FontVariation_cyw5f"]
 fallbacks = Array[Font]([ExtResource("4_kfs6g")])
@@ -41,7 +42,7 @@ offset_right = -913.0
 offset_bottom = -765.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("1_w8vvv")
+texture = ExtResource("2_puijr")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -106,6 +107,13 @@ theme_override_fonts/font = SubResource("FontVariation_vr27o")
 theme_override_font_sizes/font_size = 20
 text = "Instruction"
 
+[node name="Settings_Menu_Button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(120, 32)
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_vr27o")
+theme_override_font_sizes/font_size = 20
+text = "Settings"
+
 [node name="Credits_Button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(120, 32)
 layout_mode = 2
@@ -130,7 +138,9 @@ offset_bottom = -765.0
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_lye30")
+volume_db = -14.219
 autoplay = true
+bus = &"Music"
 
 [node name="Credits_Menu" parent="." instance=ExtResource("7_r8yaf")]
 visible = false
@@ -139,3 +149,12 @@ offset_left = -13.0
 offset_top = 1.0
 offset_right = -901.0
 offset_bottom = -765.0
+
+[node name="Settings_Menu_2" parent="." instance=ExtResource("8_03a01")]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.484
+anchor_bottom = 0.369
+offset_right = -0.744048
+offset_bottom = 19.333

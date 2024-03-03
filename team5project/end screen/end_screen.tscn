@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://mkomnbmd7eoh"]
 
 [ext_resource type="Script" path="res://end screen/end_screen.gd" id="1_dx8cw"]
-[ext_resource type="Texture2D" uid="uid://bow4opl3ptpvq" path="res://tile_0014_end_game.png" id="1_qn51r"]
+[ext_resource type="Texture2D" uid="uid://djwpdssroxk7p" path="res://Water_EndGame.png" id="2_kojoc"]
 [ext_resource type="FontFile" uid="uid://bajhcr7csr6jm" path="res://PressStart2P.ttf" id="3_4ka0a"]
 [ext_resource type="AudioStream" uid="uid://con41i8e4thap" path="res://Sakura-Girl-Peach-chosic.com_.mp3" id="3_6pwnc"]
 
@@ -33,7 +33,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("1_qn51r")
+texture = ExtResource("2_kojoc")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -103,4 +103,5 @@ text = "Main Menu"
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_6pwnc")
+volume_db = -14.219
 autoplay = true

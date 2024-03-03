@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://cqpx1ehejg0ob"]
 
 [ext_resource type="Script" path="res://pause_menu.gd" id="1_4yw8a"]
-[ext_resource type="Texture2D" uid="uid://eess7uyvg1uh" path="res://tile_0014.png" id="2_lpafv"]
+[ext_resource type="Texture2D" uid="uid://bu51euhiqpiiq" path="res://Water_Pause_Game.png" id="2_2fg7p"]
 [ext_resource type="FontFile" uid="uid://bajhcr7csr6jm" path="res://PressStart2P.ttf" id="3_cwrpg"]
 [ext_resource type="PackedScene" uid="uid://bayrvi5tdmxbb" path="res://settings menu/settings_menu.tscn" id="3_oeqh2"]
 
@@ -38,7 +38,7 @@ offset_right = 431.0
 offset_bottom = 240.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_lpafv")
+texture = ExtResource("2_2fg7p")
 
 [node name="GridContainer" type="GridContainer" parent="."]
 layout_mode = 1
