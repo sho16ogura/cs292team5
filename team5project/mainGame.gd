@@ -169,12 +169,13 @@ func _input(event):
 		#-> Custom Data Layers (and add variable) -> paint (bottom)->paint properties
 		#->painting on 
 		
+		
 		var mouse_pos : Vector2i = get_global_mouse_position() #global position in float
 		var tile_mouse_pos : Vector2i = tile_map.local_to_map(mouse_pos) #local position in int
 		tile_mouse_pos = tile_mouse_pos + Vector2i(-1, -1)
 		
 		var eight_sur_tiles = get_eight_neighbor_category(tile_mouse_pos)
-		var four_sur_tiles = get_four_neighbor_category(tile_mouse_pos)
+		#var four_sur_tiles = get_four_neighbor_category(tile_mouse_pos)
 		var source_id = 0
 		
 		if mode_state == MODES.DIG:
@@ -195,15 +196,13 @@ func _input(event):
 		elif mode_state == MODES.UNDIG:
 			var ground_atlas_coord = Vector2i(0,0) #ground tile
 			
-			if can_undig(eight_sur_tiles, tile_mouse_pos):
-				var cost = COSTS["undig"]
-				if check_tile(tile_mouse_pos, is_riverbed_tile):
-					cost =  COSTS["undig"]
-				elif check_tile(tile_mouse_pos, is_low_or_med_water_tile):
-					cost =  COSTS["undig_shallow_river"]
-				elif check_tile(tile_mouse_pos, is_high_water_tile):
-					cost =  COSTS["undig_deep_river"]
+			var cost = COSTS["undig"]
+			if check_tile(tile_mouse_pos, is_low_or_med_water_tile):
+				cost =  COSTS["undig_shallow_river"]
+			elif check_tile(tile_mouse_pos, is_high_water_tile):
+				cost =  COSTS["undig_deep_river"]
 					
+			if can_undig(eight_sur_tiles, tile_mouse_pos,cost):					
 				reduce_balance(cost)
 				tile_map.set_cell(ground_layer, tile_mouse_pos, source_id, ground_atlas_coord)#change cell to ground
 				dig_undig_sfx.play(0.2)#soundeffect
@@ -235,8 +234,8 @@ func _input(event):
 						pumping_water_sfx.play()
 					
 					#if cistern is located next to the pump, strenthen the pump
-					var is_cistern_neighbor = four_sur_tiles.slice(1).any(func (c): return c==5)
-			
+					var is_cistern_neighbor = get_four_neighbor_category(tile_mouse_pos).slice(1).any(func (c): return c==5)
+					
 					if is_cistern_neighbor:
 						drain_eight_neighbor_river(tile_mouse_pos)
 					else:
@@ -259,11 +258,10 @@ func _input(event):
 		elif mode_state == MODES.CISTERN:
 			var cistern_atlas_coord = Vector2i(1,1) #cistern tile
 			
-			reduce_balance(COSTS["cistern"])
-			
 			#set pump, iterate and change back to ground
 			if can_place_cistern(eight_sur_tiles):
 				
+				reduce_balance(COSTS["cistern"])
 				#set cistern
 				tile_map.set_cell(ground_layer, tile_mouse_pos, source_id, cistern_atlas_coord)
 				hammer_sfx.play()#constructing sound
@@ -304,7 +302,13 @@ func highlight_tile(prev_hover):
 				tile_map.set_cell(highlight_layer, tile_mouse_pos, source_id, highlight_cannot_set_coord)
 					
 		elif mode_state == MODES.UNDIG:
-			if can_undig(eight_sur_tiles, tile_mouse_pos):
+			var cost = COSTS["undig"]
+			if check_tile(tile_mouse_pos, is_low_or_med_water_tile):
+				cost =  COSTS["undig_shallow_river"]
+			elif check_tile(tile_mouse_pos, is_high_water_tile):
+				cost =  COSTS["undig_deep_river"]
+				
+			if can_undig(eight_sur_tiles, tile_mouse_pos, cost):
 				#blue highlight
 				tile_map.set_cell(highlight_layer, tile_mouse_pos, source_id, highlight_can_set_coord)
 				update_undig_price(tile_mouse_pos)
@@ -347,8 +351,7 @@ func can_dig(eight_sur_tiles):
 	
 	return curr_tile_is_ground and surr_tiles_are_not_outside and will_not_make_riverbed_square and check_balance(COSTS["dig"])
 
-func can_undig(eight_sur_tiles, tile_mouse_pos):
-	var cost = COSTS["undig"]
+func can_undig(eight_sur_tiles, tile_mouse_pos, cost):
 	
 	if check_tile(tile_mouse_pos, is_riverbed_tile):
 		cost =  COSTS["undig"]
@@ -557,11 +560,11 @@ func decrease_score(penalty):
 	
 func building_dec_water_level(curr_pos):
 	var water_source_id = 0
-	var building_source_id = 1
+	#var building_source_id = 1
 		
 	var shallow_water = Vector2i(2,0)
-	var deep_water = Vector2i(3,0)
-	var broken_house_diff = Vector2i(0,1)
+	#var deep_water = Vector2i(3,0)
+	#var broken_house_diff = Vector2i(0,1)
 				
 	#decrement water depth
 	if buildings[curr_pos] == 0:
@@ -851,3 +854,4 @@ func is_med_water_tile(tile):
 #Checks if a tile is deep water
 func is_high_water_tile(tile):
 	return tile == TILE.HIGH_WATER
+
