@@ -21,6 +21,7 @@ var tile_category_custom_data = "tile_category"
 @onready var error_sfx = $TileMap/error_sfx
 @onready var destruction_sfx = $TileMap/destruction_sfx
 @onready var pumping_water_sfx = $TileMap/pumping_water_sfx
+@onready var select_sfx = $TileMap/select_sfx
 #@onready var end_screen = $end_screen
 #@onready var tilemap = $TileMap
 
@@ -134,6 +135,7 @@ func _input(event):
 		set_tile_type(Vector2i(23, 8), TILE.LIGHT_ON)
 		light_on_location = Vector2i(23, 8)
 		prevhover = highlight_tile(prevhover)
+		select_sfx.play()
 	
 	#if toggle_undig (K) is pressed, mode change to undig mode
 	elif Input.is_action_just_pressed("toggle_undig"):
@@ -143,6 +145,7 @@ func _input(event):
 		set_tile_type(Vector2i(19, 8), TILE.LIGHT_ON)
 		light_on_location = Vector2i(19, 8)
 		prevhover = highlight_tile(prevhover)
+		select_sfx.play()
 	
 	elif Input.is_action_just_pressed("toggle_pump"):
 		mode_state = MODES.PUMP
@@ -151,6 +154,7 @@ func _input(event):
 		set_tile_type(Vector2i(19, 11), TILE.LIGHT_ON)
 		light_on_location = Vector2i(19, 11)
 		prevhover = highlight_tile(prevhover)
+		select_sfx.play()
 
 	elif Input.is_action_just_pressed("toggle_cistern"):
 		mode_state = MODES.CISTERN
@@ -159,9 +163,7 @@ func _input(event):
 		set_tile_type(Vector2i(23, 11), TILE.LIGHT_ON)
 		light_on_location = Vector2i(23, 11)
 		prevhover = highlight_tile(prevhover)
-	
-	elif event is InputEventMouseMotion:
-		return
+		select_sfx.play()
 	
 	#can add action by Project -> Project Settings -> Input Map -> Add new Action
 	elif Input.is_action_just_pressed("click") and global_lockout == false: #if left mouse button is clicked
