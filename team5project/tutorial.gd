@@ -6,6 +6,7 @@ extends Node2D
 @onready var gameover_timer = $"../TileMap/GameOverTimer"
 @onready var flood_timer = $"../TileMap/FloodTimer"
 
+var font = load("res://PressStart2P.ttf")
 
 var tutorial_label = Label.new()
 var except_start = Vector2i(0,0)
@@ -34,7 +35,9 @@ func _ready():
 		#create quit tutorial button
 		var quit_tutorial_button = Button.new()
 		quit_tutorial_button.set_position(Vector2(100,450))
-		quit_tutorial_button.text = "back to main menu"
+		quit_tutorial_button.text = "quit"
+		quit_tutorial_button.add_theme_font_override("font",font)
+		#quit_tutorial_button.add_theme_font_size_override("font_size",10)
 		quit_tutorial_button.pressed.connect(self._on_quit_tutorial_button_pressed)
 		add_child(quit_tutorial_button)
 		
@@ -42,20 +45,23 @@ func _ready():
 		var next_tutorial_button = Button.new()
 		next_tutorial_button.set_position(Vector2(700,450))
 		next_tutorial_button.text = "next"
+		next_tutorial_button.add_theme_font_override("font",font)
 		next_tutorial_button.pressed.connect(self._on_next_tutorial_button_pressed)
 		add_child(next_tutorial_button)
 		
 		#create previous tutorial button
 		var restart_tutorial_button = Button.new()
-		restart_tutorial_button.set_position(Vector2(520,450))
+		restart_tutorial_button.set_position(Vector2(500,450))
 		restart_tutorial_button.text = "reset"
+		restart_tutorial_button.add_theme_font_override("font",font)
 		restart_tutorial_button.pressed.connect(self._on_restart_tutorial_button_pressed)
 		add_child(restart_tutorial_button)
 		
 		#create previous tutorial button
 		var previous_tutorial_button = Button.new()
-		previous_tutorial_button.set_position(Vector2(350,450))
+		previous_tutorial_button.set_position(Vector2(300,450))
 		previous_tutorial_button.text = "back"
+		previous_tutorial_button.add_theme_font_override("font",font)
 		previous_tutorial_button.pressed.connect(self._on_previous_tutorial_button_pressed)
 		add_child(previous_tutorial_button)
 		
@@ -104,6 +110,8 @@ func do_tutorial():
 		tutorial_label.set_position(Vector2(150,200))
 		tutorial_label.text = "Woops! Heavy rain in mountain! First time in 100 years!\n Please help people evacuate by gaining time, Mayor!"
 		tutorial_label.add_theme_color_override("font_color",Color(0,0,0,1))
+		tutorial_label.add_theme_font_override("font",font)
+		tutorial_label.add_theme_font_size_override("font_size",10)
 		if tutorial_label not in get_children():
 			add_child(tutorial_label)
 		
@@ -114,6 +122,8 @@ func do_tutorial():
 		tutorial_label.text = "Water (blue tiles) flows toward dry riverbed (brown tile)
 								Dark blue is deeper, so it can flow to the riverbed next to it."
 		tutorial_label.add_theme_color_override("font_color",Color(0,0,0,1))
+		tutorial_label.add_theme_font_override("font",font)
+		tutorial_label.add_theme_font_size_override("font_size",10)
 		if tutorial_label not in get_children():
 			add_child(tutorial_label)
 			
@@ -130,6 +140,9 @@ func do_tutorial():
 							Your task is to delay the flood in the city so more people can escape from the city
 							If the river reaches the city..."
 		tutorial_label.add_theme_color_override("font_color",Color(0,0,0,1))
+		tutorial_label.add_theme_font_override("font",font)
+		tutorial_label.add_theme_font_size_override("font_size",10)
+		
 		if tutorial_label not in get_children():
 			add_child(tutorial_label)
 			
@@ -152,7 +165,8 @@ func do_tutorial():
 		tutorial_label.set_position(Vector2(200,200))
 		tutorial_label.text = "GAME OVER!!!"
 		tutorial_label.add_theme_color_override("font_color",Color(1,0,0,1))
-		tutorial_label.add_theme_font_size_override("font_size",50)
+		tutorial_label.add_theme_font_override("font",font)
+		tutorial_label.add_theme_font_size_override("font_size",30)
 	
 		
 	elif tutorial_count == 3:
@@ -163,7 +177,9 @@ func do_tutorial():
 								You can change mode by using ASDF keys.
 								These items are placable by spending money.
 								Try to get higher score!"
+		tutorial_label.add_theme_font_override("font",font)
 		tutorial_label.add_theme_color_override("font_color",Color(0,0,0,1))
+		tutorial_label.add_theme_font_size_override("font_size",10)
 		if tutorial_label not in get_children():
 			add_child(tutorial_label)
 		
@@ -175,6 +191,8 @@ func do_tutorial():
 								If you are in different mode (undig, pump etc), press S to start digging.
 								You need 5 money to dig"
 		tutorial_label.add_theme_color_override("font_color",Color(0,0,0,1))
+		tutorial_label.add_theme_font_override("font",font)
+		tutorial_label.add_theme_font_size_override("font_size",10)
 		if tutorial_label not in get_children():
 			add_child(tutorial_label)
 			
@@ -189,6 +207,8 @@ func do_tutorial():
 								If the house is flooded, you can place pump next to it to protect it
 								You need 20 money to place it"
 		tutorial_label.add_theme_color_override("font_color",Color(0,0,0,1))
+		tutorial_label.add_theme_font_override("font",font)
+		tutorial_label.add_theme_font_size_override("font_size",10)
 		if tutorial_label not in get_children():
 			add_child(tutorial_label)
 			
@@ -209,7 +229,9 @@ func do_tutorial():
 								Press F and place it on green (ground) tile next to pump 
 								If house/car is flooded, you can place pump next to it to protect it
 								You need 10 money to place it"
+		tutorial_label.add_theme_font_override("font",font)
 		tutorial_label.add_theme_color_override("font_color",Color(0,0,0,1))
+		tutorial_label.add_theme_font_size_override("font_size",10)
 		if tutorial_label not in get_children():
 			add_child(tutorial_label)
 			
@@ -238,8 +260,10 @@ func do_tutorial():
 								You need another riverbed access to the bottom to undig
 								You need 5 money to undig riverbed
 								You need 10 money to dig shallow river
-								You need 15 money to dig deep river"
+								You need 15 money to dig deep river"		
+		tutorial_label.add_theme_font_override("font",font)
 		tutorial_label.add_theme_color_override("font_color",Color(0,0,0,1))
+		tutorial_label.add_theme_font_size_override("font_size",10)
 		if tutorial_label not in get_children():
 			add_child(tutorial_label)
 			
@@ -261,7 +285,9 @@ func do_tutorial():
 								Rock tile can be unchangeable
 								The city at the bottom will be broken eventually...
 								"
+		tutorial_label.add_theme_font_override("font",font)
 		tutorial_label.add_theme_color_override("font_color",Color(0,0,0,1))
+		tutorial_label.add_theme_font_size_override("font_size",10)
 		if tutorial_label not in get_children():
 			add_child(tutorial_label)
 			
@@ -278,7 +304,8 @@ func do_tutorial():
 		tutorial_label.set_position(Vector2(100,200))
 		tutorial_label.text = "Tutorial Completed!"
 		tutorial_label.add_theme_color_override("font_color",Color(0.5,1,0.5,1))
-		tutorial_label.add_theme_font_size_override("font_size",50)
+		tutorial_label.add_theme_font_size_override("font_size",30)
+		tutorial_label.add_theme_font_override("font",font)
 		if tutorial_label not in get_children():
 			add_child(tutorial_label)
 			
