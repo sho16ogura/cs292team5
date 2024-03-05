@@ -90,7 +90,8 @@ func tutorial_count_change(dif):
 	
 		
 func do_tutorial():
-	
+	except_start = Vector2i(0,0)
+	except_end = Vector2i(0,0)
 	var tutorial_count = Global.tutorial_count
 	#print(tutorial_count)
 	#unable all tutorial layer
@@ -341,12 +342,6 @@ func _input(_event):
 		
 		var x = tile_mouse_pos[0] - 1
 		var y = tile_mouse_pos[1] - 1
-		
-		if sx == ex and sy == ey:
-			sx = 0
-			ex = 16
-			sy = 0
-			ey = 12
 	
 		var within_border = sx <= x and x <= ex and sy <= y and y <= ey
 		var within_frame = 0 <= x and x <= 16 and 0 <= y and y <= 12
