@@ -21,7 +21,7 @@ var tile_category_custom_data = "tile_category"
 @onready var error_sfx = $TileMap/error_sfx
 @onready var destruction_sfx = $TileMap/destruction_sfx
 @onready var pumping_water_sfx = $TileMap/pumping_water_sfx
-@onready var select_sfx = $TileMap/select_sfx
+@onready var select_tool_sfx = $TileMap/select_tool_sfx
 #@onready var end_screen = $end_screen
 #@onready var tilemap = $TileMap
 
@@ -128,42 +128,42 @@ func _input(event):
 		pass
 		
 	#if toggle_dig (J) is pressed, mode change to dig mode
-	elif Input.is_action_just_pressed("toggle_dig"):
+	elif Input.is_action_just_pressed("toggle_dig") and light_on_location != Vector2i(23,8):
 		mode_state = MODES.DIG
 		print("dig mode")
 		set_tile_type(light_on_location, TILE.LIGHT_OFF)
 		set_tile_type(Vector2i(23, 8), TILE.LIGHT_ON)
 		light_on_location = Vector2i(23, 8)
 		prevhover = highlight_tile(prevhover)
-		select_sfx.play()
+		select_tool_sfx.play()
 	
 	#if toggle_undig (K) is pressed, mode change to undig mode
-	elif Input.is_action_just_pressed("toggle_undig"):
+	elif Input.is_action_just_pressed("toggle_undig") and light_on_location != Vector2i(19,8):
 		mode_state = MODES.UNDIG
 		print("undig mode")
 		set_tile_type(light_on_location, TILE.LIGHT_OFF)
 		set_tile_type(Vector2i(19, 8), TILE.LIGHT_ON)
 		light_on_location = Vector2i(19, 8)
 		prevhover = highlight_tile(prevhover)
-		select_sfx.play()
+		select_tool_sfx.play()
 	
-	elif Input.is_action_just_pressed("toggle_pump"):
+	elif Input.is_action_just_pressed("toggle_pump") and light_on_location != Vector2i(19,11):
 		mode_state = MODES.PUMP
 		print("pump mode")
 		set_tile_type(light_on_location, TILE.LIGHT_OFF)
 		set_tile_type(Vector2i(19, 11), TILE.LIGHT_ON)
 		light_on_location = Vector2i(19, 11)
 		prevhover = highlight_tile(prevhover)
-		select_sfx.play()
+		select_tool_sfx.play()
 
-	elif Input.is_action_just_pressed("toggle_cistern"):
+	elif Input.is_action_just_pressed("toggle_cistern") and light_on_location != Vector2i(23,11):
 		mode_state = MODES.CISTERN
 		print("cistern mode")
 		set_tile_type(light_on_location, TILE.LIGHT_OFF)
 		set_tile_type(Vector2i(23, 11), TILE.LIGHT_ON)
 		light_on_location = Vector2i(23, 11)
 		prevhover = highlight_tile(prevhover)
-		select_sfx.play()
+		select_tool_sfx.play()
 	
 	#can add action by Project -> Project Settings -> Input Map -> Add new Action
 	elif Input.is_action_just_pressed("click") and global_lockout == false: #if left mouse button is clicked
