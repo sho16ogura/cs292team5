@@ -196,15 +196,13 @@ func _input(event):
 		elif mode_state == MODES.UNDIG:
 			var ground_atlas_coord = Vector2i(0,0) #ground tile
 			
-			if can_undig(eight_sur_tiles, tile_mouse_pos):
-				var cost = COSTS["undig"]
-				if check_tile(tile_mouse_pos, is_riverbed_tile):
-					cost =  COSTS["undig"]
-				elif check_tile(tile_mouse_pos, is_low_or_med_water_tile):
-					cost =  COSTS["undig_shallow_river"]
-				elif check_tile(tile_mouse_pos, is_high_water_tile):
-					cost =  COSTS["undig_deep_river"]
+			var cost = COSTS["undig"]
+			if check_tile(tile_mouse_pos, is_low_or_med_water_tile):
+				cost =  COSTS["undig_shallow_river"]
+			elif check_tile(tile_mouse_pos, is_high_water_tile):
+				cost =  COSTS["undig_deep_river"]
 					
+			if can_undig(eight_sur_tiles, tile_mouse_pos,cost):					
 				reduce_balance(cost)
 				tile_map.set_cell(ground_layer, tile_mouse_pos, source_id, ground_atlas_coord)#change cell to ground
 				dig_undig_sfx.play(0.2)#soundeffect
@@ -304,7 +302,13 @@ func highlight_tile(prev_hover):
 				tile_map.set_cell(highlight_layer, tile_mouse_pos, source_id, highlight_cannot_set_coord)
 					
 		elif mode_state == MODES.UNDIG:
-			if can_undig(eight_sur_tiles, tile_mouse_pos):
+			var cost = COSTS["undig"]
+			if check_tile(tile_mouse_pos, is_low_or_med_water_tile):
+				cost =  COSTS["undig_shallow_river"]
+			elif check_tile(tile_mouse_pos, is_high_water_tile):
+				cost =  COSTS["undig_deep_river"]
+				
+			if can_undig(eight_sur_tiles, tile_mouse_pos, cost):
 				#blue highlight
 				tile_map.set_cell(highlight_layer, tile_mouse_pos, source_id, highlight_can_set_coord)
 				update_undig_price(tile_mouse_pos)
@@ -347,8 +351,7 @@ func can_dig(eight_sur_tiles):
 	
 	return curr_tile_is_ground and surr_tiles_are_not_outside and will_not_make_riverbed_square and check_balance(COSTS["dig"])
 
-func can_undig(eight_sur_tiles, tile_mouse_pos):
-	var cost = COSTS["undig"]
+func can_undig(eight_sur_tiles, tile_mouse_pos, cost):
 	
 	if check_tile(tile_mouse_pos, is_riverbed_tile):
 		cost =  COSTS["undig"]
@@ -807,6 +810,8 @@ func set_tile_type(location, tile_type):
 
 #Checks if the current tile is a river, riverbed, or water tile
 func check_tile(tile, predicate):
+	if typeof(get_tile_type(tile)) == TYPE_STRING:
+		return false
 	return predicate.call(get_tile_type(tile))
 
 #Checks if a neighbor tile is a river, riverbed, or water tile
