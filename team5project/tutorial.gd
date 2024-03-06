@@ -99,7 +99,10 @@ func do_tutorial():
 	except_start = Vector2i(0,0)
 	except_end = Vector2i(0,0)
 	var tutorial_count = Global.tutorial_count
-	#print(tutorial_count)
+	
+	tutorial_label.add_theme_font_override("font",font)
+	tutorial_label.add_theme_font_size_override("font_size",10)
+	
 	#unable all tutorial layer
 	for i in range(4,14):
 		tile_map.set_layer_enabled(i, false)
@@ -108,10 +111,11 @@ func do_tutorial():
 		tile_map.set_layer_enabled(LAYERS["tutorial_border_0"], true)
 		
 		tutorial_label.set_position(Vector2(150,200))
-		tutorial_label.text = "Woops! Heavy rain in mountain! First time in 100 years!\n Please help people evacuate by gaining time, Mayor!"
+		tutorial_label.text = "Woops! Heavy rain in mountain! First time in 100 years!
+							
+							Please help people evacuate by gaining time, Mayor!"
 		tutorial_label.add_theme_color_override("font_color",Color(0,0,0,1))
-		tutorial_label.add_theme_font_override("font",font)
-		tutorial_label.add_theme_font_size_override("font_size",10)
+		
 		if tutorial_label not in get_children():
 			add_child(tutorial_label)
 		
@@ -120,10 +124,10 @@ func do_tutorial():
 		#tutorial_label = Label.new()
 		tutorial_label.set_position(Vector2(150,250))
 		tutorial_label.text = "Water (blue tiles) flows toward dry riverbed (brown tile)
+		
 								Dark blue is deeper, so it can flow to the riverbed next to it."
 		tutorial_label.add_theme_color_override("font_color",Color(0,0,0,1))
-		tutorial_label.add_theme_font_override("font",font)
-		tutorial_label.add_theme_font_size_override("font_size",10)
+
 		if tutorial_label not in get_children():
 			add_child(tutorial_label)
 			
@@ -135,13 +139,13 @@ func do_tutorial():
 	elif tutorial_count == 2:
 		tile_map.set_layer_enabled(LAYERS["tutorial_border_2"], true)
 		
-		tutorial_label.set_position(Vector2(100,200))
+		tutorial_label.set_position(Vector2(50,200))
 		tutorial_label.text = "If the river reaches the bottom of the map (city limit), the city is broken.
-							Your task is to delay the flood in the city so more people can escape from the city
+		
+							Your task is to delay the flood in the city so more people can escape
+							
 							If the river reaches the city..."
-		tutorial_label.add_theme_color_override("font_color",Color(0,0,0,1))
-		tutorial_label.add_theme_font_override("font",font)
-		tutorial_label.add_theme_font_size_override("font_size",10)
+		tutorial_label.add_theme_color_override("font_color",Color(0,0,0,1))		
 		
 		if tutorial_label not in get_children():
 			add_child(tutorial_label)
@@ -171,28 +175,58 @@ func do_tutorial():
 		
 	elif tutorial_count == 3:
 		tile_map.set_layer_enabled(LAYERS["tutorial_border_3"], true)
-		tutorial_label.set_position(Vector2(100,100))
+		tutorial_label.set_position(Vector2(50,100))
 		tutorial_label.text = 	"You can see your score, money, and mode on the right.
+		
 								The score and money increases as time goes on.
+								
 								You can change mode by using ASDF keys.
+								
 								These items are placable by spending money.
+								
 								Try to get higher score!"
-		tutorial_label.add_theme_font_override("font",font)
 		tutorial_label.add_theme_color_override("font_color",Color(0,0,0,1))
-		tutorial_label.add_theme_font_size_override("font_size",10)
 		if tutorial_label not in get_children():
 			add_child(tutorial_label)
+			
+	elif tutorial_count == 4:
+		tile_map.set_layer_enabled(LAYERS["tutorial_border_8"], true)
+		tutorial_label.set_position(Vector2(50,50))
+		tutorial_label.text = "You can see there are different tiles
+		
+								You need to protect House/car tiles
+								- If next to river tile, they will be flooded
+								- If they are flooded/broken, you lose score
+								
+								Rock tile can be unchangeable
+								
+								The city at the bottom will be broken eventually...
+								"
+		tutorial_label.add_theme_color_override("font_color",Color(0,0,0,1))
+		if tutorial_label not in get_children():
+			add_child(tutorial_label)
+			
+		except_start = Vector2i(3,6)
+		except_end = Vector2i(13,11)
+		
+		while true:
+			#wait until the timer runs out of time (until river change state)
+			await get_tree().create_timer(timer.wait_time).timeout
+			tile_map.set_cell(LAYERS["ground"],Vector2i(3,6), 0, Vector2i(4,0))
 		
 	elif tutorial_count == 5:
 		tile_map.set_layer_enabled(LAYERS["tutorial_border_4"], true)
 		tutorial_label.set_position(Vector2(50,300))
 		tutorial_label.text = "You can dig river to divert river direction
+		
 								You cannot make pond (4 tile square)
-								If you are in different mode (undig, pump etc), press S to start digging.
+								
+								Press S to start digging
+								 if you are in different mode
+								
 								You need 5 money to dig"
 		tutorial_label.add_theme_color_override("font_color",Color(0,0,0,1))
-		tutorial_label.add_theme_font_override("font",font)
-		tutorial_label.add_theme_font_size_override("font_size",10)
+		
 		if tutorial_label not in get_children():
 			add_child(tutorial_label)
 			
@@ -203,12 +237,16 @@ func do_tutorial():
 		tile_map.set_layer_enabled(LAYERS["tutorial_border_5"], true)
 		tutorial_label.set_position(Vector2(50,300))
 		tutorial_label.text =  "You can use pump to stop river from flowing
-								Press D and place it on green (ground) tile next to river 
-								If the house is flooded, you can place pump next to it to protect it
+		
+								Press D and place it 
+								 on green (ground) tile next to river 
+								
+								If the house is flooded, 
+								 you can place pump next to it to protect it
+								
 								You need 20 money to place it"
 		tutorial_label.add_theme_color_override("font_color",Color(0,0,0,1))
-		tutorial_label.add_theme_font_override("font",font)
-		tutorial_label.add_theme_font_size_override("font_size",10)
+		
 		if tutorial_label not in get_children():
 			add_child(tutorial_label)
 			
@@ -226,12 +264,15 @@ func do_tutorial():
 		tile_map.set_layer_enabled(LAYERS["tutorial_border_6"], true)
 		tutorial_label.set_position(Vector2(50,300))
 		tutorial_label.text = "You can use cistern to increase the power of pump
-								Press F and place it on green (ground) tile next to pump 
-								If house/car is flooded, you can place pump next to it to protect it
+		
+								Press F and place it 
+								 on green (ground) tile next to pump 
+								
+								If house/car is flooded, 
+								 you can place pump next to it to protect it
+								
 								You need 10 money to place it"
-		tutorial_label.add_theme_font_override("font",font)
 		tutorial_label.add_theme_color_override("font_color",Color(0,0,0,1))
-		tutorial_label.add_theme_font_size_override("font_size",10)
 		if tutorial_label not in get_children():
 			add_child(tutorial_label)
 			
@@ -254,40 +295,18 @@ func do_tutorial():
 		
 	elif tutorial_count == 8:
 		tile_map.set_layer_enabled(LAYERS["tutorial_border_8"], true)
-		tutorial_label.set_position(Vector2(150,50))
+		tutorial_label.set_position(Vector2(50,50))
 		tutorial_label.text = "You can undig the riverbed (brown tile) and river
-								Undigging prevents river from flowing to certain direction
-								You need another riverbed access to the bottom to undig
-								You need 5 money to undig riverbed
-								You need 10 money to dig shallow river
-								You need 15 money to dig deep river"		
-		tutorial_label.add_theme_font_override("font",font)
-		tutorial_label.add_theme_color_override("font_color",Color(0,0,0,1))
-		tutorial_label.add_theme_font_size_override("font_size",10)
-		if tutorial_label not in get_children():
-			add_child(tutorial_label)
-			
-		except_start = Vector2i(3,6)
-		except_end = Vector2i(13,11)
 		
-		while true:
-			#wait until the timer runs out of time (until river change state)
-			await get_tree().create_timer(timer.wait_time).timeout
-			tile_map.set_cell(LAYERS["ground"],Vector2i(3,6), 0, Vector2i(4,0))
-			
-	elif tutorial_count == 4:
-		tile_map.set_layer_enabled(LAYERS["tutorial_border_8"], true)
-		tutorial_label.set_position(Vector2(150,50))
-		tutorial_label.text = "You can see there are different tiles
-								House/car tiles to protect 
-								- If next to river tile, they will be flooded
-								- If they are flooded/broken, you lose score
-								Rock tile can be unchangeable
-								The city at the bottom will be broken eventually...
-								"
-		tutorial_label.add_theme_font_override("font",font)
+								Undigging can stop river flow but
+								 riverbeds need to access to the bottom of the map!!!
+								
+								You need 5 money to undig riverbed
+								
+								You need 10 money to dig shallow river
+								
+								You need 15 money to dig deep river"		
 		tutorial_label.add_theme_color_override("font_color",Color(0,0,0,1))
-		tutorial_label.add_theme_font_size_override("font_size",10)
 		if tutorial_label not in get_children():
 			add_child(tutorial_label)
 			
@@ -301,11 +320,11 @@ func do_tutorial():
 		
 	elif tutorial_count == 9:
 		tile_map.set_layer_enabled(LAYERS["tutorial_border_9"], true)
-		tutorial_label.set_position(Vector2(100,200))
+		tutorial_label.set_position(Vector2(150,200))
 		tutorial_label.text = "Tutorial Completed!"
 		tutorial_label.add_theme_color_override("font_color",Color(0.5,1,0.5,1))
 		tutorial_label.add_theme_font_size_override("font_size",30)
-		tutorial_label.add_theme_font_override("font",font)
+		
 		if tutorial_label not in get_children():
 			add_child(tutorial_label)
 			
