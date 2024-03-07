@@ -1,18 +1,19 @@
-[gd_scene load_steps=14 format=3 uid="uid://yque0owxfk04"]
+[gd_scene load_steps=15 format=3 uid="uid://yque0owxfk04"]
 
 [ext_resource type="Script" path="res://mainGame.gd" id="1_n7f0u"]
-[ext_resource type="Texture2D" uid="uid://cdfbquhbtstem" path="res://tileset_0.7.png" id="2_a5ytt"]
+[ext_resource type="Texture2D" uid="uid://yhe088kicaw7" path="res://tileset_1.0.png" id="2_dexwb"]
 [ext_resource type="AudioStream" uid="uid://duqktdpccx1si" path="res://dig-undig.wav" id="3_k130k"]
 [ext_resource type="Texture2D" uid="uid://cmayp06vjjacm" path="res://buildings_rock_tree_highlight.png" id="3_vsg0t"]
 [ext_resource type="AudioStream" uid="uid://t8fmqk2owta7" path="res://hammer.mp3" id="4_58vkq"]
 [ext_resource type="AudioStream" uid="uid://d1twaokdntpq7" path="res://error.wav" id="5_hj26o"]
 [ext_resource type="AudioStream" uid="uid://cbhjguvy5pxft" path="res://destruction.wav" id="6_1mp51"]
 [ext_resource type="AudioStream" uid="uid://q1sc303erpj0" path="res://pumping-water.mp3" id="7_5c7lh"]
+[ext_resource type="AudioStream" uid="uid://ct8h6yl0y8t7d" path="res://selecttool.wav" id="9_8yut0"]
 [ext_resource type="PackedScene" uid="uid://cqpx1ehejg0ob" path="res://pause menu/pause_menu.tscn" id="9_xps7o"]
 [ext_resource type="Script" path="res://tutorial.gd" id="10_f8e5e"]
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_advvw"]
-texture = ExtResource("2_a5ytt")
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_3qqwg"]
+texture = ExtResource("2_dexwb")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 0:0/0/custom_data_0 = 1
@@ -71,6 +72,8 @@ texture_region_size = Vector2i(32, 32)
 2:9/0 = 0
 3:9/0 = 0
 4:9/0 = 0
+0:10/0 = 0
+1:10/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_n0c1u"]
 texture = ExtResource("3_vsg0t")
@@ -105,7 +108,7 @@ tile_size = Vector2i(32, 32)
 custom_data_layer_0/name = "tile_category"
 custom_data_layer_0/type = 2
 sources/1 = SubResource("TileSetAtlasSource_n0c1u")
-sources/0 = SubResource("TileSetAtlasSource_advvw")
+sources/0 = SubResource("TileSetAtlasSource_3qqwg")
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource("1_n7f0u")
@@ -187,6 +190,10 @@ stream = ExtResource("6_1mp51")
 
 [node name="pumping_water_sfx" type="AudioStreamPlayer" parent="TileMap"]
 stream = ExtResource("7_5c7lh")
+
+[node name="select_tool_sfx" type="AudioStreamPlayer" parent="TileMap"]
+stream = ExtResource("9_8yut0")
+volume_db = -15.0
 
 [node name="pause_menu" parent="." instance=ExtResource("9_xps7o")]
 visible = false
