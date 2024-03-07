@@ -195,7 +195,10 @@ func _input(event):
 		#var four_sur_tiles = get_four_neighbor_category(tile_mouse_pos)
 		var source_id = 0
 		
-		if mode_state == MODES.DIG:
+		if tile_mouse_pos[1]>= 13:
+			return
+		
+		elif mode_state == MODES.DIG:
 			var riverbed_atlas_coord = Vector2i(1, 0) #riverbed tile
 			
 
@@ -286,7 +289,6 @@ func _input(event):
 				error_sfx.play()
 				print("cannot set cistern here")
 				
-			
 		else:
 			error_sfx.play()
 			print("not enough balance")

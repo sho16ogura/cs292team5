@@ -222,7 +222,7 @@ func do_tutorial():
 		tutorial_label.set_position(Vector2(50,50))
 		tutorial_label.text = "You can see there are different tiles
 		
-								You need to protect House/car tiles
+								You need to protect houses and cars
 								- If next to river tile, they'll be flooded
 								- If they are flooded/broken, you'll lose score
 								
