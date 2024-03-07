@@ -71,3 +71,9 @@ func handling_connecting_signals() -> void:
 	settings_menu_2.exit_settings_menu_2.connect(on_exit_settings_menu_2)
 	
 	tutorial_button.button_down.connect(on_tutorial_pressed)
+	
+func _input(event):
+	if Input.is_action_just_pressed("hard_mode"):
+		Global.tutorial_count = -1
+		Global.hard_mode = 1
+		Global.switch_scene("res://mainGame.tscn")

@@ -4,6 +4,7 @@ var score = 0
 var current_scene = null
 var next_scene = null
 var tutorial_count = -1
+var hard_mode = 0
 
 func _ready():
 	var root = get_tree().root
