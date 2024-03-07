@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://b5j3kmh5ma6mx"]
+[gd_scene load_steps=13 format=3 uid="uid://b5j3kmh5ma6mx"]
 
 [ext_resource type="Script" path="res://main menu/main menu/main_menu.gd" id="1_sn3hk"]
 [ext_resource type="Texture2D" uid="uid://gi4olcu077qn" path="res://Water_FirstGame.png" id="2_puijr"]
@@ -13,16 +13,13 @@
 fallbacks = Array[Font]([ExtResource("4_kfs6g")])
 base_font = ExtResource("3_jn30q")
 
-[sub_resource type="FontVariation" id="FontVariation_8xl6r"]
+[sub_resource type="FontVariation" id="FontVariation_me2gr"]
 base_font = ExtResource("4_kfs6g")
 
 [sub_resource type="FontVariation" id="FontVariation_vr27o"]
 base_font = ExtResource("4_kfs6g")
 
 [sub_resource type="FontVariation" id="FontVariation_fphxa"]
-base_font = ExtResource("4_kfs6g")
-
-[sub_resource type="FontVariation" id="FontVariation_me2gr"]
 base_font = ExtResource("4_kfs6g")
 
 [node name="Main_Menu" type="Control"]
@@ -98,10 +95,9 @@ layout_mode = 2
 [node name="Start_Button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(120, 32)
 layout_mode = 2
-theme_override_fonts/font = SubResource("FontVariation_8xl6r")
+theme_override_fonts/font = SubResource("FontVariation_me2gr")
 theme_override_font_sizes/font_size = 20
-text = "Start Game
-"
+text = "Start Game"
 
 [node name="Settings_Button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 visible = false

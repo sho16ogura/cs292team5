@@ -1,7 +1,7 @@
 class_name MainMenu
 extends Control
 
-@onready var start_button = $MarginContainer/HBoxContainer/VBoxContainer/Start_Button as Button
+#@onready var start_button = $MarginContainer/HBoxContainer/VBoxContainer/Start_Button as Button
 @onready var exit_button = $MarginContainer/HBoxContainer/VBoxContainer/Exit_Button as Button
 @onready var settings_button = $MarginContainer/HBoxContainer/VBoxContainer/Settings_Button as Button
 @onready var tutorial_button = $MarginContainer/HBoxContainer/VBoxContainer/Tutorial_Button as Button
@@ -13,7 +13,7 @@ extends Control
 @onready var credits_button = $MarginContainer/HBoxContainer/VBoxContainer/Credits_Button as Button
 @onready var settings_button_2 = $MarginContainer/HBoxContainer/VBoxContainer/Settings_Menu_Button as Button
 @onready var settings_menu_2 = $Settings_Menu_2 as SettingsMenu2
-
+@onready var start_button = $MarginContainer/HBoxContainer/VBoxContainer/Start_Button as Button
 
 func _ready():
 	handling_connecting_signals()
