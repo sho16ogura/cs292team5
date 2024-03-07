@@ -103,6 +103,7 @@ func do_tutorial():
 	
 	tutorial_label.add_theme_font_override("font",font)
 	tutorial_label.add_theme_font_size_override("font_size",10)
+	tutorial_label.text = ""
 	
 	#unable all tutorial layer
 	for i in range(4,15):
