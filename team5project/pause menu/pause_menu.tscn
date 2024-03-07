@@ -77,6 +77,11 @@ layout_mode = 2
 theme_override_fonts/font = SubResource("FontVariation_7j7nm")
 text = "Resume Game"
 
+[node name="Main_Menu_Button" type="Button" parent="GridContainer"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_7j7nm")
+text = "Main Menu"
+
 [node name="Instruction_Button" type="Button" parent="GridContainer"]
 visible = false
 layout_mode = 2
@@ -88,4 +93,5 @@ visible = false
 layout_mode = 1
 
 [connection signal="pressed" from="GridContainer/Resume_Button" to="." method="_on_resume_button_pressed"]
+[connection signal="pressed" from="GridContainer/Main_Menu_Button" to="." method="_on_resume_button_pressed"]
 [connection signal="pressed" from="GridContainer/Instruction_Button" to="." method="_on_instruction_button_pressed"]
