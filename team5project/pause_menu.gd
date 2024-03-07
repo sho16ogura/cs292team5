@@ -10,7 +10,7 @@ func _ready():
 	handling_connecting_signals()
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("pause"):
+	if event.is_action_pressed("pause") and Global.tutorial_count == -1:
 		_is_paused = !_is_paused
 	
 func set_paused(value: bool) -> void:
