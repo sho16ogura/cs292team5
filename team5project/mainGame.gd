@@ -107,6 +107,21 @@ func _ready():
 			#if the building belongs to category 6 (breakables), add it to building dist {pos:0 water level}
 			if building_tile_data and building_tile_data.get_custom_data(tile_category_custom_data) == 6:
 				buildings[curr_pos]=0
+				
+				
+	if Global.hard_mode == 1:
+		for y in range(1,12):
+			for x in range(1,16):
+				var is_riverbed = tile_map.get_cell_atlas_coords(ground_layer, Vector2i(x,y)) == Vector2i(1,0)
+				if is_riverbed:
+					tile_map.set_cell(ground_layer, Vector2i(x,y), 0, Vector2i(0,0))
+					
+			tile_map.set_cell(ground_layer, Vector2i(8,y), 0, Vector2i(1,0))
+			timer.wait_time = .5
+			
+		Global.hard_mode = 0
+			
+		
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 # Go to Project Setting -> Physics -> Common to see number of cycles per second

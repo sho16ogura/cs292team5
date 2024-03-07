@@ -1,14 +1,21 @@
-[gd_scene load_steps=6 format=3 uid="uid://mkomnbmd7eoh"]
+[gd_scene load_steps=9 format=3 uid="uid://mkomnbmd7eoh"]
 
 [ext_resource type="Script" path="res://end screen/end_screen.gd" id="1_dx8cw"]
-[ext_resource type="Texture2D" uid="uid://bow4opl3ptpvq" path="res://tile_0014_end_game.png" id="1_qn51r"]
+[ext_resource type="Texture2D" uid="uid://djwpdssroxk7p" path="res://Water_EndGame.png" id="2_kojoc"]
+[ext_resource type="FontFile" uid="uid://bajhcr7csr6jm" path="res://PressStart2P.ttf" id="3_4ka0a"]
 [ext_resource type="AudioStream" uid="uid://con41i8e4thap" path="res://Sakura-Girl-Peach-chosic.com_.mp3" id="3_6pwnc"]
 
-[sub_resource type="SystemFont" id="SystemFont_2ifao"]
-font_names = PackedStringArray("Impact")
+[sub_resource type="FontVariation" id="FontVariation_rfjmc"]
+base_font = ExtResource("3_4ka0a")
 
-[sub_resource type="SystemFont" id="SystemFont_gqcxq"]
-font_names = PackedStringArray("Impact")
+[sub_resource type="FontVariation" id="FontVariation_518cd"]
+base_font = ExtResource("3_4ka0a")
+
+[sub_resource type="FontVariation" id="FontVariation_wvjhf"]
+
+[sub_resource type="FontVariation" id="FontVariation_fkmi3"]
+fallbacks = Array[Font]([ExtResource("3_4ka0a")])
+base_font = SubResource("FontVariation_wvjhf")
 
 [node name="end_screen" type="Control"]
 layout_mode = 3
@@ -26,7 +33,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("1_qn51r")
+texture = ExtResource("2_kojoc")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -43,7 +50,7 @@ theme_override_constants/margin_bottom = 12
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 custom_minimum_size = Vector2(2.08165e-12, 2.08165e-12)
 layout_mode = 2
-theme_override_constants/separation = 40
+theme_override_constants/separation = 60
 
 [node name="Seperator" type="Control" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -55,8 +62,8 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 6
 theme_override_constants/shadow_offset_y = 6
 theme_override_constants/outline_size = 10
-theme_override_fonts/font = SubResource("SystemFont_2ifao")
-theme_override_font_sizes/font_size = 72
+theme_override_fonts/font = SubResource("FontVariation_rfjmc")
+theme_override_font_sizes/font_size = 60
 text = "GAME OVER"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -68,8 +75,8 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 theme_override_constants/outline_size = 2
-theme_override_fonts/font = SubResource("SystemFont_2ifao")
-theme_override_font_sizes/font_size = 35
+theme_override_fonts/font = SubResource("FontVariation_518cd")
+theme_override_font_sizes/font_size = 32
 text = "SCORE: 9999"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -90,10 +97,11 @@ layout_mode = 2
 [node name="Main_Menu_Button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(120, 32)
 layout_mode = 2
-theme_override_fonts/font = SubResource("SystemFont_gqcxq")
+theme_override_fonts/font = SubResource("FontVariation_fkmi3")
 theme_override_font_sizes/font_size = 24
 text = "Main Menu"
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_6pwnc")
+volume_db = -14.219
 autoplay = true
