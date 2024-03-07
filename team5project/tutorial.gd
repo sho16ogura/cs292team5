@@ -111,10 +111,10 @@ func do_tutorial():
 	if tutorial_count == 0:
 		tile_map.set_layer_enabled(LAYERS["tutorial_border_0"], true)
 		
-		tutorial_label.set_position(Vector2(150,370))
-		tutorial_label.text = "Woops! Heavy rain in mountain! First time in 100 years!
+		tutorial_label.set_position(Vector2(50,370))
+		tutorial_label.text = "Oh no! There's heavy rain in the mountains for the first time in 100 years!
 							
-							Please help people evacuate by gaining time, Mayor!"
+							Please help people evacuate by delaying the flood, Mayor!"
 		tutorial_label.add_theme_color_override("font_color",Color(0,0,0,1))
 		
 		if tutorial_label not in get_children():
@@ -124,7 +124,7 @@ func do_tutorial():
 		tile_map.set_layer_enabled(LAYERS["tutorial_border_1"], true)
 		#tutorial_label = Label.new()
 		tutorial_label.set_position(Vector2(150,250))
-		tutorial_label.text = "Water (blue tiles) flows toward dry riverbed (brown tile)
+		tutorial_label.text = "Water (blue tiles) flows toward the dry riverbed (brown tile)
 		
 								Dark blue is deeper, so it can flow to the riverbed next to it.
 								
@@ -148,9 +148,9 @@ func do_tutorial():
 		tile_map.set_layer_enabled(LAYERS["tutorial_map"], true)
 		
 		tutorial_label.set_position(Vector2(50,200))
-		tutorial_label.text = "If the river reaches the bottom of the map (city limit), the city is broken.
+		tutorial_label.text = "If the river reaches the bottom of the map (city limit), the city is flooded.
 		
-							Your task is to delay the flood in the city so more people can escape
+							Your task is to delay the flood so more people can escape
 							
 							If the river reaches the city..."
 		tutorial_label.add_theme_color_override("font_color",Color(0,0,0,1))		
@@ -190,15 +190,17 @@ func do_tutorial():
 	elif tutorial_count == 3:
 		tile_map.set_layer_enabled(LAYERS["tutorial_border_3"], true)
 		tutorial_label.set_position(Vector2(50,100))
-		tutorial_label.text = 	"You can see your score, money, and mode on the right.
+		tutorial_label.text = 	"You can see your score, money,
+								 and tile selection on the right.
 		
 								The score and money increases as time goes on.
 								
-								You can change mode by using ASDF keys.
+								You can change the tile you're placing
+								 by using the ASDF keys.
 								
 								These items are placable by spending money.
 								
-								Try to get higher score!
+								Try to get a higher score!
 								
 								
 								
@@ -208,9 +210,8 @@ func do_tutorial():
 								
 								
 								
-								
-								
-								Press ASDF to change mode
+								Press ASDF 
+								 to change tile selection
 								"
 		tutorial_label.add_theme_color_override("font_color",Color(0,0,0,1))
 		if tutorial_label not in get_children():
@@ -222,12 +223,12 @@ func do_tutorial():
 		tutorial_label.text = "You can see there are different tiles
 		
 								You need to protect House/car tiles
-								- If next to river tile, they will be flooded
-								- If they are flooded/broken, you lose score
+								- If next to river tile, they'll be flooded
+								- If they are flooded/broken, you'll lose score
 								
-								Rock tile can be unchangeable
+								Rock tiles are unchangeable
 								
-								The city at the bottom will be broken eventually...
+								The city at the bottom will be destroyed eventually...
 								"
 		tutorial_label.add_theme_color_override("font_color",Color(0,0,0,1))
 		if tutorial_label not in get_children():
@@ -248,14 +249,14 @@ func do_tutorial():
 		
 		
 		
-							You can dig river to divert river direction
+							You can dig the river to divert the river's direction
 		
-								You cannot make pond (4 tile square)
+								You cannot make a pond (4-tile square)
 								
 								Press S to start digging
-								 if you are in different mode
+								 if you are in a different mode
 								
-								You need 5 money to dig"
+								Digging costs 5 money"
 		tutorial_label.add_theme_color_override("font_color",Color(0,0,0,1))
 		
 		if tutorial_label not in get_children():
@@ -271,16 +272,16 @@ func do_tutorial():
 		
 		
 		
-								You can use pump to stop river from flowing
+								You can use a pump to stop river from flowing
 								 for 20 seconds though...
 		
 								Press D and place it 
-								 on green (ground) tile next to river 
+								 on a green (ground) tile next to river 
 								
-								If the house is flooded, 
-								 you can place pump next to it to protect it
+								If a house or car is flooded, 
+								 you can place a pump next to it to drain it
 								
-								You need 20 money to place it"
+								A pump costs 20 money"
 		tutorial_label.add_theme_color_override("font_color",Color(0,0,0,1))
 		
 		if tutorial_label not in get_children():
@@ -311,15 +312,12 @@ func do_tutorial():
 		
 		
 		
-								You can use cistern to increase the power of pump
+								You can use a cistern to increase the power of pump
 		
 								Press F and place it 
-								 on green (ground) tile next to pump 
+								 on a green (ground) tile next to the pump 
 								
-								If house/car is flooded, 
-								 you can place pump next to it to protect it
-								
-								You need 10 money to place it"
+								A cistern costs 10 money"
 		tutorial_label.add_theme_color_override("font_color",Color(0,0,0,1))
 		if tutorial_label not in get_children():
 			add_child(tutorial_label)
@@ -347,7 +345,7 @@ func do_tutorial():
 		tutorial_label.text = "You can undig the riverbed (brown tile) and river
 		
 								Undigging can stop river flow but
-								 riverbeds need to access to the bottom of the map!!!
+								 river must connect to the bottom of the map!
 								
 								You need 5 money to undig riverbed
 								
@@ -394,11 +392,11 @@ func do_tutorial():
 			
 		
 		tutorial_label.text = "If you want, you can try hard mode
-								 - starting from straight riverbed
+								 - starting from the straight riverbed
 								 - faster river flow 
 								
 							Press plus key (shift+equal)
-							 after going back to starting screen"
+							 after going back to the starting screen"
 		tutorial_label.add_theme_color_override("font_color",Color(1,1,1))
 		tutorial_label.add_theme_font_size_override("font_size",10)
 		tutorial_label.set_position(Vector2(200,350))
