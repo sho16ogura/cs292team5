@@ -9,6 +9,9 @@ extends Node2D
 var font = load("res://PressStart2P.ttf")
 
 var tutorial_label = Label.new()
+var tutorial_label2 = Label.new()
+var tutorial_label3 = Label.new()
+
 var except_start = Vector2i(0,0)
 var except_end = Vector2i(16,12)
 
@@ -103,6 +106,16 @@ func do_tutorial():
 	
 	tutorial_label.add_theme_font_override("font",font)
 	tutorial_label.add_theme_font_size_override("font_size",10)
+	tutorial_label.text = ""
+	
+	tutorial_label2.add_theme_font_override("font",font)
+	tutorial_label2.add_theme_font_size_override("font_size",10)
+	tutorial_label2.text = ""
+	
+	tutorial_label2.add_theme_font_override("font",font)
+	tutorial_label2.add_theme_font_size_override("font_size",10)
+	tutorial_label3.text = ""
+	
 	
 	#unable all tutorial layer
 	for i in range(4,15):
@@ -111,7 +124,7 @@ func do_tutorial():
 	if tutorial_count == 0:
 		tile_map.set_layer_enabled(LAYERS["tutorial_border_0"], true)
 		
-		tutorial_label.set_position(Vector2(50,370))
+		tutorial_label.set_position(tile_map.map_to_local(Vector2i(1,11)))
 		tutorial_label.text = "Oh no! There's heavy rain in the mountains for the first time in 100 years!
 							
 							Please help people evacuate by delaying the flood, Mayor!"
@@ -123,20 +136,22 @@ func do_tutorial():
 	elif tutorial_count == 1:		
 		tile_map.set_layer_enabled(LAYERS["tutorial_border_1"], true)
 		#tutorial_label = Label.new()
-		tutorial_label.set_position(Vector2(150,250))
+		tutorial_label.set_position(tile_map.map_to_local(Vector2i(4,8)))
 		tutorial_label.text = "Water (blue tiles) flows toward the dry riverbed (brown tile)
 		
 								Dark blue is deeper, so it can flow to the riverbed next to it.
-								
-								
-								
-								
-								
-								Shallow                             Deep"
+								"
 		tutorial_label.add_theme_color_override("font_color",Color(0,0,0,1))
+		
+		tutorial_label2.set_position(tile_map.map_to_local(Vector2i(4,11)))
+		tutorial_label2.text = "Shallow                             Deep"
+		tutorial_label2.add_theme_color_override("font_color",Color(0,0,0,1))
 
 		if tutorial_label not in get_children():
 			add_child(tutorial_label)
+			
+		if tutorial_label2 not in get_children():
+			add_child(tutorial_label2)
 			
 		except_start = Vector2i(6,0)
 		except_end = Vector2i(12,5)
@@ -147,7 +162,7 @@ func do_tutorial():
 		tile_map.set_layer_enabled(LAYERS["tutorial_border_2"], true)
 		tile_map.set_layer_enabled(LAYERS["tutorial_map"], true)
 		
-		tutorial_label.set_position(Vector2(50,200))
+		tutorial_label.set_position(tile_map.map_to_local(Vector2i(1,5)))
 		tutorial_label.text = "If the river reaches the bottom of the map (city limit), the city is flooded.
 		
 							Your task is to delay the flood so more people can escape
@@ -174,7 +189,7 @@ func do_tutorial():
 			#tile_map.set_cell(LAYERS["ground"], Vector2i(8,10), 0, Vector2i(4,0))
 			#if just_before_gameover state, pop out game over
 			
-		tutorial_label.set_position(Vector2(170,200))
+		tutorial_label.set_position(tile_map.map_to_local(Vector2i(5,6)))
 		tutorial_label.text = "GAME OVER!!!"
 		tutorial_label.add_theme_color_override("font_color",Color(1,0,0,1))
 		tutorial_label.add_theme_font_override("font",font)
