@@ -11,4 +11,5 @@ func _ready():
 
 func on_exit_pressed() -> void:
 	exit_settings_menu_2.emit()
-	set_process(false)
+	set_process(false) 
+	
