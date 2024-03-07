@@ -72,7 +72,7 @@ func handling_connecting_signals() -> void:
 	
 	tutorial_button.button_down.connect(on_tutorial_pressed)
 	
-func _input(event):
+func _input(_event):
 	if Input.is_action_just_pressed("hard_mode"):
 		Global.tutorial_count = -1
 		Global.hard_mode = 1
