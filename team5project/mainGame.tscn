@@ -1,16 +1,17 @@
-[gd_scene load_steps=15 format=3 uid="uid://yque0owxfk04"]
+[gd_scene load_steps=16 format=3 uid="uid://yque0owxfk04"]
 
 [ext_resource type="Script" path="res://mainGame.gd" id="1_n7f0u"]
-[ext_resource type="Texture2D" uid="uid://yhe088kicaw7" path="res://tileset_1.0.png" id="2_dexwb"]
+[ext_resource type="Texture2D" path="res://tileset_1.0.png" id="2_dexwb"]
 [ext_resource type="AudioStream" uid="uid://duqktdpccx1si" path="res://dig-undig.wav" id="3_k130k"]
 [ext_resource type="Texture2D" uid="uid://cmayp06vjjacm" path="res://buildings_rock_tree_highlight.png" id="3_vsg0t"]
 [ext_resource type="AudioStream" uid="uid://t8fmqk2owta7" path="res://hammer.mp3" id="4_58vkq"]
 [ext_resource type="AudioStream" uid="uid://d1twaokdntpq7" path="res://error.wav" id="5_hj26o"]
 [ext_resource type="AudioStream" uid="uid://cbhjguvy5pxft" path="res://destruction.wav" id="6_1mp51"]
 [ext_resource type="AudioStream" uid="uid://q1sc303erpj0" path="res://pumping-water.mp3" id="7_5c7lh"]
-[ext_resource type="AudioStream" uid="uid://ct8h6yl0y8t7d" path="res://selecttool.wav" id="9_8yut0"]
+[ext_resource type="AudioStream" path="res://selecttool.wav" id="9_8yut0"]
 [ext_resource type="PackedScene" uid="uid://cqpx1ehejg0ob" path="res://pause menu/pause_menu.tscn" id="9_xps7o"]
 [ext_resource type="Script" path="res://tutorial.gd" id="10_f8e5e"]
+[ext_resource type="Script" path="res://addons/paulloz.colorblindness/colorblindness.gd" id="11_pymxc"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_3qqwg"]
 texture = ExtResource("2_dexwb")
@@ -209,6 +210,11 @@ grow_vertical = 1
 
 [node name="tutorial" type="Node2D" parent="."]
 script = ExtResource("10_f8e5e")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Colorblindness" type="CanvasLayer" parent="CanvasLayer"]
+script = ExtResource("11_pymxc")
 
 [connection signal="timeout" from="TileMap/Timer" to="." method="_on_timer_timeout"]
 [connection signal="timeout" from="TileMap/Timer" to="tutorial" method="_on_timer_timeout"]

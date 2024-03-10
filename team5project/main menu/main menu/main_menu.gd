@@ -1,9 +1,9 @@
 class_name MainMenu
 extends Control
 
-@onready var start_button = $MarginContainer/HBoxContainer/VBoxContainer/Start_Button as Button
+#@onready var start_button = $MarginContainer/HBoxContainer/VBoxContainer/Start_Button as Button
 @onready var exit_button = $MarginContainer/HBoxContainer/VBoxContainer/Exit_Button as Button
-@onready var settings_button = $MarginContainer/HBoxContainer/VBoxContainer/Settings_Button as Button
+#onready var settings_button = $MarginContainer/HBoxContainer/VBoxContainer/Settings_Button as Button
 @onready var tutorial_button = $MarginContainer/HBoxContainer/VBoxContainer/Tutorial_Button as Button
 #@onready var instruction_button = $MarginContainer/HBoxContainer/VBoxContainer/Instruction_Button as Button
 #@onready var start_level = preload("res://mainGame.tscn") as PackedScene
@@ -13,7 +13,7 @@ extends Control
 @onready var credits_button = $MarginContainer/HBoxContainer/VBoxContainer/Credits_Button as Button
 @onready var settings_button_2 = $MarginContainer/HBoxContainer/VBoxContainer/Settings_Menu_Button as Button
 @onready var settings_menu_2 = $Settings_Menu_2 as SettingsMenu2
-
+@onready var start_button = $MarginContainer/HBoxContainer/VBoxContainer/Start_Button as Button
 
 func _ready():
 	handling_connecting_signals()
@@ -62,7 +62,7 @@ func on_exit_settings_menu_2() -> void:
 
 func handling_connecting_signals() -> void:
 	start_button.button_down.connect(on_start_pressed)
-	settings_button.button_down.connect(on_settings_pressed)
+	#settings_button.button_down.connect(on_settings_pressed)
 	settings_button_2.button_down.connect(on_settings_menu2_pressed)
 	exit_button.button_down.connect(on_exit_pressed)
 	credits_button.button_down.connect(on_credits_pressed)

@@ -8,21 +8,19 @@
 [ext_resource type="PackedScene" uid="uid://bayrvi5tdmxbb" path="res://settings menu/settings_menu.tscn" id="4_ska44"]
 [ext_resource type="PackedScene" uid="uid://bn78c4xmom6n" path="res://credits menu/credits_menu.tscn" id="7_r8yaf"]
 [ext_resource type="PackedScene" uid="uid://dfp36d3bwhxxc" path="res://settings menu 2/settings_menu.tscn" id="8_03a01"]
+[ext_resource type="Script" path="res://addons/paulloz.colorblindness/colorblindness.gd" id="9_cx36u"]
 
 [sub_resource type="FontVariation" id="FontVariation_cyw5f"]
 fallbacks = Array[Font]([ExtResource("4_kfs6g")])
 base_font = ExtResource("3_jn30q")
 
-[sub_resource type="FontVariation" id="FontVariation_8xl6r"]
-base_font = ExtResource("4_kfs6g")
-
-[sub_resource type="FontVariation" id="FontVariation_vr27o"]
+[sub_resource type="FontVariation" id="FontVariation_me2gr"]
 base_font = ExtResource("4_kfs6g")
 
 [sub_resource type="FontVariation" id="FontVariation_fphxa"]
 base_font = ExtResource("4_kfs6g")
 
-[sub_resource type="FontVariation" id="FontVariation_me2gr"]
+[sub_resource type="FontVariation" id="FontVariation_vr27o"]
 base_font = ExtResource("4_kfs6g")
 
 [node name="Main_Menu" type="Control"]
@@ -98,20 +96,12 @@ layout_mode = 2
 [node name="Start_Button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(120, 32)
 layout_mode = 2
-theme_override_fonts/font = SubResource("FontVariation_8xl6r")
+theme_override_fonts/font = SubResource("FontVariation_me2gr")
 theme_override_font_sizes/font_size = 20
-text = "Start Game
-"
-
-[node name="Settings_Button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
-visible = false
-custom_minimum_size = Vector2(120, 32)
-layout_mode = 2
-theme_override_fonts/font = SubResource("FontVariation_vr27o")
-theme_override_font_sizes/font_size = 20
-text = "Instruction"
+text = "Start Game"
 
 [node name="Tutorial_Button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(120, 32)
 layout_mode = 2
 theme_override_fonts/font = SubResource("FontVariation_fphxa")
 theme_override_font_sizes/font_size = 20
@@ -168,3 +158,8 @@ anchor_right = 0.484
 anchor_bottom = 0.369
 offset_right = -0.744048
 offset_bottom = 19.333
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Colorblindness" type="CanvasLayer" parent="CanvasLayer"]
+script = ExtResource("9_cx36u")
