@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bow4opl3ptpvq"
-path="res://.godot/imported/tile_0014_end_game.png-8edbd073b160f5ed74eafca690354744.ctex"
+uid="uid://do68nplqgqkod"
+path="res://.godot/imported/colorblindness.svg-cdf4a189ed9048dd8081e18d690a9550.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://tile_0014_end_game.png"
-dest_files=["res://.godot/imported/tile_0014_end_game.png-8edbd073b160f5ed74eafca690354744.ctex"]
+source_file="res://addons/paulloz.colorblindness/colorblindness.svg"
+dest_files=["res://.godot/imported/colorblindness.svg-cdf4a189ed9048dd8081e18d690a9550.ctex"]
 
 [params]
 
@@ -32,3 +32,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
+svg/scale=1.0
+editor/scale_with_editor_scale=false
+editor/convert_colors_with_editor_theme=false

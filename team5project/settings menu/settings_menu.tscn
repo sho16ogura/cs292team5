@@ -1,19 +1,16 @@
-[gd_scene load_steps=5 format=3 uid="uid://bayrvi5tdmxbb"]
+[gd_scene load_steps=6 format=3 uid="uid://bayrvi5tdmxbb"]
 
 [ext_resource type="Script" path="res://settings menu/settings_menu.gd" id="1_dy5ih"]
+[ext_resource type="FontFile" uid="uid://bajhcr7csr6jm" path="res://PressStart2P.ttf" id="2_4ydc6"]
 
-[sub_resource type="SystemFont" id="SystemFont_8lba5"]
-font_names = PackedStringArray("Impact")
-subpixel_positioning = 0
+[sub_resource type="FontVariation" id="FontVariation_xlras"]
+base_font = ExtResource("2_4ydc6")
 
-[sub_resource type="SystemFont" id="SystemFont_y0byd"]
-font_names = PackedStringArray("Impact")
-font_weight = 150
-subpixel_positioning = 0
+[sub_resource type="FontVariation" id="FontVariation_0p1fo"]
+base_font = ExtResource("2_4ydc6")
 
-[sub_resource type="SystemFont" id="SystemFont_oeo85"]
-font_names = PackedStringArray("Impact")
-subpixel_positioning = 0
+[sub_resource type="FontVariation" id="FontVariation_rg14g"]
+base_font = ExtResource("2_4ydc6")
 
 [node name="Settings_Menu" type="Control"]
 layout_mode = 3
@@ -45,7 +42,7 @@ alignment = 1
 layout_mode = 2
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 12
-theme_override_fonts/font = SubResource("SystemFont_8lba5")
+theme_override_fonts/font = SubResource("FontVariation_xlras")
 theme_override_font_sizes/font_size = 24
 text = "Instruction"
 horizontal_alignment = 1
@@ -56,22 +53,27 @@ layout_mode = 2
 theme_override_constants/separation = 140
 
 [node name="TextEdit" type="TextEdit" parent="MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(800, 260)
+custom_minimum_size = Vector2(800, 300)
 layout_direction = 1
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_colors/font_color = Color(0.764706, 0.698039, 0.890196, 0.192157)
-theme_override_fonts/font = SubResource("SystemFont_y0byd")
-text = "* Your goal is stopping the water from reaching the bottom of the screen.
+theme_override_fonts/font = SubResource("FontVariation_0p1fo")
+theme_override_font_sizes/font_size = 16
+text = "* Your goal is stopping the water from reaching 
+the bottom of the screen.
 * Controls:
 - Mouse to select and click tiles change
 - Space to pause the game
-- A: to remove river tiles (you cannot prevent the river from reaching the bottom of the screen)
-- S: to place riverbed tiles (default, cannot make a square)
-- D:  to place pumps (pump drains neighboring four tiles) 
-- F: to place cisterns (improves efficiency of pump, need to be placed next to pump)
-"
+- A: to remove river tiles (you cannot prevent 
+the river from reaching the bottom of the screen)
+- S: to place riverbed tiles (default, cannot 
+make a square)
+- D:  to place pumps (pump drains neighboring 
+four tiles) 
+- F: to place cisterns (improves efficiency of 
+pump, need to be placed next to pump)"
 editable = false
 virtual_keyboard_enabled = false
 middle_mouse_paste_enabled = false
@@ -79,5 +81,5 @@ middle_mouse_paste_enabled = false
 [node name="Exit_Button" type="Button" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 10
-theme_override_fonts/font = SubResource("SystemFont_oeo85")
+theme_override_fonts/font = SubResource("FontVariation_rg14g")
 text = "Exit"

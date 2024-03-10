@@ -1,15 +1,27 @@
-[gd_scene load_steps=7 format=3 uid="uid://b5j3kmh5ma6mx"]
+[gd_scene load_steps=14 format=3 uid="uid://b5j3kmh5ma6mx"]
 
 [ext_resource type="Script" path="res://main menu/main menu/main_menu.gd" id="1_sn3hk"]
-[ext_resource type="Texture2D" uid="uid://eess7uyvg1uh" path="res://tile_0014.png" id="1_w8vvv"]
+[ext_resource type="Texture2D" uid="uid://gi4olcu077qn" path="res://Water_FirstGame.png" id="2_puijr"]
+[ext_resource type="FontVariation" uid="uid://5rr2s8877l3r" path="res://new_font_variation.tres" id="3_jn30q"]
+[ext_resource type="FontFile" uid="uid://bajhcr7csr6jm" path="res://PressStart2P.ttf" id="4_kfs6g"]
 [ext_resource type="AudioStream" uid="uid://rkepwtflhojx" path="res://Sakura-Girl-Beach-chosic.com_.mp3" id="4_lye30"]
 [ext_resource type="PackedScene" uid="uid://bayrvi5tdmxbb" path="res://settings menu/settings_menu.tscn" id="4_ska44"]
+[ext_resource type="PackedScene" uid="uid://bn78c4xmom6n" path="res://credits menu/credits_menu.tscn" id="7_r8yaf"]
+[ext_resource type="PackedScene" uid="uid://dfp36d3bwhxxc" path="res://settings menu 2/settings_menu.tscn" id="8_03a01"]
+[ext_resource type="Script" path="res://addons/paulloz.colorblindness/colorblindness.gd" id="9_cx36u"]
 
-[sub_resource type="SystemFont" id="SystemFont_iqhrx"]
-font_names = PackedStringArray("Impact")
+[sub_resource type="FontVariation" id="FontVariation_cyw5f"]
+fallbacks = Array[Font]([ExtResource("4_kfs6g")])
+base_font = ExtResource("3_jn30q")
 
-[sub_resource type="SystemFont" id="SystemFont_ef1sv"]
-font_names = PackedStringArray("Impact")
+[sub_resource type="FontVariation" id="FontVariation_me2gr"]
+base_font = ExtResource("4_kfs6g")
+
+[sub_resource type="FontVariation" id="FontVariation_fphxa"]
+base_font = ExtResource("4_kfs6g")
+
+[sub_resource type="FontVariation" id="FontVariation_vr27o"]
+base_font = ExtResource("4_kfs6g")
 
 [node name="Main_Menu" type="Control"]
 layout_mode = 3
@@ -27,19 +39,21 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_right = -925.0
-offset_bottom = -770.0
+offset_right = -913.0
+offset_bottom = -765.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("1_w8vvv")
+texture = ExtResource("2_puijr")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_right = -913.0
-offset_bottom = -643.0
+anchors_preset = -1
+anchor_right = 0.479
+anchor_bottom = 0.381
+offset_left = 2.0
+offset_top = 1.0
+offset_right = 5.086
+offset_bottom = 6.41699
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/margin_left = 12
@@ -48,8 +62,9 @@ theme_override_constants/margin_right = 12
 theme_override_constants/margin_bottom = 12
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+custom_minimum_size = Vector2(2.08165e-12, 10)
 layout_mode = 2
-theme_override_constants/separation = 60
+theme_override_constants/separation = 40
 
 [node name="Separator" type="Control" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -58,8 +73,8 @@ layout_mode = 2
 layout_mode = 2
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 24
-theme_override_fonts/font = SubResource("SystemFont_iqhrx")
-theme_override_font_sizes/font_size = 64
+theme_override_fonts/font = SubResource("FontVariation_cyw5f")
+theme_override_font_sizes/font_size = 48
 text = "FLOOD CONTROL
 "
 horizontal_alignment = 1
@@ -67,6 +82,7 @@ vertical_alignment = 1
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
 layout_mode = 2
+theme_override_constants/separation = 0
 alignment = 1
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
@@ -80,33 +96,70 @@ layout_mode = 2
 [node name="Start_Button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(120, 32)
 layout_mode = 2
-theme_override_fonts/font = SubResource("SystemFont_ef1sv")
-theme_override_font_sizes/font_size = 24
-text = "Start Game
-"
+theme_override_fonts/font = SubResource("FontVariation_me2gr")
+theme_override_font_sizes/font_size = 20
+text = "Start Game"
 
-[node name="Settings_Button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Tutorial_Button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(120, 32)
 layout_mode = 2
-theme_override_fonts/font = SubResource("SystemFont_ef1sv")
-theme_override_font_sizes/font_size = 24
-text = "Instruction"
+theme_override_fonts/font = SubResource("FontVariation_fphxa")
+theme_override_font_sizes/font_size = 20
+text = "Tutorial"
+
+[node name="Settings_Menu_Button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(120, 32)
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_vr27o")
+theme_override_font_sizes/font_size = 20
+text = "Settings"
+
+[node name="Credits_Button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(120, 32)
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_vr27o")
+theme_override_font_sizes/font_size = 20
+text = "Credits"
 
 [node name="Exit_Button" type="Button" parent="MarginContainer/HBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(120, 32)
 layout_mode = 2
-theme_override_fonts/font = SubResource("SystemFont_ef1sv")
-theme_override_font_sizes/font_size = 24
+theme_override_fonts/font = SubResource("FontVariation_me2gr")
+theme_override_font_sizes/font_size = 20
 text = "Exit Game"
 
 [node name="Settings_Menu" parent="." instance=ExtResource("4_ska44")]
 visible = false
 layout_mode = 1
-offset_left = -458.0
-offset_top = 19.0
-offset_right = -458.0
-offset_bottom = -770.0
+offset_left = -13.0
+offset_top = 1.0
+offset_right = -901.0
+offset_bottom = -765.0
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("4_lye30")
+volume_db = -14.219
 autoplay = true
+bus = &"Music"
+
+[node name="Credits_Menu" parent="." instance=ExtResource("7_r8yaf")]
+visible = false
+layout_mode = 1
+offset_left = -13.0
+offset_top = 1.0
+offset_right = -901.0
+offset_bottom = -765.0
+
+[node name="Settings_Menu_2" parent="." instance=ExtResource("8_03a01")]
+visible = false
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.484
+anchor_bottom = 0.369
+offset_right = -0.744048
+offset_bottom = 19.333
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Colorblindness" type="CanvasLayer" parent="CanvasLayer"]
+script = ExtResource("9_cx36u")

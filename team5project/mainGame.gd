@@ -11,7 +11,7 @@ var highlight_layer = 3
 var prevhover : Vector2i = Vector2i(0,0)
 
 var global_lockout = false
-var light_on_location = Vector2i(20, 10)
+var light_on_location = Vector2i(23, 8)
 
 #returns tile category int (0 = no data, 1 = ground, 2 = riverbed, 3 = river, 4 = pump)
 var tile_category_custom_data = "tile_category"
@@ -21,6 +21,7 @@ var tile_category_custom_data = "tile_category"
 @onready var error_sfx = $TileMap/error_sfx
 @onready var destruction_sfx = $TileMap/destruction_sfx
 @onready var pumping_water_sfx = $TileMap/pumping_water_sfx
+@onready var select_tool_sfx = $TileMap/select_tool_sfx
 #@onready var end_screen = $end_screen
 #@onready var tilemap = $TileMap
 
@@ -55,7 +56,11 @@ var tile_dict = {
 	"6": Vector2i(1, 5),
 	"7": Vector2i(2, 5),
 	"8": Vector2i(3, 5),
-	"9": Vector2i(4, 5)
+	"9": Vector2i(4, 5),
+	"red0": Vector2i(0, 9),
+	"red1": Vector2i(1, 9),
+	"red2": Vector2i(2, 9),
+	"red5": Vector2i(3, 9)
 }
 
 #array of coordinates of neighbros (curr, right, down, left, up) if curr = (0,0)
@@ -102,6 +107,21 @@ func _ready():
 			#if the building belongs to category 6 (breakables), add it to building dist {pos:0 water level}
 			if building_tile_data and building_tile_data.get_custom_data(tile_category_custom_data) == 6:
 				buildings[curr_pos]=0
+				
+				
+	if Global.hard_mode == 1:
+		for y in range(1,12):
+			for x in range(1,16):
+				var is_riverbed = tile_map.get_cell_atlas_coords(ground_layer, Vector2i(x,y)) == Vector2i(1,0)
+				if is_riverbed:
+					tile_map.set_cell(ground_layer, Vector2i(x,y), 0, Vector2i(0,0))
+					
+			tile_map.set_cell(ground_layer, Vector2i(8,y), 0, Vector2i(1,0))
+			timer.wait_time = .5
+			
+		Global.hard_mode = 0
+			
+		
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 # Go to Project Setting -> Physics -> Common to see number of cycles per second
@@ -123,41 +143,42 @@ func _input(event):
 		pass
 		
 	#if toggle_dig (J) is pressed, mode change to dig mode
-	elif Input.is_action_just_pressed("toggle_dig"):
+	elif Input.is_action_just_pressed("toggle_dig") and light_on_location != Vector2i(23,8):
 		mode_state = MODES.DIG
 		print("dig mode")
 		set_tile_type(light_on_location, TILE.LIGHT_OFF)
-		set_tile_type(Vector2i(20, 10), TILE.LIGHT_ON)
-		light_on_location = Vector2i(20, 10)
+		set_tile_type(Vector2i(23, 8), TILE.LIGHT_ON)
+		light_on_location = Vector2i(23, 8)
 		prevhover = highlight_tile(prevhover)
+		select_tool_sfx.play()
 	
 	#if toggle_undig (K) is pressed, mode change to undig mode
-	elif Input.is_action_just_pressed("toggle_undig"):
+	elif Input.is_action_just_pressed("toggle_undig") and light_on_location != Vector2i(19,8):
 		mode_state = MODES.UNDIG
 		print("undig mode")
 		set_tile_type(light_on_location, TILE.LIGHT_OFF)
-		set_tile_type(Vector2i(18, 10), TILE.LIGHT_ON)
-		light_on_location = Vector2i(18, 10)
+		set_tile_type(Vector2i(19, 8), TILE.LIGHT_ON)
+		light_on_location = Vector2i(19, 8)
 		prevhover = highlight_tile(prevhover)
+		select_tool_sfx.play()
 	
-	elif Input.is_action_just_pressed("toggle_pump"):
+	elif Input.is_action_just_pressed("toggle_pump") and light_on_location != Vector2i(19,11):
 		mode_state = MODES.PUMP
 		print("pump mode")
 		set_tile_type(light_on_location, TILE.LIGHT_OFF)
-		set_tile_type(Vector2i(22, 10), TILE.LIGHT_ON)
-		light_on_location = Vector2i(22, 10)
+		set_tile_type(Vector2i(19, 11), TILE.LIGHT_ON)
+		light_on_location = Vector2i(19, 11)
 		prevhover = highlight_tile(prevhover)
+		select_tool_sfx.play()
 
-	elif Input.is_action_just_pressed("toggle_cistern"):
+	elif Input.is_action_just_pressed("toggle_cistern") and light_on_location != Vector2i(23,11):
 		mode_state = MODES.CISTERN
 		print("cistern mode")
 		set_tile_type(light_on_location, TILE.LIGHT_OFF)
-		set_tile_type(Vector2i(24, 10), TILE.LIGHT_ON)
-		light_on_location = Vector2i(24, 10)
+		set_tile_type(Vector2i(23, 11), TILE.LIGHT_ON)
+		light_on_location = Vector2i(23, 11)
 		prevhover = highlight_tile(prevhover)
-	
-	elif event is InputEventMouseMotion:
-		return
+		select_tool_sfx.play()
 	
 	#can add action by Project -> Project Settings -> Input Map -> Add new Action
 	elif Input.is_action_just_pressed("click") and global_lockout == false: #if left mouse button is clicked
@@ -165,15 +186,19 @@ func _input(event):
 		#-> Custom Data Layers (and add variable) -> paint (bottom)->paint properties
 		#->painting on 
 		
+		
 		var mouse_pos : Vector2i = get_global_mouse_position() #global position in float
 		var tile_mouse_pos : Vector2i = tile_map.local_to_map(mouse_pos) #local position in int
 		tile_mouse_pos = tile_mouse_pos + Vector2i(-1, -1)
 		
 		var eight_sur_tiles = get_eight_neighbor_category(tile_mouse_pos)
-		var four_sur_tiles = get_four_neighbor_category(tile_mouse_pos)
+		#var four_sur_tiles = get_four_neighbor_category(tile_mouse_pos)
 		var source_id = 0
 		
-		if mode_state == MODES.DIG:
+		if tile_mouse_pos[1]>= 13:
+			return
+		
+		elif mode_state == MODES.DIG:
 			var riverbed_atlas_coord = Vector2i(1, 0) #riverbed tile
 			
 
@@ -191,15 +216,13 @@ func _input(event):
 		elif mode_state == MODES.UNDIG:
 			var ground_atlas_coord = Vector2i(0,0) #ground tile
 			
-			if can_undig(eight_sur_tiles, tile_mouse_pos):
-				var cost = COSTS["undig"]
-				if check_tile(tile_mouse_pos, is_riverbed_tile):
-					cost =  COSTS["undig"]
-				elif check_tile(tile_mouse_pos, is_low_or_med_water_tile):
-					cost =  COSTS["undig_shallow_river"]
-				elif check_tile(tile_mouse_pos, is_high_water_tile):
-					cost =  COSTS["undig_deep_river"]
+			var cost = COSTS["undig"]
+			if check_tile(tile_mouse_pos, is_low_or_med_water_tile):
+				cost =  COSTS["undig_shallow_river"]
+			elif check_tile(tile_mouse_pos, is_high_water_tile):
+				cost =  COSTS["undig_deep_river"]
 					
+			if can_undig(eight_sur_tiles, tile_mouse_pos,cost):					
 				reduce_balance(cost)
 				tile_map.set_cell(ground_layer, tile_mouse_pos, source_id, ground_atlas_coord)#change cell to ground
 				dig_undig_sfx.play(0.2)#soundeffect
@@ -231,8 +254,8 @@ func _input(event):
 						pumping_water_sfx.play()
 					
 					#if cistern is located next to the pump, strenthen the pump
-					var is_cistern_neighbor = four_sur_tiles.slice(1).any(func (c): return c==5)
-			
+					var is_cistern_neighbor = get_four_neighbor_category(tile_mouse_pos).slice(1).any(func (c): return c==5)
+					
 					if is_cistern_neighbor:
 						drain_eight_neighbor_river(tile_mouse_pos)
 					else:
@@ -255,11 +278,10 @@ func _input(event):
 		elif mode_state == MODES.CISTERN:
 			var cistern_atlas_coord = Vector2i(1,1) #cistern tile
 			
-			reduce_balance(COSTS["cistern"])
-			
 			#set pump, iterate and change back to ground
 			if can_place_cistern(eight_sur_tiles):
 				
+				reduce_balance(COSTS["cistern"])
 				#set cistern
 				tile_map.set_cell(ground_layer, tile_mouse_pos, source_id, cistern_atlas_coord)
 				hammer_sfx.play()#constructing sound
@@ -267,7 +289,6 @@ func _input(event):
 				error_sfx.play()
 				print("cannot set cistern here")
 				
-			
 		else:
 			error_sfx.play()
 			print("not enough balance")
@@ -300,9 +321,16 @@ func highlight_tile(prev_hover):
 				tile_map.set_cell(highlight_layer, tile_mouse_pos, source_id, highlight_cannot_set_coord)
 					
 		elif mode_state == MODES.UNDIG:
-			if can_undig(eight_sur_tiles, tile_mouse_pos):
+			var cost = COSTS["undig"]
+			if check_tile(tile_mouse_pos, is_low_or_med_water_tile):
+				cost =  COSTS["undig_shallow_river"]
+			elif check_tile(tile_mouse_pos, is_high_water_tile):
+				cost =  COSTS["undig_deep_river"]
+				
+			if can_undig(eight_sur_tiles, tile_mouse_pos, cost):
 				#blue highlight
 				tile_map.set_cell(highlight_layer, tile_mouse_pos, source_id, highlight_can_set_coord)
+				update_undig_price(tile_mouse_pos)
 			
 			else:	
 				#red highlight
@@ -342,8 +370,7 @@ func can_dig(eight_sur_tiles):
 	
 	return curr_tile_is_ground and surr_tiles_are_not_outside and will_not_make_riverbed_square and check_balance(COSTS["dig"])
 
-func can_undig(eight_sur_tiles, tile_mouse_pos):
-	var cost = COSTS["undig"]
+func can_undig(eight_sur_tiles, tile_mouse_pos, cost):
 	
 	if check_tile(tile_mouse_pos, is_riverbed_tile):
 		cost =  COSTS["undig"]
@@ -441,7 +468,13 @@ func _on_flood_timer_timeout():
 	if broken_buildings and not game_over:
 		for b in broken_buildings:
 			buildings.erase(b)
-			
+	
+	for y in range(12, 0, -1):
+		for x in range(16, 0 , -1):
+			var temp_vec = Vector2i(x, y)
+			if check_if_water_is_isolated(temp_vec):
+				decrease_water_depth(temp_vec)
+
 func _on_game_over_timer_timeout():
 	
 	#if the rightmost house is broken, can move on to ending
@@ -546,11 +579,11 @@ func decrease_score(penalty):
 	
 func building_dec_water_level(curr_pos):
 	var water_source_id = 0
-	var building_source_id = 1
+	#var building_source_id = 1
 		
 	var shallow_water = Vector2i(2,0)
-	var deep_water = Vector2i(3,0)
-	var broken_house_diff = Vector2i(0,1)
+	#var deep_water = Vector2i(3,0)
+	#var broken_house_diff = Vector2i(0,1)
 				
 	#decrement water depth
 	if buildings[curr_pos] == 0:
@@ -672,6 +705,11 @@ func _on_timer_timeout():
 					tiles_flowed_to.merge(water_flow(temp_vec, tile_directions[2]))
 				elif check_neighbor(temp_vec, tile_directions[3], is_river_not_high_water_tile):
 					tiles_flowed_to.merge(water_flow(temp_vec, tile_directions[3]))
+	
+	var mouse_pos : Vector2i = get_global_mouse_position() #global position in float
+	var tile_mouse_pos : Vector2i = tile_map.local_to_map(mouse_pos) #local position in int
+	tile_mouse_pos = tile_mouse_pos + Vector2i(-1, -1)
+	update_undig_price(tile_mouse_pos)
 
 #check if removing a tile from the river prevents there from being a continuous line of river tiles from the top to the bottom of the screen
 func check_river_connection(tile_pos):
@@ -704,8 +742,8 @@ func check_river_connection(tile_pos):
 func update_counter(counter):
 	if counter == COUNTER.MONEY:
 		var counter_array = fix_counter_array_size(str(balance).split("", true))
-		for x in 7:
-			set_tile_type(Vector2i(x+18, 6), counter_array[x])
+		for x in 5:
+			set_tile_type(Vector2i(x+18, 6), counter_array[x+2])
 		return
 	else: # COUNTER.SCORE
 		if score > 0:
@@ -730,6 +768,28 @@ func water_flow(tile, direction):
 		temp_dict[neighbor] = 1
 	
 	return temp_dict
+
+func update_undig_price(tile_mouse_pos):
+	if check_tile(tile_mouse_pos, is_low_or_med_water_tile):
+		set_tile_type(Vector2i(18, 9), "red0")
+		set_tile_type(Vector2i(19, 9), "red1")
+		set_tile_type(Vector2i(20, 9), "red0")
+	elif check_tile(tile_mouse_pos, is_high_water_tile):
+		set_tile_type(Vector2i(18, 9), "red0")
+		set_tile_type(Vector2i(19, 9), "red1")
+		set_tile_type(Vector2i(20, 9), "red5")
+	else:
+		set_tile_type(Vector2i(18, 9), "0")
+		set_tile_type(Vector2i(19, 9), "0")
+		set_tile_type(Vector2i(20, 9), "5")
+	return
+
+func check_if_water_is_isolated(loc):
+	return \
+	not check_neighbor(loc, TileSet.CELL_NEIGHBOR_BOTTOM_SIDE, is_water_tile) and\
+	not check_neighbor(loc, TileSet.CELL_NEIGHBOR_TOP_SIDE, is_water_tile) and\
+	not check_neighbor(loc, TileSet.CELL_NEIGHBOR_LEFT_SIDE, is_water_tile) and\
+	not check_neighbor(loc, TileSet.CELL_NEIGHBOR_RIGHT_SIDE, is_water_tile)
 
 func increase_water_depth(tile):
 	if check_tile(tile, is_river_tile) == false:
@@ -769,6 +829,8 @@ func set_tile_type(location, tile_type):
 
 #Checks if the current tile is a river, riverbed, or water tile
 func check_tile(tile, predicate):
+	if typeof(get_tile_type(tile)) == TYPE_STRING:
+		return false
 	return predicate.call(get_tile_type(tile))
 
 #Checks if a neighbor tile is a river, riverbed, or water tile
@@ -811,3 +873,4 @@ func is_med_water_tile(tile):
 #Checks if a tile is deep water
 func is_high_water_tile(tile):
 	return tile == TILE.HIGH_WATER
+

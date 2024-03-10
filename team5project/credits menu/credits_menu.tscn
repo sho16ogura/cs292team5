@@ -1,0 +1,113 @@
+[gd_scene load_steps=6 format=3 uid="uid://bn78c4xmom6n"]
+
+[ext_resource type="FontFile" uid="uid://bajhcr7csr6jm" path="res://PressStart2P.ttf" id="1_fkw2k"]
+[ext_resource type="Script" path="res://credits menu/credits_menu.gd" id="1_meis2"]
+
+[sub_resource type="FontVariation" id="FontVariation_oipgb"]
+base_font = ExtResource("1_fkw2k")
+
+[sub_resource type="FontVariation" id="FontVariation_a7ij5"]
+base_font = ExtResource("1_fkw2k")
+
+[sub_resource type="FontVariation" id="FontVariation_bfcas"]
+base_font = ExtResource("1_fkw2k")
+
+[node name="Credits_Menu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_meis2")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = -48
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 12
+theme_override_fonts/font = SubResource("FontVariation_oipgb")
+theme_override_font_sizes/font_size = 24
+text = "Credits"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 140
+
+[node name="TextEdit" type="TextEdit" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(2.08165e-12, 350)
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontVariation_a7ij5")
+theme_override_font_sizes/font_size = 10
+text = "- Sound Effects:
+* Title screen song: https://www.chosic.com/download-audio/58134/
+* End screen song: https://www.chosic.com/download-audio/58132/
+* Hammar sound: https://pixabay.com/sound-effects/search/hammer/
+* Pump sound: https://pixabay.com/sound-effects/search/water%20pump/
+* Dig sound (originally named as click sound) as asset dig-undig.wav
+* Destruction sound (originally named as explosion sound) as asset destruction.wav
+* Error sound (originally named as explosion sound) as asset error.wav
+* Select sound as asset selecttool.wav
+* Sound editting tool: https://sfxr.me/
+
+- Font: 
+* https://fonts.google.com/specimen/Press+Start+2P
+
+- Videos: 
+* Singleton Scene Switcher (8:25~): https://www.youtube.com/watch?v=RMdf60IAxY0
+* Main Menu: https://www.youtube.com/watch?v=Ueivz6JY5Fw&list=PLaldY12tBJUn8drhDIg
+KEsIOPt0KCHfvX&index=4&t=583s&pp=gAQBiAQB + https://www.youtube.com/watch?v=Z8jcjy_
+jZy
+k&list=PLaldY12tBJUn8drhDIgKEsIOPt0KCHfvX&index=10&t=389s&pp=gAQBiAQB + https://ww
+w.youtube.com/watch?v=zovnfSytasI&list=PLaldY12tBJUn8drhDIgKEsIOPt0KCHfvX&index=17&p
+p=gAQBiAQB
+* End Screen: https://www.youtube.com/watch?v=fbAFK1ExAkM&list=PLaldY12tBJUn8drhDIgKEsI
+OPt0KCHfvX&index=5&t=53s&pp=gAQBiAQB + https://www.youtube.com/watch?v=EjS3Dir1NkQ
+&list=PLaldY12tBJUn8drhDIgKEsIOPt0KCHfvX&index=8&t=486s&pp=gAQBiAQB + https://www.
+youtube.com/watch?v=W2nxeKWzVXM&list=PLaldY12tBJUn8drhDIgKEsIOPt0KCHfvX&index=14
+&t=27s&pp=gAQBiAQB + https://www.youtube.com/watch?v=pDRx2F_pY2s&list=PLaldY12tBJUn
+8drhDIgKEsIOPt0KCHfvX&index=15&t=1s&pp=gAQBiAQB
+* Pause Menu: https://www.youtube.com/watch?v=JEQR4ALlwVU&list=PLaldY12tBJUn8drhDI
+gKEsIOPt0KCHfvX&index=6&t=53s&pp=gAQBiAQB + https://www.youtube.com/watch?v=OWtwYp
+2lIlQ&list=PLaldY12tBJUn8drhDIgKEsIOPt0KCHfvX&index=11&pp=gAQBiAQB + https://www.y
+outube.com/watch?v=9dlNkB-QK3c&list=PLaldY12tBJUn8drhDIgKEsIOPt0KCHfvX&index=12&t=16s
+&pp=gAQBiAQB
+* Background music: https://www.youtube.com/watch?v=K-F_wgb6fqs&list=PLaldY12tBJUn
+8drhDIgKEsIOPt0KCHfvX&index=7&pp=gAQBiAQB
+* Settings Menu: https://www.youtube.com/watch?v=QN08u5aLlRo&list=PLaldY12tBJUn8dr
+hDIgKEsIOPt0KCHfvX&index=9&t=520s&pp=gAQBiAQB + https://www.youtube.com/watch?v=Qn
+EG01t2P9M&list=PLaldY12tBJUn8drhDIgKEsIOPt0KCHfvX&index=16&pp=gAQBiAQB + https://w
+ww.youtube.com/watch?v=yWvqvjLJ5Ko&list=PLaldY12tBJUn8drhDIgKEsIOPt0KCHfvX&index=18
+&pp=gAQBiAQB
+
+- Art assets:
+* All tiles were drawn with pixelart.com
+* Art assets (https://ninjikin.itch.io/water)
+
+- Source code:
+* Colorblindness mode: https://github.com/paulloz/godot-colorblindness
+
+- TA:
+- Adam Brohl, our TA (helping with the river detection system)"
+
+[node name="Exit_Button" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 10
+theme_override_fonts/font = SubResource("FontVariation_bfcas")
+text = "Exit"

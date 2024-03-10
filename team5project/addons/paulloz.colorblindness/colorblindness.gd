@@ -3,10 +3,6 @@ extends Node
 var score = 0
 var current_scene = null
 var next_scene = null
-var tutorial_count = -1
-var hard_mode = 0
-#enum COLORBLIND_MODE { None, Protanopia, Deuteranopia, Tritanopia, Achromatopsia }
-#var current_mode = COLORBLIND_MODE.None
 
 func _ready():
 	var root = get_tree().root
@@ -39,5 +35,3 @@ func _deferred_switch_scene(res_path):
 	get_tree().root.add_child(current_scene)
 	get_tree().current_scene = current_scene
 	
-#referenc: https://www.youtube.com/watch?v=RMdf60IAxY0
-
