@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://yque0owxfk04"]
+[gd_scene load_steps=15 format=3 uid="uid://yque0owxfk04"]
 
 [ext_resource type="Script" path="res://mainGame.gd" id="1_n7f0u"]
 [ext_resource type="Texture2D" uid="uid://cdfbquhbtstem" path="res://tileset_0.7.png" id="2_a5ytt"]
@@ -10,6 +10,7 @@
 [ext_resource type="AudioStream" uid="uid://q1sc303erpj0" path="res://pumping-water.mp3" id="7_5c7lh"]
 [ext_resource type="PackedScene" uid="uid://cqpx1ehejg0ob" path="res://pause menu/pause_menu.tscn" id="9_xps7o"]
 [ext_resource type="Script" path="res://tutorial.gd" id="10_f8e5e"]
+[ext_resource type="Script" path="res://addons/paulloz.colorblindness/colorblindness.gd" id="11_pymxc"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_advvw"]
 texture = ExtResource("2_a5ytt")
@@ -202,6 +203,11 @@ grow_vertical = 1
 
 [node name="tutorial" type="Node2D" parent="."]
 script = ExtResource("10_f8e5e")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Colorblindness" type="CanvasLayer" parent="CanvasLayer"]
+script = ExtResource("11_pymxc")
 
 [connection signal="timeout" from="TileMap/Timer" to="." method="_on_timer_timeout"]
 [connection signal="timeout" from="TileMap/Timer" to="tutorial" method="_on_timer_timeout"]

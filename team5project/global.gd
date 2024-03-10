@@ -5,6 +5,8 @@ var current_scene = null
 var next_scene = null
 var tutorial_count = -1
 var hard_mode = 0
+#enum COLORBLIND_MODE { None, Protanopia, Deuteranopia, Tritanopia, Achromatopsia }
+#var current_mode = COLORBLIND_MODE.None
 
 func _ready():
 	var root = get_tree().root

@@ -1,9 +1,10 @@
-[gd_scene load_steps=8 format=3 uid="uid://cqpx1ehejg0ob"]
+[gd_scene load_steps=9 format=3 uid="uid://cqpx1ehejg0ob"]
 
 [ext_resource type="Script" path="res://pause_menu.gd" id="1_4yw8a"]
 [ext_resource type="Texture2D" uid="uid://bu51euhiqpiiq" path="res://Water_Pause_Game.png" id="2_2fg7p"]
 [ext_resource type="FontFile" uid="uid://bajhcr7csr6jm" path="res://PressStart2P.ttf" id="3_cwrpg"]
 [ext_resource type="PackedScene" uid="uid://bayrvi5tdmxbb" path="res://settings menu/settings_menu.tscn" id="3_oeqh2"]
+[ext_resource type="Script" path="res://addons/paulloz.colorblindness/colorblindness.gd" id="5_m3hf5"]
 
 [sub_resource type="FontVariation" id="FontVariation_qfpg1"]
 base_font = ExtResource("3_cwrpg")
@@ -91,6 +92,11 @@ text = "Instruction"
 [node name="Settings_Menu" parent="." instance=ExtResource("3_oeqh2")]
 visible = false
 layout_mode = 1
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Colorblindness" type="CanvasLayer" parent="CanvasLayer"]
+script = ExtResource("5_m3hf5")
 
 [connection signal="pressed" from="GridContainer/Resume_Button" to="." method="_on_resume_button_pressed"]
 [connection signal="pressed" from="GridContainer/Main_Menu_Button" to="." method="_on_resume_button_pressed"]

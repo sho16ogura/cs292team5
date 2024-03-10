@@ -1,9 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://mkomnbmd7eoh"]
+[gd_scene load_steps=10 format=3 uid="uid://mkomnbmd7eoh"]
 
 [ext_resource type="Script" path="res://end screen/end_screen.gd" id="1_dx8cw"]
 [ext_resource type="Texture2D" uid="uid://djwpdssroxk7p" path="res://Water_EndGame.png" id="2_kojoc"]
 [ext_resource type="FontFile" uid="uid://bajhcr7csr6jm" path="res://PressStart2P.ttf" id="3_4ka0a"]
 [ext_resource type="AudioStream" uid="uid://con41i8e4thap" path="res://Sakura-Girl-Peach-chosic.com_.mp3" id="3_6pwnc"]
+[ext_resource type="Script" path="res://addons/paulloz.colorblindness/colorblindness.gd" id="5_aa28d"]
 
 [sub_resource type="FontVariation" id="FontVariation_rfjmc"]
 base_font = ExtResource("3_4ka0a")
@@ -105,3 +106,8 @@ text = "Main Menu"
 stream = ExtResource("3_6pwnc")
 volume_db = -14.219
 autoplay = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Colorblindness" type="CanvasLayer" parent="CanvasLayer"]
+script = ExtResource("5_aa28d")

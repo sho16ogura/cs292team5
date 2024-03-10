@@ -1,35 +1,37 @@
-@tool
-@icon("res://addons/paulloz.colorblindness/colorblindness.svg")
-class_name Colorblindness
-extends CanvasLayer
+extends Node
 
-enum TYPE { None, Protanopia, Deuteranopia, Tritanopia, Achromatopsia }
-
-@export
-var Type: TYPE = TYPE.None:
-	set(value):
-		if rect.material:
-			rect.material.set_shader_parameter("type", value)
-		else:
-			temp = value
-		Type = value
-		
-var temp = null
-
-var rect := ColorRect.new()
-
+var score = 0
+var current_scene = null
+var next_scene = null
 
 func _ready():
-	self.add_child(self.rect)
-
-	self.rect.custom_minimum_size = self.rect.get_viewport_rect().size
-	self.rect.material = load("res://addons/paulloz.colorblindness/colorblindness.material")
-	self.rect.set_mouse_filter(Control.MOUSE_FILTER_IGNORE)
-	if self.temp:
-		self.Type = self.temp
-		self.temp = null
-
-	self.get_tree().root.size_changed.connect(_on_viewport_size_changed)
-
-func _on_viewport_size_changed():
-	self.rect.rect_min_size = self.rect.get_viewport_rect().size
+	var root = get_tree().root
+	current_scene = root.get_child(root.get_child_count() - 1)
+	
+func switch_scene(res_path):
+	call_deferred("_deferred_switch_scene", res_path)
+	
+func switch_scene_without_reset(res_path):
+	if not next_scene:
+		next_scene = current_scene
+		current_scene.free()
+		var s = load(res_path)
+		current_scene = s.instantiate()
+		
+		get_tree().root.add_child(current_scene)
+		get_tree().current_scene = current_scene
+	else:
+		var temp = current_scene
+		current_scene.free()
+		
+		get_tree().root.add_child(next_scene)
+		get_tree().current_scene = next_scene
+		next_scene = temp
+	
+func _deferred_switch_scene(res_path):
+	current_scene.free()
+	var s = load(res_path)
+	current_scene = s.instantiate()
+	get_tree().root.add_child(current_scene)
+	get_tree().current_scene = current_scene
+	
